@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cvter.intern.dao.UserDao">
+
+    <select id="selectUserById" parameterType="java.lang.Integer" resultType="cvter.intern.model.User">
+        SELECT id, uid, name, password, deleted, create_time createTime, update_time updateTime FROM user_info
+        WHERE id = #{id}
+    </select>
+
+    <select id="selectAllUser" resultType="cvter.intern.model.User">
+        SELECT id, uid, name, password, deleted, create_time createTime, update_time updateTime FROM user_info
+    </select>
+
+</mapper>
