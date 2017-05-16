@@ -9,9 +9,17 @@ import java.util.List;
  */
 public interface UserService {
 
-    List<User> getAllUser();
+    User selectById(int id);
 
-    User getUserByPhoneOrEmail(String emailOrPhone, Short state);
+    User selectByUid(String uid);
 
-    User getUserById(Long userId);
+    List<User> selectAll();
+
+    int save(User user);
+
+    int update(User user);
+
+    int delete(User user);
+
+    int deleteById(int id);
 }

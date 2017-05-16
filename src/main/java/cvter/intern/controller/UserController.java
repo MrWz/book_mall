@@ -8,7 +8,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 /**
@@ -24,14 +23,11 @@ public class UserController {
     private UserService userService;
 
     @RequestMapping("/showUser")
-    public String showUser(HttpServletRequest request, Model model){
+    public String showUser(Model model) {
         log.info("查询所有用户信息");
-        List<User> userList = userService.getAllUser();
-        for (User u :
-                userList) {
-            System.out.println(u);
-        }
-        model.addAttribute("userList",userList);
+        List<User> userList = userService.selectAll();
+        log.info("users = {}" + userList);
+        model.addAttribute("userList", userList);
         return "showUser";
     }
 }

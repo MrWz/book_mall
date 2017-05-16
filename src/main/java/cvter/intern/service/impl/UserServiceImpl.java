@@ -15,19 +15,35 @@ import java.util.List;
 @Service
 @Transactional(rollbackFor = Exception.class)
 public class UserServiceImpl implements UserService {
-    
+
     @Resource
     private UserDao userDao;
 
-    public User getUserById(Long userId) {
-        return userDao.selectUserById(userId);
+    public User selectById(int id) {
+        return userDao.selectById(id);
     }
-    
-    public User getUserByPhoneOrEmail(String emailOrPhone, Short state) {
-        return userDao.selectUserByPhoneOrEmail(emailOrPhone,state);
+
+    public User selectByUid(String uid) {
+        return userDao.selectByUid(uid);
     }
-    
-    public List<User> getAllUser() {
-        return userDao.selectAllUser();
+
+    public List<User> selectAll() {
+        return userDao.selectAll();
+    }
+
+    public int save(User user) {
+        return userDao.save(user);
+    }
+
+    public int update(User user) {
+        return userDao.update(user);
+    }
+
+    public int delete(User user) {
+        return userDao.delete(user);
+    }
+
+    public int deleteById(int id) {
+        return userDao.deleteById(id);
     }
 }

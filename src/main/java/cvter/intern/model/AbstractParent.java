@@ -7,11 +7,11 @@ import java.util.Date;
  */
 public abstract class AbstractParent {
 
-    protected int id;
-    protected String uid;
-    protected Date createTime;
-    protected Date updateTime;
-    protected int deleted;
+    protected int id;                   //对应表中id字段
+    protected String uid;               //对应表中UID字段
+    protected Date createTime;          //对应表中create_time字段
+    protected Date updateTime;          //对应表中update_time字段
+    protected int deleted;              //对应表中deleted字段
 
     public int getId() {
         return id;
