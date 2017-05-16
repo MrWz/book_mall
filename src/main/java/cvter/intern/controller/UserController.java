@@ -25,7 +25,7 @@ public class UserController {
     @RequestMapping("/showUser")
     public String showUser(Model model) {
         log.info("查询所有用户信息");
-        List<User> userList = userService.selectAll();
+        List<User> userList = userService.getPaginate(1, 4);
         log.info("users = {}" + userList);
         model.addAttribute("userList", userList);
         return "showUser";

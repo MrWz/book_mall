@@ -13,37 +13,36 @@ import java.util.List;
  * Created by cvter on 2017/5/15.
  */
 @Service
-@Transactional(rollbackFor = Exception.class)
 public class UserServiceImpl implements UserService {
 
     @Resource
     private UserDao userDao;
 
-    public User selectById(int id) {
-        return userDao.selectById(id);
+    public User getByUid(String uid) {
+        return userDao.getByUid(uid);
     }
 
-    public User selectByUid(String uid) {
-        return userDao.selectByUid(uid);
+    public List<User> getPaginate(int currentPage, int pageSize) {
+        return userDao.getPaginate(currentPage, pageSize);
     }
 
-    public List<User> selectAll() {
-        return userDao.selectAll();
-    }
-
+    @Transactional(rollbackFor = Exception.class)
     public int save(User user) {
         return userDao.save(user);
     }
 
+    @Transactional(rollbackFor = Exception.class)
     public int update(User user) {
         return userDao.update(user);
     }
 
+    @Transactional(rollbackFor = Exception.class)
     public int delete(User user) {
         return userDao.delete(user);
     }
 
-    public int deleteById(int id) {
-        return userDao.deleteById(id);
+    @Transactional(rollbackFor = Exception.class)
+    public int deleteByUid(int uid) {
+        return userDao.deleteByUid(uid);
     }
 }

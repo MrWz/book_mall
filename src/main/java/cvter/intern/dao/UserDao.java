@@ -13,27 +13,19 @@ import java.util.List;
 public interface UserDao {
 
     /**
-     * 通过id查找用户
-     *
-     * @param id
-     * @return
-     */
-    User selectById(@Param("id") int id);
-
-    /**
      * 通过UID查找用户
      *
      * @param uid
      * @return
      */
-    User selectByUid(@Param("uid") String uid);
+    User getByUid(@Param("uid") String uid);
 
     /**
      * 查找所有用户
      *
      * @return
      */
-    List<User> selectAll();
+    List<User> getPaginate(@Param("currentPage") int currentPage, @Param("pageSize") int pageSize);
 
     /**
      * 增加用户
@@ -62,8 +54,8 @@ public interface UserDao {
     /**
      * 通过ID删除用户
      *
-     * @param id
+     * @param uid
      * @return
      */
-    int deleteById(@Param("id") int id);
+    int deleteByUid(@Param("uid") int uid);
 }

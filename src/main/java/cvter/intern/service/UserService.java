@@ -9,11 +9,9 @@ import java.util.List;
  */
 public interface UserService {
 
-    User selectById(int id);
+    User getByUid(String uid);
 
-    User selectByUid(String uid);
-
-    List<User> selectAll();
+    List<User> getPaginate(int currentPage, int pageSize);
 
     int save(User user);
 
@@ -21,5 +19,5 @@ public interface UserService {
 
     int delete(User user);
 
-    int deleteById(int id);
+    int deleteByUid(int uid);
 }
