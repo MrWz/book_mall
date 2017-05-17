@@ -47,7 +47,6 @@ public class User extends AbstractParent {
         if (getId() == user.getId() && getUid() == user.getUid()) {
             return true;
         }
-
         return false;
     }
 
