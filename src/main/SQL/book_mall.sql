@@ -1,7 +1,7 @@
 /*
 Navicat MySQL Data Transfer
 
-Source Server         : localhost
+Source Server         : 本地
 Source Server Version : 50715
 Source Host           : localhost:3306
 Source Database       : book_mall
@@ -10,7 +10,7 @@ Target Server Type    : MYSQL
 Target Server Version : 50715
 File Encoding         : 65001
 
-Date: 2017-05-16 19:03:23
+Date: 2017-05-17 10:00:30
 */
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -24,7 +24,7 @@ CREATE TABLE `book_info` (
   `uid` varchar(32) NOT NULL COMMENT '逻辑UID',
   `name` varchar(32) CHARACTER SET utf8mb4 NOT NULL COMMENT '书名',
   `author` varchar(16) NOT NULL COMMENT '作者',
-  `describe` text NOT NULL COMMENT '简介',
+  `description` text NOT NULL COMMENT '简介',
   `price` int(11) NOT NULL COMMENT '价格',
   `stock` int(32) NOT NULL COMMENT '库存量',
   `deleted` tinyint(1) NOT NULL DEFAULT '0' COMMENT '逻辑删除',
@@ -67,7 +67,7 @@ DROP TABLE IF EXISTS `hobby_info`;
 CREATE TABLE `hobby_info` (
   `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '自增ID',
   `uid` varchar(32) NOT NULL COMMENT '逻辑UID',
-  `describe` varchar(10) NOT NULL COMMENT '兴趣描述符',
+  `description` varchar(10) NOT NULL COMMENT '兴趣描述符',
   `deleted` tinyint(1) NOT NULL DEFAULT '0' COMMENT '逻辑删除',
   `create_time` datetime NOT NULL COMMENT '创建时间',
   `update_time` datetime NOT NULL COMMENT '更新时间',
@@ -108,7 +108,7 @@ DROP TABLE IF EXISTS `premission_info`;
 CREATE TABLE `premission_info` (
   `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '自增ID',
   `uid` varchar(32) NOT NULL COMMENT '权限UID',
-  `describe` varchar(16) NOT NULL COMMENT '权限描述',
+  `description` varchar(16) NOT NULL COMMENT '权限描述',
   `deleted` tinyint(1) NOT NULL DEFAULT '0' COMMENT '逻辑删除',
   `create_time` datetime NOT NULL COMMENT '创建时间',
   `update_time` datetime NOT NULL COMMENT '更新时间',
@@ -127,7 +127,7 @@ DROP TABLE IF EXISTS `role_info`;
 CREATE TABLE `role_info` (
   `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '自增UID',
   `uid` varchar(32) NOT NULL COMMENT '角色UID',
-  `describe` varchar(20) NOT NULL COMMENT '角色描述',
+  `description` varchar(20) NOT NULL COMMENT '角色描述',
   `deleted` tinyint(1) NOT NULL DEFAULT '0' COMMENT '逻辑删除',
   `create_time` datetime NOT NULL COMMENT '创建时间',
   `update_time` datetime NOT NULL COMMENT '更新时间',
