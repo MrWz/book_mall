@@ -9,7 +9,7 @@ import java.util.List;
 /**
  * Created by cvter on 2017/5/15.
  */
-@Repository
+//@Repository
 public interface UserDao {
 
     /**
