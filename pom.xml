@@ -134,7 +134,7 @@
         <dependency>
             <groupId>com.alibaba</groupId>
             <artifactId>fastjson</artifactId>
-            <version>1.1.41</version>
+            <version>1.2.32</version>
         </dependency>
 
         <!-- 添加日志相关jar包 -->
@@ -197,9 +197,19 @@
             <version>6.11</version>
         </dependency>
     </dependencies>
+
     <build>
         <finalName>seewo-bookmall-system</finalName>
         <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>1.8</source>
+                    <target>1.8</target>
+                </configuration>
+            </plugin>
+
             <plugin>
                 <groupId>org.mybatis.generator</groupId>
                 <artifactId>mybatis-generator-maven-plugin</artifactId>
@@ -210,6 +220,5 @@
                 </configuration>
             </plugin>
         </plugins>
-
     </build>
 </project>
