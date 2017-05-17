@@ -1,49 +1,39 @@
 package cvter.intern.service.impl;
 
-import cvter.intern.dao.UserDao;
-import cvter.intern.model.User;
+import cvter.intern.dao.UserInfoMapper;
+import cvter.intern.model.RoleInfo;
+import cvter.intern.model.UserInfo;
 import cvter.intern.service.UserService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
-import javax.annotation.Resource;
 import java.util.List;
 
 /**
- * Created by cvter on 2017/5/15.
+ * Created by cvter on 2017/5/17.
  */
 @Service
-@Transactional(rollbackFor = Exception.class)
-public class UserServiceImpl implements UserService {
+public class UserServiceImpl implements UserService{
+    @Autowired
+    private UserInfoMapper userInfoMapper;
 
-    @Resource
-    private UserDao userDao;
-
-    public User selectById(int id) {
-        return userDao.selectById(id);
+    public int save(UserInfo record) {
+        return userInfoMapper.insert(record);
     }
 
-    public User selectByUid(String uid) {
-        return userDao.selectByUid(uid);
+    public UserInfo selectByUid(String uid) {
+        return userInfoMapper.selectByPrimaryKey(uid);
     }
 
-    public List<User> selectAll() {
-        return userDao.selectAll();
+    public int update(UserInfo record) {
+        return userInfoMapper.updateByPrimaryKey(record);
     }
 
-    public int save(User user) {
-        return userDao.save(user);
+    public int deleteByUid(String uid) {
+        return userInfoMapper.deleteByPrimaryKey(uid);
     }
 
-    public int update(User user) {
-        return userDao.update(user);
-    }
-
-    public int delete(User user) {
-        return userDao.delete(user);
-    }
-
-    public int deleteById(int id) {
-        return userDao.deleteById(id);
-    }
+//    public List<UserInfo> selectAll() {
+//        return userInfoMapper.selectAll();
+//    }
 }

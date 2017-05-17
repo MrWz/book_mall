@@ -1,25 +1,17 @@
 package cvter.intern.service;
 
-import cvter.intern.model.User;
+import cvter.intern.model.RoleInfo;
+import cvter.intern.model.UserInfo;
 
 import java.util.List;
 
 /**
- * Created by cvter on 2017/5/15.
+ * Created by cvter on 2017/5/17.
  */
 public interface UserService {
-
-    User selectById(int id);
-
-    User selectByUid(String uid);
-
-    List<User> selectAll();
-
-    int save(User user);
-
-    int update(User user);
-
-    int delete(User user);
-
-    int deleteById(int id);
+    public int save(UserInfo record);
+    UserInfo selectByUid(String uid);
+    int update(UserInfo record);
+    int deleteByUid(String uid);
+//    List<UserInfo> selectAll();
 }
