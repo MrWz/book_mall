@@ -18,8 +18,7 @@ public class PanicServiceImpl implements PanicService{
     @Autowired
     private PanicInfoMapper panicInfoMapper;
 
-    public PanicInfo selectByUID(String uid)
-    {
+    public PanicInfo selectByUID(String uid) {
         return panicInfoMapper.selectByPrimaryKey(uid);
     }
 

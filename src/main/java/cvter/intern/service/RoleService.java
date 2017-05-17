@@ -8,9 +8,14 @@ import java.util.List;
  * Created by cvter on 2017/5/17.
  */
 public interface RoleService {
-    public int save(RoleInfo record);
-    RoleInfo selectByUID(String uid);
-    int update(RoleInfo record);
+
+    int save(RoleInfo roleInfo);
+
     int deleteByUid(String uid);
+
+    int update(RoleInfo roleInfo);
+
+    RoleInfo selectByUid(String uid);
+
     List<RoleInfo> selectAll();
 }

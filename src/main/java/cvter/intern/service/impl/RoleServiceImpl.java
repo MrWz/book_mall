@@ -3,40 +3,57 @@ package cvter.intern.service.impl;
 import cvter.intern.dao.RoleInfoMapper;
 import cvter.intern.model.RoleInfo;
 import cvter.intern.service.RoleService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import javax.annotation.Resource;
 import java.util.List;
 
 /**
  * Created by cvter on 2017/5/17.
  */
 @Service
-public class RoleServiceImpl implements RoleService{
-    @Autowired
+//@Transactional(rollbackFor = Exception.class)
+public class RoleServiceImpl implements RoleService {
+
+    @Resource
     private RoleInfoMapper roleInfoMapper;
 
-    public int save(RoleInfo record) {
-        return roleInfoMapper.insert(record);
+    public RoleServiceImpl() {
+        super();
     }
 
-    public int update(RoleInfo record) {
-        return  roleInfoMapper.updateByPrimaryKey(record);
+    /**
+     * 增加记录
+     */
+    public int save(RoleInfo roleInfo) {
+        return roleInfoMapper.insert(roleInfo);
     }
 
+    /**
+     * 删除记录
+     */
     public int deleteByUid(String uid) {
         return roleInfoMapper.deleteByPrimaryKey(uid);
     }
 
-    public List<RoleInfo> selectAll() {
-        return null;
+    /**
+     * 更新记录
+     */
+    public int update(RoleInfo roleInfo) {
+        return roleInfoMapper.updateByPrimaryKey(roleInfo);
     }
 
-    public RoleInfo selectByUID(String uid) {
+    /**
+     * 查询记录
+     */
+    public RoleInfo selectByUid(String uid) {
         return roleInfoMapper.selectByPrimaryKey(uid);
     }
 
-// int insertSelective(RoleInfo record);
-
-
+    //分表查询
+    public List<RoleInfo> selectAll() {
+        return null;
+    }
 }
