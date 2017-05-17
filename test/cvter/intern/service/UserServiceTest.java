@@ -1,16 +1,9 @@
 package cvter.intern.service;
 
-import cvter.intern.model.User;
-import cvter.intern.utils.UIDUtil;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-
-import javax.annotation.Resource;
-import java.util.List;
 
 /**
  * Created by cvter on 2017/5/16.
@@ -21,24 +14,24 @@ import java.util.List;
 @ContextConfiguration({/*"classpath:spring-mvc.xml",*/ "classpath:spring-mybatis.xml"})
 public class UserServiceTest {
 
-    @Resource /*或者 @Autowired */
-    private UserService userService;
-
-    private Logger logger = LoggerFactory.getLogger(this.getClass());
-
-    @Test
-    public void getByUid() throws Exception {
-    }
-
-    @Test
-    public void getPaginate() throws Exception {
-        List<User> userList = userService.getPaginate(1, 5);
-        for (User user :
-                userList) {
-            System.out.println(user);
-        }
-        System.out.println(UIDUtil.getRandomUID());
-    }
+//    @Resource /*或者 @Autowired */
+//    private UserService userService;
+//
+//    private Logger logger = LoggerFactory.getLogger(this.getClass());
+//
+//    @Test
+//    public void getByUid() throws Exception {
+//    }
+//
+//    @Test
+//    public void getPaginate() throws Exception {
+//        List<User> userList = userService.getPaginate(1, 5);
+//        for (User user :
+//                userList) {
+//            System.out.println(user);
+//        }
+//        System.out.println(UIDUtil.getRandomUID());
+//    }
 
     @Test
     public void save() throws Exception {
