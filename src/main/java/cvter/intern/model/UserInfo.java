@@ -2,36 +2,27 @@ package cvter.intern.model;
 
 import java.util.Date;
 
-public class RoleInfo {
+public class UserInfo {
     private Integer id;
 
-<<<<<<< HEAD
     private String uid;
 
-    private String description;
+    private String name;
+
+    private String password;
 
     private Boolean deleted;
 
-=======
->>>>>>> 104dea07edc8a327db9962f2a0fd1e9614a781b3
-    public RoleInfo(Integer id, String uid, String description, Boolean deleted, Date createTime, Date updateTime) {
+    public UserInfo(Integer id, String uid, String name, String password, Boolean deleted, Date createTime, Date updateTime) {
         this.id = id;
         this.uid = uid;
-        this.description = description;
+        this.name = name;
+        this.password = password;
         this.deleted = deleted;
         this.createTime = createTime;
         this.updateTime = updateTime;
     }
 
-<<<<<<< HEAD
-=======
-    private String uid;
-
-    private String description;
-
-    private Boolean deleted;
-
->>>>>>> 104dea07edc8a327db9962f2a0fd1e9614a781b3
     private Date createTime;
 
     private Date updateTime;
@@ -52,12 +43,20 @@ public class RoleInfo {
         this.uid = uid == null ? null : uid.trim();
     }
 
-    public String getDescription() {
-        return description;
+    public String getName() {
+        return name;
     }
 
-    public void setDescription(String description) {
-        this.description = description == null ? null : description.trim();
+    public void setName(String name) {
+        this.name = name == null ? null : name.trim();
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password == null ? null : password.trim();
     }
 
     public Boolean getDeleted() {

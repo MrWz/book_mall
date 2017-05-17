@@ -15,6 +15,7 @@ public interface RoleInfoMapper {
     int insert(RoleInfo record);
 
     int insertSelective(RoleInfo record);
+
     List<RoleInfo> selectByExample(RoleInfoExample example);
 
     RoleInfo selectByPrimaryKey(String uid);

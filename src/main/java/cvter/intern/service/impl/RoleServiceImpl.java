@@ -3,6 +3,7 @@ package cvter.intern.service.impl;
 import cvter.intern.dao.RoleInfoMapper;
 import cvter.intern.model.RoleInfo;
 import cvter.intern.service.RoleService;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

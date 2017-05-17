@@ -27,8 +27,10 @@
     </properties>
 
 
+
     <dependencies>
         <!-- 添加jstl依赖 -->
+
         <dependency>
             <groupId>jstl</groupId>
             <artifactId>jstl</artifactId>
@@ -200,6 +202,11 @@
 
     <build>
         <finalName>seewo-bookmall-system</finalName>
+<<<<<<< HEAD
+
+        <plugins>
+            <plugin>
+=======
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -211,6 +218,7 @@
             </plugin>
 
             <plugin>
+>>>>>>> 104dea07edc8a327db9962f2a0fd1e9614a781b3
                 <groupId>org.mybatis.generator</groupId>
                 <artifactId>mybatis-generator-maven-plugin</artifactId>
                 <version>1.3.2</version>
@@ -221,4 +229,5 @@
             </plugin>
         </plugins>
     </build>
+
 </project>

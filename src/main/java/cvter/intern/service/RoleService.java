@@ -18,5 +18,4 @@ public interface RoleService {
     RoleInfo selectByUid(String uid);
 
     List<RoleInfo> selectAll();
-
 }

@@ -2,36 +2,33 @@ package cvter.intern.model;
 
 import java.util.Date;
 
-public class RoleInfo {
+public class PanicInfo {
     private Integer id;
 
-<<<<<<< HEAD
     private String uid;
 
-    private String description;
+    private Byte nums;
 
-    private Boolean deleted;
+    private Integer curPrice;
 
-=======
->>>>>>> 104dea07edc8a327db9962f2a0fd1e9614a781b3
-    public RoleInfo(Integer id, String uid, String description, Boolean deleted, Date createTime, Date updateTime) {
+    private Date startTime;
+
+    private Date endTime;
+
+    public PanicInfo(Integer id, String uid, Byte nums, Integer curPrice, Date startTime, Date endTime, Boolean deleted, Date createTime, Date updateTime) {
         this.id = id;
         this.uid = uid;
-        this.description = description;
+        this.nums = nums;
+        this.curPrice = curPrice;
+        this.startTime = startTime;
+        this.endTime = endTime;
         this.deleted = deleted;
         this.createTime = createTime;
         this.updateTime = updateTime;
     }
 
-<<<<<<< HEAD
-=======
-    private String uid;
-
-    private String description;
-
     private Boolean deleted;
 
->>>>>>> 104dea07edc8a327db9962f2a0fd1e9614a781b3
     private Date createTime;
 
     private Date updateTime;
@@ -52,12 +49,36 @@ public class RoleInfo {
         this.uid = uid == null ? null : uid.trim();
     }
 
-    public String getDescription() {
-        return description;
+    public Byte getNums() {
+        return nums;
     }
 
-    public void setDescription(String description) {
-        this.description = description == null ? null : description.trim();
+    public void setNums(Byte nums) {
+        this.nums = nums;
+    }
+
+    public Integer getCurPrice() {
+        return curPrice;
+    }
+
+    public void setCurPrice(Integer curPrice) {
+        this.curPrice = curPrice;
+    }
+
+    public Date getStartTime() {
+        return startTime;
+    }
+
+    public void setStartTime(Date startTime) {
+        this.startTime = startTime;
+    }
+
+    public Date getEndTime() {
+        return endTime;
+    }
+
+    public void setEndTime(Date endTime) {
+        this.endTime = endTime;
     }
 
     public Boolean getDeleted() {
