@@ -28,6 +28,9 @@ public class Asawqwq{
     private RoleInfoMapper roleInfoMapper;
 
     @Autowired
+    private RoleService roleService;
+
+    @Autowired
     private PanicInfoMapper panicInfoMapper;
 
     @Autowired
@@ -43,8 +46,8 @@ public class Asawqwq{
 
     @Test
     public void testSelectRole(){
-        RoleInfoExample example = new RoleInfoExample();
-        example.createCriteria().andIdEqualTo(2);
+//        RoleInfoExample example = new RoleInfoExample();
+//        example.createCriteria().andIdEqualTo(2);
        // roleInfo.setUid("11111");
        // roleInfoMapper.insert(roleInfo);
        //roleInfoMapper.selectByExample(example);
@@ -58,7 +61,8 @@ public class Asawqwq{
 //        panicInfoMapper.deleteByPrimaryKey("mm");
 //        panicInfoMapper.insert(new PanicInfo(1,"mm",(byte)2,6,new Date(2015),new Date(2015),false,new Date(2015),new Date(2015)));
 //        panicService.deleteByUid("mm");
-        discountService.selectByUID("mm");
+//        discountService.selectByUID("mm");
+        System.out.println(roleService.selectByUid("72297c8842604c059b05d28bfb11d10b"));
 
     }
 }
