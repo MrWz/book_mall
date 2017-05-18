@@ -5,15 +5,6 @@ import java.util.Date;
 public class RoleInfo {
     private Integer id;
 
-    public RoleInfo(Integer id, String uid, String description, Boolean deleted, Date createTime, Date updateTime) {
-        this.id = id;
-        this.uid = uid;
-        this.description = description;
-        this.deleted = deleted;
-        this.createTime = createTime;
-        this.updateTime = updateTime;
-    }
-
     private String uid;
 
     private String description;
@@ -23,6 +14,15 @@ public class RoleInfo {
     private Date createTime;
 
     private Date updateTime;
+
+    public RoleInfo(Integer id, String uid, String description, Boolean deleted, Date createTime, Date updateTime) {
+        this.id = id;
+        this.uid = uid;
+        this.description = description;
+        this.deleted = deleted;
+        this.createTime = createTime;
+        this.updateTime = updateTime;
+    }
 
     public Integer getId() {
         return id;

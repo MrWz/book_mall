@@ -28,6 +28,9 @@ public class Asawqwq{
     private RoleInfoMapper roleInfoMapper;
 
     @Autowired
+    private RoleService roleService;
+
+    @Autowired
     private PanicInfoMapper panicInfoMapper;
 
     @Autowired
@@ -43,8 +46,8 @@ public class Asawqwq{
 
     @Test
     public void testSelectRole(){
-        RoleInfoExample example = new RoleInfoExample();
-        example.createCriteria().andIdEqualTo(2);
+//        RoleInfoExample example = new RoleInfoExample();
+//        example.createCriteria().andIdEqualTo(2);
        // roleInfo.setUid("11111");
        // roleInfoMapper.insert(roleInfo);
        //roleInfoMapper.selectByExample(example);
