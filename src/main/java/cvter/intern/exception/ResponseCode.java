@@ -8,14 +8,14 @@ package cvter.intern.exception;
 public interface ResponseCode {
 
     /**
-     * 获得响应码
+     * 获得状态码
      *
      * @return
      */
     int getCode();
 
     /**
-     * 获得响应码对应的信息
+     * 获得状态码描述
      *
      * @return
      */
