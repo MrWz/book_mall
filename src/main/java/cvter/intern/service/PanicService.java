@@ -1,7 +1,6 @@
 package cvter.intern.service;
 
 import cvter.intern.model.PanicInfo;
-import cvter.intern.model.RoleInfo;
 
 import java.util.List;
 
@@ -10,8 +9,12 @@ import java.util.List;
  */
 public interface PanicService {
     int save(PanicInfo record);
+
     int update(PanicInfo record);
+
     PanicInfo selectByUID(String uid);
+
     int deleteByUid(String uid);
+
     List<PanicInfo> selectAll();
 }

@@ -1,7 +1,6 @@
 package cvter.intern.service.impl;
 
 import cvter.intern.dao.UserInfoMapper;
-import cvter.intern.model.RoleInfo;
 import cvter.intern.model.UserInfo;
 import cvter.intern.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,24 +15,47 @@ import java.util.List;
 public class UserServiceImpl implements UserService{
     @Autowired
     private UserInfoMapper userInfoMapper;
-
+    /**
+     * 增加记录
+     */
     public int save(UserInfo record) {
         return userInfoMapper.insert(record);
     }
 
-    public UserInfo selectByUid(String uid) {
-        return userInfoMapper.selectByPrimaryKey(uid);
-    }
-
-    public int update(UserInfo record) {
-        return userInfoMapper.updateByPrimaryKey(record);
-    }
-
+    /**
+     * 删除记录
+     */
     public int deleteByUid(String uid) {
         return userInfoMapper.deleteByPrimaryKey(uid);
     }
 
-//    public List<UserInfo> selectAll() {
-//        return userInfoMapper.selectAll();
-//    }
+    /**
+     * 更新记录
+     */
+    public int update(UserInfo record) {
+        return userInfoMapper.updateByPrimaryKey(record);
+    }
+
+    /**
+     * 查询
+     */
+    public UserInfo selectByUid(String uid) {
+        return userInfoMapper.selectByPrimaryKey(uid);
+    }
+
+    /**
+     * 查询全部记录，采用分表查询
+     */
+    public List<UserInfo> selectAll() {return null;}
+
+    /**
+     * 验证用户登录
+     */
+    public UserInfo checkAdminLogin(String uid,String username, String password) {
+        UserInfo userInfo=userInfoMapper.selectByPrimaryKey(uid);
+        if(userInfo!=null&&userInfo.getName().equals(username)&&userInfo.getPassword().equals(password)){
+            return userInfo;
+        }
+        return null;
+    }
 }
