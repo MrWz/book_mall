@@ -6,25 +6,39 @@ import java.util.List;
 import org.apache.ibatis.annotations.Param;
 
 public interface UserInfoMapper {
-    int countByExample(UserInfoExample example);
 
-    int deleteByExample(UserInfoExample example);
-
-    int deleteByPrimaryKey(String uid);
-
+    /**
+     * 增加记录
+     */
     int insert(UserInfo record);
 
-    int insertSelective(UserInfo record);
+    /**
+     * 删除记录
+     */
+    int deleteByPrimaryKey(String uid);
 
-    List<UserInfo> selectByExample(UserInfoExample example);
+    /**
+     * 更新记录
+     */
+    int updateByPrimaryKey(UserInfo record);
 
+    /**
+     * 查询
+     */
     UserInfo selectByPrimaryKey(String uid);
 
-    int updateByExampleSelective(@Param("record") UserInfo record, @Param("example") UserInfoExample example);
+//    int insertSelective(UserInfo record);
+//
+//    List<UserInfo> selectByExample(UserInfoExample example);
+//
+//    int updateByExampleSelective(@Param("record") UserInfo record, @Param("example") UserInfoExample example);
+//
+//    int updateByExample(@Param("record") UserInfo record, @Param("example") UserInfoExample example);
+//
+//    int updateByPrimaryKey(UserInfo record);
+//
+//    int countByExample(UserInfoExample example);
+//
+//    int deleteByExample(UserInfoExample example);
 
-    int updateByExample(@Param("record") UserInfo record, @Param("example") UserInfoExample example);
-
-    int updateByPrimaryKeySelective(UserInfo record);
-
-    int updateByPrimaryKey(UserInfo record);
 }
