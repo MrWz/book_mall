@@ -1,13 +1,12 @@
 package cvter.intern.controller;
 
-import cvter.intern.model.UserInfo;
+import cvter.intern.model.BookInfo;
+import cvter.intern.service.BookService;
 import cvter.intern.service.UserService;
-import cvter.intern.utils.TIMEUtil;
 import cvter.intern.utils.UIDUtil;
 import org.springframework.stereotype.Controller;
-import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.servlet.ModelAndView;
+
 import javax.annotation.Resource;
 import java.util.Date;
 
@@ -19,24 +18,58 @@ import java.util.Date;
 public class AdminController {
     @Resource
     private UserService userService;
-
+    @Resource
+    private BookService bookService;
     @RequestMapping("/login")
     public String login() {
         return "adminlogin";
     }
 
-    @RequestMapping("/index")
-    public String index(String user,String password){
-        if(user.equals("admin")&&password.equals("123456")){
-            return "index";
-        }else{
-            return "adminlogin";
+    @RequestMapping("/Index")
+    public String index(String username, String password) {
+        if (userService.checkLogin(username, password)) {
+            return "Index";
         }
-        //UserInfo userInfo=new UserInfo(3, UIDUtil.getRandomUID(),"admin","min", false,new Date(0),new Date(0));
-        //userService.save(userInfo);
-        // userInfo=userService.checkAdminLogin(uid,)
-
-
-
+        return "adminlogin";
     }
+
+//    @RequestMapping("/book_add")
+//    public String book_add(String username,String author,int price,int stock,String describe) {
+//        if(username!=null){
+//            Date date=new Date();
+//            BookInfo bookInfo=new BookInfo(UIDUtil.getRandomUID(),username,author,price,stock,false,date,date,describe);
+//            bookService.save(bookInfo);
+//            return "book_add";
+//        }
+//        return "book_add";
+//
+//    }
+    @RequestMapping("/book_add")
+    public String book_add(String username,String author) {
+
+        if(username==null){
+            System.out.println("null");
+        }
+        else{
+            System.out.println("not null");
+        }
+        return "book_add";
+    }
+
+
+
+//    @RequestMapping("/book_del")
+//    public String book_del() {
+//        return "book_del";
+//    }
+//
+//    @RequestMapping("/book_adjust_price")
+//    public String book_adjust_price() {
+//        return "book_adjust_price";
+//    }
+//
+//    @RequestMapping("/book_adjust_stock")
+//    public String book_adjust_stock() {
+//        return "book_adjust_stock";
+//    }
 }

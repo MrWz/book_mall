@@ -3,6 +3,7 @@ package cvter.intern.service.impl;
 import cvter.intern.dao.UserInfoMapper;
 import cvter.intern.model.UserInfo;
 import cvter.intern.service.UserService;
+import cvter.intern.utils.MD5Util;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -15,11 +16,37 @@ import java.util.List;
 public class UserServiceImpl implements UserService{
     @Autowired
     private UserInfoMapper userInfoMapper;
+
+
+    @Override
+    public UserInfo selectByName(String name) {
+        return userInfoMapper.selectByName(name);
+    }
+
+
     /**
      * 增加记录
      */
+
     public int save(UserInfo record) {
         return userInfoMapper.insert(record);
+    }
+
+    @Override
+    public boolean checkLogin(String username,String password) {
+        /*if(username!=null){
+            UserInfo userInfo=userInfoMapper.selectByName(username);
+            System.out.println(userInfo.getPassword());
+            if(MD5Util.verifyMD5(password,userInfo.getPassword())){
+                return true;
+            }
+        }
+        return false;*/
+        UserInfo userInfo=userInfoMapper.selectByName(username);
+        if(password.equals(userInfo.getPassword())){
+            return true;
+        }
+        return false;
     }
 
     /**
@@ -48,14 +75,4 @@ public class UserServiceImpl implements UserService{
      */
     public List<UserInfo> selectAll() {return null;}
 
-    /**
-     * 验证用户登录
-     */
-//    public UserInfo selectByUserAndPass(String username, String password) {
-//        UserInfo userInfo=userInfoMapper.selectByPrimaryKey(username,password);
-//        if(userInfo!=null&&userInfo.getName().equals(username)&&userInfo.getPassword().equals(password)){
-//            return userInfo;
-//        }
-//        return null;
-//    }
 }

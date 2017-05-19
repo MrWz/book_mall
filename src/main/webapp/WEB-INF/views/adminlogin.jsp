@@ -14,14 +14,14 @@
 </head>
 <body>
 
-<form action="/admin/v1/index" method = post>
+<form action="/admin/v1/Index" method = post>
     <table>
         <tr>
             <td colspan = 2>CVTE管理员登陆页面</td>
         </tr>
         <tr>
             <td>账号：</td>
-            <td><input type = text name = user size = 16/></td>
+            <td><input type = text name = username size = 16/></td>
         </tr>
         <tr>
             <td>密码：</td>

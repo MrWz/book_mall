@@ -128,11 +128,11 @@
     </if>
   </delete>
   <insert id="insert" parameterType="cvter.intern.model.BookInfo" >
-    insert into book_info (id, uid, name, 
+    insert into book_info (uid, name,
       author, price, stock, 
       deleted, create_time, update_time, 
       description)
-    values (#{id,jdbcType=INTEGER}, #{uid,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR}, 
+    values (#{uid,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR},
       #{author,jdbcType=VARCHAR}, #{price,jdbcType=INTEGER}, #{stock,jdbcType=INTEGER}, 
       #{deleted,jdbcType=BIT}, #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP}, 
       #{description,jdbcType=LONGVARCHAR})

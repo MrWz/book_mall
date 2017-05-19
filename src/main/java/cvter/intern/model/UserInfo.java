@@ -13,6 +13,10 @@ public class UserInfo {
 
     private Boolean deleted;
 
+    public UserInfo() {
+        
+    }
+
     public UserInfo(Integer id, String uid, String name, String password, Boolean deleted, Date createTime, Date updateTime) {
         this.id = id;
         this.uid = uid;

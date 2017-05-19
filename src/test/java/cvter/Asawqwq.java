@@ -62,9 +62,7 @@ public class Asawqwq{
 //        panicInfoMapper.insert(new PanicInfo(1,"mm",(byte)2,6,new Date(2015),new Date(2015),false,new Date(2015),new Date(2015)));
 //        panicService.deleteByUid("mm");
 
-//        discountService.selectByUID("mm");
-        System.out.println(roleService.selectByUid("72297c8842604c059b05d28bfb11d10b"));
-
+        //discountService.selectByUID("mm");
 
     }
 }
