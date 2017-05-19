@@ -52,17 +52,16 @@ public class Asawqwq{
        // roleInfoMapper.insert(roleInfo);
        //roleInfoMapper.selectByExample(example);
 
-        //roleInfoMapper.selectByPrimaryKey("mm");
+        roleInfoMapper.selectByPrimaryKey("mm");
         //roleInfoMapper.deleteByPrimaryKey("mm");
-        //roleInfoMapper.insert(new RoleInfo(1,"nn","dd",false,new Date(2015),new Date(2015)));
+      //  roleInfoMapper.insert(new RoleInfo(1,"nn","dd",false,new Date(2015),new Date(2015)));
         //roleInfoMapper.updateByPrimaryKey(new RoleInfo(1,"mm","dd",false,new Date(2015),new Date(2015)));
 
 //        panicInfoMapper.selectByPrimaryKey("mm");
 //        panicInfoMapper.deleteByPrimaryKey("mm");
 //        panicInfoMapper.insert(new PanicInfo(1,"mm",(byte)2,6,new Date(2015),new Date(2015),false,new Date(2015),new Date(2015)));
 //        panicService.deleteByUid("mm");
-//        discountService.selectByUID("mm");
-        System.out.println(roleService.selectByUid("72297c8842604c059b05d28bfb11d10b"));
+        //discountService.selectByUID("mm");
 
     }
 }

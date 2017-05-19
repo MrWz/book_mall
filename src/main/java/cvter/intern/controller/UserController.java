@@ -26,7 +26,7 @@ public class UserController {
     public String login(ModelMap model, String username, String password){
 
         if(username!=null){
-            
+
         }
         return "login";
     }
