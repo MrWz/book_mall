@@ -2,7 +2,7 @@ package cvter.intern.controller;
 
 import cvter.intern.model.UserInfo;
 import cvter.intern.service.UserService;
-import cvter.intern.utils.MD5Util;
+import cvter.intern.utils.Md5SaltUtil;
 import cvter.intern.utils.UIDUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
