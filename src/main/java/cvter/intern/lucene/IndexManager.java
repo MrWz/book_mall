@@ -6,10 +6,7 @@ import cvter.intern.lucene.model.Index;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.List;
-import java.util.Properties;
 
 /**
  * 索引管理器
@@ -18,8 +15,8 @@ import java.util.Properties;
  */
 public class IndexManager {
 
-    public static String INDEX_DIR = null;         //索引目录
-    public static int nDocs;                       //索引目录
+    public static String INDEX_DIR = "D:/lucene/luceneIndex";         //索引目录
+    public static int nDocs = 100;                                   //搜索数目
 
     private static IndexDao indexDao;
     private static IndexManager indexManager;
@@ -28,17 +25,15 @@ public class IndexManager {
     private IndexManager(Class<IndexDao> clazz) {
 
         //加载配置文件
-        Properties prop = new Properties();
-        InputStream is = ClassLoader.getSystemResourceAsStream("common.properties");
+//        Properties prop = new Properties();
+//        InputStream is = ClassLoader.getSystemResourceAsStream("common.properties");
         try {
-            prop.load(is);
-
-            INDEX_DIR = prop.getProperty("indexPath", "luceneIndex");
-            nDocs = Integer.parseInt(prop.getProperty("nDocs", "100"));
+//            prop.load(is);
+//
+//            INDEX_DIR = prop.getProperty("indexPath", "luceneIndex");
+//            nDocs = Integer.parseInt(prop.getProperty("nDocs", "100"));
 
             indexDao = clazz.newInstance();
-        } catch (IOException e) {
-            logger.error("加载配置文件出错");
         } catch (IllegalAccessException e) {
             logger.error("实例化Impl对象失败");
         } catch (InstantiationException e) {
@@ -83,9 +78,13 @@ public class IndexManager {
      * @return
      * @throws Exception
      */
-    public List<Index> searchIndexTopN(String text, String queryField, int nDocs) throws Exception {
+    public List<Index> searchIndexTopN(String text, String queryField, int nDocs) {
 
-        return indexDao.searchIndexTopN(text, queryField, nDocs);
+        try {
+            return indexDao.searchIndexTopN(text, queryField, nDocs);
+        } catch (Exception e) {
+            return null;
+        }
     }
 
     /**
@@ -98,9 +97,13 @@ public class IndexManager {
      * @return
      * @throws Exception
      */
-    public List<Index> searchIndexPaginated(String text, String queryField, int currentPage, int pageSize) throws Exception {
+    public List<Index> searchIndexPaginated(String text, String queryField, int currentPage, int pageSize) {
 
-        return indexDao.searchIndexPaginated(text, queryField, currentPage, pageSize);
+        try {
+            return indexDao.searchIndexPaginated(text, queryField, currentPage, pageSize);
+        } catch (Exception e) {
+            return null;
+        }
     }
 
     /**

@@ -2,7 +2,7 @@ package cvter.intern.controller;
 
 import cvter.intern.model.UserInfo;
 import cvter.intern.service.UserService;
-import cvter.intern.utils.MD5Util;
+import cvter.intern.utils.Md5SaltUtil;
 import cvter.intern.utils.UIDUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -37,7 +37,7 @@ public class UserController {
     public String register(ModelMap model, String username, String password){
         if(username!=null){
 
-            String mdPassword=MD5Util.getMD5(password);
+            String mdPassword= Md5SaltUtil.getMD5(password, "uid");
             Date date=new Date();
 
             UserInfo user=new UserInfo(999, UIDUtil.getRandomUID(),username,mdPassword,false,date,date);
