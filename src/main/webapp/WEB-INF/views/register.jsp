@@ -93,5 +93,6 @@
 
 <script type="text/javascript" src="../bootstrap3/js/jquery-1.11.2.min.js" ></script>
 <script type="text/javascript" src="../bootstrap3/js/bootstrap.min.js" ></script>
+<center>${myJson}</center>
 </body>
 </html>

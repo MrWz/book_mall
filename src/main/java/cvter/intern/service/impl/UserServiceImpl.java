@@ -1,11 +1,15 @@
 package cvter.intern.service.impl;
 
+import com.alibaba.fastjson.JSON;
 import cvter.intern.dao.UserInfoMapper;
 import cvter.intern.model.UserInfo;
 import cvter.intern.service.UserService;
+import cvter.intern.utils.MD5Util;
+import cvter.intern.utils.UIDUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -16,9 +20,61 @@ public class UserServiceImpl implements UserService{
     @Autowired
     private UserInfoMapper userInfoMapper;
 
+    /*
+     * 验证登录是否成功
+     * */
+    @Override
+    public Boolean checkLogin(String username, String password) {
+        if(username!=null){
+            UserInfo userInfo=selectByName(username);
+            if(userInfo==null){//用户不存在
+                return false;
+            }
+            else{//用户已存在
+                String mdPwd=userInfo.getPassword();
+//                if(MD5Util.verifyMD5(password,mdPwd)){
+//                    return true;
+//                }
+                if(password.equals(mdPwd)){
+                    return true;
+                }
+                else{//密码错误
+                    return false;
+                }
+            }
+        }
+        else{
+            return false;
+        }
+    }
+
+    /*
+     * 验证注册是否成功
+     * */
+    @Override
+    public Boolean checkRegister(String username, String password) {
+        if(username!=null){
+            UserInfo userInfo=selectByName(username);
+            if(userInfo==null){//用户不存在
+               // String mdPassword= MD5Util.getMD5(password);
+                Date date=new Date();
+                UserInfo user=new UserInfo(UIDUtil.getRandomUID(),username,password,false,date,date);
+                save(user);
+                return true;
+            }
+            else{//用户已存在
+                System.out.println("======用户存在");
+                return false;
+            }
+        }
+        else{
+            return false;
+        }
+
+    }
 
     @Override
-    public String selectByName(String name) {
+    public UserInfo selectByName(String name) {
         return userInfoMapper.selectByName(name);
     }
 
