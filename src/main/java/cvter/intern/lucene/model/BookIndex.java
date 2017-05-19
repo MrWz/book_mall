@@ -1,28 +1,28 @@
-package cvter.intern.lucene;
+package cvter.intern.lucene.model;
 
 /**
  * Created by cvter on 2017/5/18.
  */
-public class BookIndex {
+public class BookIndex implements Index{
 
     public static String UID = "uid";
     public static String NAME = "name";
     public static String AUTHOR = "author";
-    public static String SUMMARY = "summary";
+    public static String DESCRIPTION = "description";
 
     private String uid;
     private String name;
     private String author;
-    private String summary;
+    private String description;
 
     public BookIndex() {
     }
 
-    public BookIndex(String uid, String name, String author, String summary) {
+    public BookIndex(String uid, String name, String author, String description) {
         this.uid = uid;
         this.name = name;
         this.author = author;
-        this.summary = summary;
+        this.description = description;
     }
 
     public String getUid() {
@@ -49,12 +49,12 @@ public class BookIndex {
         this.author = author;
     }
 
-    public String getSummary() {
-        return summary;
+    public String getDescription() {
+        return description;
     }
 
-    public void setSummary(String summary) {
-        this.summary = summary;
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     @Override
@@ -63,7 +63,7 @@ public class BookIndex {
                 "uid='" + uid + '\'' +
                 ", name='" + name + '\'' +
                 ", author='" + author + '\'' +
-                ", summary='" + summary + '\'' +
+                ", description='" + description + '\'' +
                 '}';
     }
 }
