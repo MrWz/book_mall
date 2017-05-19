@@ -7,6 +7,12 @@ import org.apache.ibatis.annotations.Param;
 
 public interface UserInfoMapper {
 
+    String selectByName(String name);
+
+    int countByExample(UserInfoExample example);
+
+    int deleteByExample(UserInfoExample example);
+
     /**
      * 增加记录
      */

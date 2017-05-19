@@ -15,9 +15,18 @@ import java.util.List;
 public class UserServiceImpl implements UserService{
     @Autowired
     private UserInfoMapper userInfoMapper;
+
+
+    @Override
+    public String selectByName(String name) {
+        return userInfoMapper.selectByName(name);
+    }
+
+
     /**
      * 增加记录
      */
+
     public int save(UserInfo record) {
         return userInfoMapper.insert(record);
     }
