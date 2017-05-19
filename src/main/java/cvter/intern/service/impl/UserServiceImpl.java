@@ -51,11 +51,11 @@ public class UserServiceImpl implements UserService{
     /**
      * 验证用户登录
      */
-    public UserInfo checkAdminLogin(String uid,String username, String password) {
-        UserInfo userInfo=userInfoMapper.selectByPrimaryKey(uid);
-        if(userInfo!=null&&userInfo.getName().equals(username)&&userInfo.getPassword().equals(password)){
-            return userInfo;
-        }
-        return null;
-    }
+//    public UserInfo selectByUserAndPass(String username, String password) {
+//        UserInfo userInfo=userInfoMapper.selectByPrimaryKey(username,password);
+//        if(userInfo!=null&&userInfo.getName().equals(username)&&userInfo.getPassword().equals(password)){
+//            return userInfo;
+//        }
+//        return null;
+//    }
 }

@@ -9,7 +9,7 @@ public interface UserService {
 
     public int save(UserInfo record);
 
-    public UserInfo checkAdminLogin(String uid,String username,String password);
+    //public UserInfo selectByUserAndPass(String username,String password);
 
     UserInfo selectByUid(String uid);
 
