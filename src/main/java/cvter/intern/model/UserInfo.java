@@ -11,10 +11,14 @@ public class UserInfo {
 
     private String password;
 
+    public UserInfo() {
+        super();
+    }
+
     private Boolean deleted;
 
-    public UserInfo(Integer id, String uid, String name, String password, Boolean deleted, Date createTime, Date updateTime) {
-        this.id = id;
+    public UserInfo(String uid, String name, String password, Boolean deleted, Date createTime, Date updateTime) {
+//        this.id = id;
         this.uid = uid;
         this.name = name;
         this.password = password;
