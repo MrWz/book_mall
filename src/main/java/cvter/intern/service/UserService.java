@@ -6,11 +6,17 @@ import java.util.List;
  * Created by cvter on 2017/5/17.
  */
 public interface UserService {
+
+    public Boolean checkLogin(String username,String password);
+
+    public Boolean checkRegister(String username,String password);
+
+
     public UserInfo selectByName(String name);
 
     public int save(UserInfo record);
 
-    public boolean checkLogin(String username,String password);
+    public boolean checkAdimLogin(String username,String password);
 
     UserInfo selectByUid(String uid);
 

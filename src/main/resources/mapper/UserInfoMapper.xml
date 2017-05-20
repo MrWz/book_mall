@@ -108,10 +108,10 @@
     </if>
   </delete>
   <insert id="insert" parameterType="cvter.intern.model.UserInfo" >
-    insert into user_info (id, uid, name,
+    insert into user_info (uid, name,
       password, deleted, create_time,
       update_time)
-    values (#{id,jdbcType=INTEGER}, #{uid,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR},
+    values (#{uid,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR},
       #{password,jdbcType=VARCHAR}, #{deleted,jdbcType=BIT}, #{createTime,jdbcType=TIMESTAMP},
       #{updateTime,jdbcType=TIMESTAMP})
   </insert>
