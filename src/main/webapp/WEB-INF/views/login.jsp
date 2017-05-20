@@ -39,7 +39,7 @@
 </nav>
 
 <div class="container">
-    <form id="loginForm" action="/user/v1/login" method="get" class="form-horizontal" onsubmit="">
+    <form id="loginForm" action="/user/v1/login" method="post" class="form-horizontal" onsubmit="">
         <div class="form-group">
             <label for="loginAccount" class="col-xs-12 col-md-2 col-md-offset-3 control-label">
                 <span class="text-muted">用户名：</span>

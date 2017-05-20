@@ -8,6 +8,10 @@
     <link rel="icon" href="../imgs/favicon.ico" type="image/icon" />
     <link rel="stylesheet" href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css" />
     <link rel="stylesheet" href="assert/css/mycss.css" />
+    <script type="text/javascript" src="D:\workTask\seewo-bookmall-system\src\main\java\cvter\intern\utils\md5.js"></script>
+    <script ttype="text/javascript">
+        console.log(md5(222222222))
+    </script>
 </head>
 <body>
 <nav class="navbar navbar-default  navbar-static-top" role="navigation" id="nav-top-id">
@@ -69,7 +73,7 @@
                 <span class="text-muted">确认密码：</span>
             </label>
             <div class="col-xs-12 col-md-3">
-                <input type="password" name="password" id="ReLoginPassword" class="form-control" required="required" maxlength="32"/>
+                <input type="password" name="repassword" id="ReLoginPassword" class="form-control" required="required" maxlength="32"/>
             </div>
             <div class="col-xs-12 col-md-6 col-md-offset-5">
                 <p class="help-block" style="margin-bottom: 0;font-size: 12px;color: #f00;"></p>
@@ -91,8 +95,6 @@
     </form>
 </div>
 
-<script type="text/javascript" src="../bootstrap3/js/jquery-1.11.2.min.js" ></script>
-<script type="text/javascript" src="../bootstrap3/js/bootstrap.min.js" ></script>
 <center>${myJson}</center>
 </body>
 </html>
