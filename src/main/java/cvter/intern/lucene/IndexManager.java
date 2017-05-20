@@ -6,7 +6,10 @@ import cvter.intern.lucene.model.Index;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.List;
+import java.util.Properties;
 
 /**
  * 索引管理器
@@ -22,22 +25,26 @@ public class IndexManager {
     private static IndexManager indexManager;
     private static Logger logger = LoggerFactory.getLogger(IndexManager.class);
 
-    private IndexManager(Class<IndexDao> clazz) {
+    private IndexManager(Class<IndexDao> clazz) throws IllegalAccessException, InstantiationException {
 
         //加载配置文件
-//        Properties prop = new Properties();
-//        InputStream is = ClassLoader.getSystemResourceAsStream("common.properties");
+        Properties prop = new Properties();
+        InputStream is = IndexManager.class.getClassLoader().getResourceAsStream("common.properties");
+        System.out.println(is);
         try {
-//            prop.load(is);
+            prop.load(is);
+            System.out.println(prop);
 //
-//            INDEX_DIR = prop.getProperty("indexPath", "luceneIndex");
-//            nDocs = Integer.parseInt(prop.getProperty("nDocs", "100"));
+            INDEX_DIR = prop.getProperty("indexPath", "luceneIndex");
+            nDocs = Integer.parseInt(prop.getProperty("nDocs", "100"));
 
             indexDao = clazz.newInstance();
         } catch (IllegalAccessException e) {
             logger.error("实例化Impl对象失败");
         } catch (InstantiationException e) {
             logger.error("实例化Impl对象失败");
+        } catch (IOException e) {
+            e.printStackTrace();
         }
 
     }
@@ -47,7 +54,7 @@ public class IndexManager {
      *
      * @return 返回索引管理器对象
      */
-    public static <T extends IndexDao> IndexManager builder(Class<T> clazz) {
+    public static <T extends IndexDao> IndexManager builder(Class<T> clazz) throws InstantiationException, IllegalAccessException {
         if (indexManager == null) {
             indexManager = new IndexManager((Class<IndexDao>) clazz);
         }
