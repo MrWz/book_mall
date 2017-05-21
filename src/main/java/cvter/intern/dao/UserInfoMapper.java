@@ -33,6 +33,11 @@ public interface UserInfoMapper {
      */
     UserInfo selectByPrimaryKey(String uid);
 
+    /**
+     * 查询全部
+     */
+    List<UserInfo> selectAll(int m,int n);
+
 //    int insertSelective(UserInfo record);
 //
 //    List<UserInfo> selectByExample(UserInfoExample example);

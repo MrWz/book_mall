@@ -8,10 +8,6 @@
     <link rel="icon" href="../imgs/favicon.ico" type="image/icon" />
     <link rel="stylesheet" href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css" />
     <link rel="stylesheet" href="assert/css/mycss.css" />
-    <script type="text/javascript" src="D:\workTask\seewo-bookmall-system\src\main\java\cvter\intern\utils\md5.js"></script>
-    <script ttype="text/javascript">
-        console.log(md5(222222222))
-    </script>
 </head>
 <body>
 <nav class="navbar navbar-default  navbar-static-top" role="navigation" id="nav-top-id">
@@ -43,7 +39,7 @@
 </nav>
 
 <div class="container">
-    <form id="loginForm" action="/user/v1/register" method="post" class="form-horizontal" onsubmit="">
+    <form id="registerForm">
         <div class="form-group">
             <label for="loginAccount" class="col-xs-12 col-md-2 col-md-offset-3 control-label">
                 <span class="text-muted">用户名：</span>
@@ -82,7 +78,7 @@
 
         <div class="form-group">
             <div class="col-xs-3 col-md-1 col-md-offset-5">
-                <input type="submit" class="btn btn-primary mybtn" value="确认" />
+                <input type="button" class="btn btn-primary mybtn" value="确认" id="registerBtn" />
             </div>
             <div class="col-xs-3 col-md-1">
                 <input type="reset" class="btn btn-primary mybtn" value="重置" />
@@ -95,6 +91,27 @@
     </form>
 </div>
 
-<center>${myJson}</center>
+<script src="https://cdn.bootcss.com/jquery/1.12.4/jquery.min.js"></script>
+<script type="text/javascript" src="../bootstrap3/js/bootstrap.min.js"></script>
+
+<div id="responseText">${myJson}</div>
 </body>
+
+<script>
+    $(function () {
+        $("#registerBtn").click(function () {
+            $.ajax({
+                type: "POST",
+                url: "/user/v1/register",
+                data: $('#registerForm').serialize(),// 你的formid
+                error: function (request) {
+                    alert("Connection error");
+                },
+                success: function (result) {
+                    $("#responseText").html("<h1>" +result.data.description + "</h1>");
+                }
+            });
+        })
+    })
+</script>
 </html>

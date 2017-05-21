@@ -1,6 +1,5 @@
 package cvter.intern.service.impl;
 
-import com.alibaba.fastjson.JSON;
 import cvter.intern.dao.UserInfoMapper;
 import cvter.intern.model.UserInfo;
 import cvter.intern.service.UserService;
@@ -99,7 +98,7 @@ public class UserServiceImpl implements UserService{
     /**
      * 查询全部记录，采用分表查询
      */
-    public List<UserInfo> selectAll() {return null;}
+    public List<UserInfo> selectAll(int m,int n) {return userInfoMapper.selectAll(m,n);}
 
     /**
      * 验证用户登录
