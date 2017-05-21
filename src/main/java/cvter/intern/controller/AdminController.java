@@ -11,7 +11,7 @@ import javax.annotation.Resource;
  */
 @Controller
 @RequestMapping("/admin/v1")
-public class AdminController {
+public class AdminController extends BaseController {
     @Resource
     private UserService userService;
 

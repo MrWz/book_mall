@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
  */
 @Controller
 @RequestMapping("/user/v1")
-public class UserController {
+public class UserController extends BaseController {
     @Autowired
     UserService userService;
 

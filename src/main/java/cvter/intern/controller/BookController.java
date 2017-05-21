@@ -1,9 +1,8 @@
 package cvter.intern.controller;
 
-import cvter.intern.lucene.IndexManager;
-import cvter.intern.lucene.dao.impl.IndexDaoImpl;
 import cvter.intern.lucene.model.BookIndex;
-import cvter.intern.lucene.model.Index;
+import cvter.intern.lucene.service.IndexBookService;
+import cvter.intern.lucene.service.impl.IndexBookServiceImpl;
 import cvter.intern.model.BookInfo;
 import cvter.intern.model.Msg;
 import org.springframework.stereotype.Controller;
@@ -21,7 +20,7 @@ import java.util.List;
  */
 @Controller
 @RequestMapping("/book/v1")
-public class BookController {
+public class BookController extends BaseController {
     @RequestMapping("/list")
     public String list() {
         return "list";
@@ -36,25 +35,22 @@ public class BookController {
      * @return
      */
     @ResponseBody
-    @RequestMapping(path = {"/search"}, method = RequestMethod.GET)
-    public Msg bookSearch(@RequestParam(required = false) String bookName,
-                          @RequestParam(required = false) String bookAuthor,
-                          @RequestParam(required = false) String bookDescription) {
+    @RequestMapping(path = {"/search"})
+    public Msg bookSearch(
+            @RequestParam(value = "pn", defaultValue = "1") Integer pn,
+            @RequestParam(required = false) String bookName,
+            @RequestParam(required = false) String bookAuthor,
+            @RequestParam(required = false) String bookDescription) throws Exception {
 
         if (StringUtils.isEmpty(bookName) && StringUtils.isEmpty(bookAuthor) && StringUtils.isEmpty(bookDescription)) {
             return Msg.fail().setCode(400);
         }
 
-        try {
-            IndexManager indexManager = IndexManager.builder(IndexDaoImpl.class);
-            List<Index> bookList = indexManager.searchIndexTopN("summary", BookIndex.DESCRIPTION, 100);
+        IndexBookService indexBookService = new IndexBookServiceImpl();
 
-            return Msg.success().add("bookList", bookList);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return Msg.fail();
-        }
+        List<BookInfo> bookInfos = indexBookService.searchBookPaginated("summary", BookIndex.DESCRIPTION, pn, 5);
 
+        return Msg.success().add("bookInfos", bookInfos);
     }
 
     /**

@@ -101,7 +101,6 @@ public class IndexDaoImpl implements IndexDao {
      */
     @Override
     public List<Index> searchIndexTopN(String text, String queryField, int nDocs) throws Exception {
-        List<Index> indexList = new ArrayList<>();
 
         directory = FSDirectory.open(new File(IndexManager.INDEX_DIR));
         analyzer = new IKAnalyzer(true);
@@ -116,7 +115,7 @@ public class IndexDaoImpl implements IndexDao {
         System.out.println("命中：" + topDocs.totalHits);
         ScoreDoc[] hits = topDocs.scoreDocs;
 
-        indexList = setIndexList(hits);
+        List<Index> indexList = setIndexList(hits);
         close();
 
         return indexList;
