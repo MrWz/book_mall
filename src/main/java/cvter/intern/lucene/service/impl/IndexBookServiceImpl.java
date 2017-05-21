@@ -5,7 +5,7 @@ import cvter.intern.lucene.dao.impl.IndexDaoImpl;
 import cvter.intern.lucene.model.BookIndex;
 import cvter.intern.lucene.model.Index;
 import cvter.intern.lucene.service.IndexBookService;
-import cvter.intern.model.BookInfo;
+import cvter.intern.model.Book;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,35 +18,35 @@ public class IndexBookServiceImpl implements IndexBookService {
     private IndexManager indexManager = IndexManager.builder(IndexDaoImpl.class);
 
     @Override
-    public List<BookInfo> searchBookTopN(String text, String queryField, int nDocs) throws Exception {
+    public List<Book> searchBookTopN(String text, String queryField, int nDocs) throws Exception {
 
-        return getBookInfo(indexManager.searchIndexTopN(text, queryField, nDocs));
+        return getBook(indexManager.searchIndexTopN(text, queryField, nDocs));
     }
 
     @Override
-    public List<BookInfo> searchBookPaginated(String text, String queryField, int currentPage, int pageSize) throws Exception {
-        List<BookInfo> bookInfos = null;
+    public List<Book> searchBookPaginated(String text, String queryField, int currentPage, int pageSize) throws Exception {
+        List<Book> Books = null;
 
-        return getBookInfo(indexManager.searchIndexPaginated(text, queryField, currentPage, pageSize));
+        return getBook(indexManager.searchIndexPaginated(text, queryField, currentPage, pageSize));
     }
 
-    private List<BookInfo> getBookInfo(List<Index> bookIndeics) {
-        List<BookInfo> bookInfos = null;
+    private List<Book> getBook(List<Index> bookIndeics) {
+        List<Book> Books = null;
 
         if (bookIndeics.size() > 0) {
-            bookInfos = new ArrayList<>();
+            Books = new ArrayList<>();
             for (Index index :
                     bookIndeics) {
                 if (index instanceof BookIndex) {
-                    BookInfo book = new BookInfo();
+                    Book book = new Book();
                     book.setUid(((BookIndex) index).getUid());
                     book.setName(((BookIndex) index).getName());
                     book.setAuthor(((BookIndex) index).getAuthor());
                     book.setDescription(((BookIndex) index).getDescription());
-                    bookInfos.add(book);
+                    Books.add(book);
                 }
             }
         }
-        return bookInfos;
+        return Books;
     }
 }

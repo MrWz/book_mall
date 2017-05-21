@@ -1,6 +1,6 @@
 package cvter.intern.lucene.service;
 
-import cvter.intern.model.BookInfo;
+import cvter.intern.model.Book;
 
 import java.util.List;
 
@@ -9,8 +9,8 @@ import java.util.List;
  */
 public interface IndexBookService {
 
-    List<BookInfo> searchBookTopN(String text, String queryField, int nDocs) throws Exception;
+    List<Book> searchBookTopN(String text, String queryField, int nDocs) throws Exception;
 
-    List<BookInfo> searchBookPaginated(String text, String queryField, int currentPage, int pageSize) throws Exception;
+    List<Book> searchBookPaginated(String text, String queryField, int currentPage, int pageSize) throws Exception;
 
 }

@@ -84,7 +84,7 @@
 
 <script src="https://cdn.bootcss.com/jquery/1.12.4/jquery.min.js"></script>
 <script type="text/javascript" src="../bootstrap3/js/bootstrap.min.js"></script>
-<div id="responseText">${myJson}</div>
+<div id="responseText"></div>
 </body>
 
 <script>

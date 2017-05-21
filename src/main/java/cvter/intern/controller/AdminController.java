@@ -23,7 +23,7 @@ public class AdminController extends BaseController {
     @RequestMapping("/index")
     public String index() {
 
-        //UserInfo userInfo=new UserInfo(3, UIDUtil.getRandomUID(),"admin","min", false,new Date(0),new Date(0));
+        //User userInfo=new User(3, UIDUtil.getRandomUID(),"admin","min", false,new Date(0),new Date(0));
         //  userService.save(userInfo);
         // userInfo=userService.checkAdminLogin(uid,)
 

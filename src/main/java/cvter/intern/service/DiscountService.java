@@ -1,6 +1,6 @@
 package cvter.intern.service;
 
-import cvter.intern.model.DiscountInfo;
+import cvter.intern.model.Discount;
 
 import java.util.List;
 
@@ -8,13 +8,13 @@ import java.util.List;
  * Created by cvter on 2017/5/17.
  */
 public interface DiscountService {
-    int save(DiscountInfo record);
+    int save(Discount record);
 
-    int update(DiscountInfo record);
+    int update(Discount record);
 
-    DiscountInfo selectByUID(String uid);
+    Discount selectByUID(String uid);
 
     int deleteByUid(String uid);
 
-    List<DiscountInfo> selectAll();
+    List<Discount> selectAll();
 }

@@ -1,16 +1,19 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="cvter.intern.dao.DiscountInfoMapper" >
-  <resultMap id="BaseResultMap" type="cvter.intern.model.DiscountInfo" >
+<mapper namespace="cvter.intern.dao.BookDao" >
+  <resultMap id="BaseResultMap" type="cvter.intern.model.Book" >
     <id column="id" property="id" jdbcType="INTEGER" />
     <result column="uid" property="uid" jdbcType="VARCHAR" />
-    <result column="discount_price" property="discountPrice" jdbcType="INTEGER" />
-    <result column="discount_num" property="discountNum" jdbcType="INTEGER" />
+    <result column="name" property="name" jdbcType="VARCHAR" />
+    <result column="author" property="author" jdbcType="VARCHAR" />
+    <result column="price" property="price" jdbcType="INTEGER" />
+    <result column="stock" property="stock" jdbcType="INTEGER" />
     <result column="deleted" property="deleted" jdbcType="BIT" />
-    <result column="valid_time" property="validTime" jdbcType="INTEGER" />
     <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
     <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
-    <result column="end_time" property="endTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <resultMap id="ResultMapWithBLOBs" type="cvter.intern.model.Book" extends="BaseResultMap" >
+    <result column="description" property="description" jdbcType="LONGVARCHAR" />
   </resultMap>
   <sql id="Example_Where_Clause" >
     <where >
@@ -71,16 +74,20 @@
     </where>
   </sql>
   <sql id="Base_Column_List" >
-    id, uid, discount_price, discount_num, deleted, valid_time, create_time, update_time, 
-    end_time
+    id, uid, name, author, price, stock, deleted, create_time, update_time
   </sql>
-  <select id="selectByExample" resultMap="BaseResultMap" parameterType="cvter.intern.model.DiscountInfoExample" >
+  <sql id="Blob_Column_List" >
+    description
+  </sql>
+  <select id="selectByExampleWithBLOBs" resultMap="ResultMapWithBLOBs" parameterType="cvter.intern.model.BookInfoExample" >
     select
     <if test="distinct" >
       distinct
     </if>
     <include refid="Base_Column_List" />
-    from discount_info
+    ,
+    <include refid="Blob_Column_List" />
+    from book_info
     <if test="_parameter != null" >
       <include refid="Example_Where_Clause" />
     </if>
@@ -88,34 +95,64 @@
       order by ${orderByClause}
     </if>
   </select>
-  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="cvter.intern.model.BookInfoExample" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from book_info
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" resultMap="ResultMapWithBLOBs" parameterType="java.lang.String" >
     select 
     <include refid="Base_Column_List" />
-    from discount_info
+    ,
+    <include refid="Blob_Column_List" />
+    from book_info
     where uid = #{uid,jdbcType=VARCHAR}
   </select>
+
+  <select id="selectByPaginate" resultMap="ResultMapWithBLOBs" parameterType="java.lang.Integer">
+    select
+    *
+    from book_info
+    limit #{m},#{n}
+  </select>
+
+  <select id="selectAll" resultMap="ResultMapWithBLOBs">
+  select
+  *
+  from book_info
+</select>
+
   <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
-    delete from discount_info
+    delete from book_info
     where uid = #{uid,jdbcType=VARCHAR}
   </delete>
-  <delete id="deleteByExample" parameterType="cvter.intern.model.DiscountInfoExample" >
-    delete from discount_info
+  <delete id="deleteByExample" parameterType="cvter.intern.model.BookInfoExample" >
+    delete from book_info
     <if test="_parameter != null" >
       <include refid="Example_Where_Clause" />
     </if>
   </delete>
-  <insert id="insert" parameterType="cvter.intern.model.DiscountInfo" >
-    insert into discount_info (id, uid, discount_price, 
-      discount_num, deleted, valid_time, 
-      create_time, update_time, end_time
-      )
-    values (#{id,jdbcType=INTEGER}, #{uid,jdbcType=VARCHAR}, #{discountPrice,jdbcType=INTEGER}, 
-      #{discountNum,jdbcType=INTEGER}, #{deleted,jdbcType=BIT}, #{validTime,jdbcType=INTEGER}, 
-      #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP}, #{endTime,jdbcType=TIMESTAMP}
-      )
+  <insert id="insert" parameterType="cvter.intern.model.Book" >
+    insert into book_info (id, uid, name, 
+      author, price, stock, 
+      deleted, create_time, update_time, 
+      description)
+    values (#{id,jdbcType=INTEGER}, #{uid,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR}, 
+      #{author,jdbcType=VARCHAR}, #{price,jdbcType=INTEGER}, #{stock,jdbcType=INTEGER}, 
+      #{deleted,jdbcType=BIT}, #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP}, 
+      #{description,jdbcType=LONGVARCHAR})
   </insert>
-  <insert id="insertSelective" parameterType="cvter.intern.model.DiscountInfo" >
-    insert into discount_info
+  <insert id="insertSelective" parameterType="cvter.intern.model.Book" >
+    insert into book_info
     <trim prefix="(" suffix=")" suffixOverrides="," >
       <if test="id != null" >
         id,
@@ -123,17 +160,20 @@
       <if test="uid != null" >
         uid,
       </if>
-      <if test="discountPrice != null" >
-        discount_price,
+      <if test="name != null" >
+        name,
       </if>
-      <if test="discountNum != null" >
-        discount_num,
+      <if test="author != null" >
+        author,
+      </if>
+      <if test="price != null" >
+        price,
+      </if>
+      <if test="stock != null" >
+        stock,
       </if>
       <if test="deleted != null" >
         deleted,
-      </if>
-      <if test="validTime != null" >
-        valid_time,
       </if>
       <if test="createTime != null" >
         create_time,
@@ -141,8 +181,8 @@
       <if test="updateTime != null" >
         update_time,
       </if>
-      <if test="endTime != null" >
-        end_time,
+      <if test="description != null" >
+        description,
       </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
@@ -152,17 +192,20 @@
       <if test="uid != null" >
         #{uid,jdbcType=VARCHAR},
       </if>
-      <if test="discountPrice != null" >
-        #{discountPrice,jdbcType=INTEGER},
+      <if test="name != null" >
+        #{name,jdbcType=VARCHAR},
       </if>
-      <if test="discountNum != null" >
-        #{discountNum,jdbcType=INTEGER},
+      <if test="author != null" >
+        #{author,jdbcType=VARCHAR},
+      </if>
+      <if test="price != null" >
+        #{price,jdbcType=INTEGER},
+      </if>
+      <if test="stock != null" >
+        #{stock,jdbcType=INTEGER},
       </if>
       <if test="deleted != null" >
         #{deleted,jdbcType=BIT},
-      </if>
-      <if test="validTime != null" >
-        #{validTime,jdbcType=INTEGER},
       </if>
       <if test="createTime != null" >
         #{createTime,jdbcType=TIMESTAMP},
@@ -170,19 +213,19 @@
       <if test="updateTime != null" >
         #{updateTime,jdbcType=TIMESTAMP},
       </if>
-      <if test="endTime != null" >
-        #{endTime,jdbcType=TIMESTAMP},
+      <if test="description != null" >
+        #{description,jdbcType=LONGVARCHAR},
       </if>
     </trim>
   </insert>
-  <select id="countByExample" parameterType="cvter.intern.model.DiscountInfoExample" resultType="java.lang.Integer" >
-    select count(*) from discount_info
+  <select id="countByExample" parameterType="cvter.intern.model.BookInfoExample" resultType="java.lang.Integer" >
+    select count(*) from book_info
     <if test="_parameter != null" >
       <include refid="Example_Where_Clause" />
     </if>
   </select>
   <update id="updateByExampleSelective" parameterType="map" >
-    update discount_info
+    update book_info
     <set >
       <if test="record.id != null" >
         id = #{record.id,jdbcType=INTEGER},
@@ -190,17 +233,20 @@
       <if test="record.uid != null" >
         uid = #{record.uid,jdbcType=VARCHAR},
       </if>
-      <if test="record.discountPrice != null" >
-        discount_price = #{record.discountPrice,jdbcType=INTEGER},
+      <if test="record.name != null" >
+        name = #{record.name,jdbcType=VARCHAR},
       </if>
-      <if test="record.discountNum != null" >
-        discount_num = #{record.discountNum,jdbcType=INTEGER},
+      <if test="record.author != null" >
+        author = #{record.author,jdbcType=VARCHAR},
+      </if>
+      <if test="record.price != null" >
+        price = #{record.price,jdbcType=INTEGER},
+      </if>
+      <if test="record.stock != null" >
+        stock = #{record.stock,jdbcType=INTEGER},
       </if>
       <if test="record.deleted != null" >
         deleted = #{record.deleted,jdbcType=BIT},
-      </if>
-      <if test="record.validTime != null" >
-        valid_time = #{record.validTime,jdbcType=INTEGER},
       </if>
       <if test="record.createTime != null" >
         create_time = #{record.createTime,jdbcType=TIMESTAMP},
@@ -208,46 +254,65 @@
       <if test="record.updateTime != null" >
         update_time = #{record.updateTime,jdbcType=TIMESTAMP},
       </if>
-      <if test="record.endTime != null" >
-        end_time = #{record.endTime,jdbcType=TIMESTAMP},
+      <if test="record.description != null" >
+        description = #{record.description,jdbcType=LONGVARCHAR},
       </if>
     </set>
     <if test="_parameter != null" >
       <include refid="Update_By_Example_Where_Clause" />
     </if>
   </update>
-  <update id="updateByExample" parameterType="map" >
-    update discount_info
+  <update id="updateByExampleWithBLOBs" parameterType="map" >
+    update book_info
     set id = #{record.id,jdbcType=INTEGER},
       uid = #{record.uid,jdbcType=VARCHAR},
-      discount_price = #{record.discountPrice,jdbcType=INTEGER},
-      discount_num = #{record.discountNum,jdbcType=INTEGER},
+      name = #{record.name,jdbcType=VARCHAR},
+      author = #{record.author,jdbcType=VARCHAR},
+      price = #{record.price,jdbcType=INTEGER},
+      stock = #{record.stock,jdbcType=INTEGER},
       deleted = #{record.deleted,jdbcType=BIT},
-      valid_time = #{record.validTime,jdbcType=INTEGER},
       create_time = #{record.createTime,jdbcType=TIMESTAMP},
       update_time = #{record.updateTime,jdbcType=TIMESTAMP},
-      end_time = #{record.endTime,jdbcType=TIMESTAMP}
+      description = #{record.description,jdbcType=LONGVARCHAR}
     <if test="_parameter != null" >
       <include refid="Update_By_Example_Where_Clause" />
     </if>
   </update>
-  <update id="updateByPrimaryKeySelective" parameterType="cvter.intern.model.DiscountInfo" >
-    update discount_info
+  <update id="updateByExample" parameterType="map" >
+    update book_info
+    set id = #{record.id,jdbcType=INTEGER},
+      uid = #{record.uid,jdbcType=VARCHAR},
+      name = #{record.name,jdbcType=VARCHAR},
+      author = #{record.author,jdbcType=VARCHAR},
+      price = #{record.price,jdbcType=INTEGER},
+      stock = #{record.stock,jdbcType=INTEGER},
+      deleted = #{record.deleted,jdbcType=BIT},
+      create_time = #{record.createTime,jdbcType=TIMESTAMP},
+      update_time = #{record.updateTime,jdbcType=TIMESTAMP}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="cvter.intern.model.Book" >
+    update book_info
     <set >
       <if test="uid != null" >
         uid = #{uid,jdbcType=VARCHAR},
       </if>
-      <if test="discountPrice != null" >
-        discount_price = #{discountPrice,jdbcType=INTEGER},
+      <if test="name != null" >
+        name = #{name,jdbcType=VARCHAR},
       </if>
-      <if test="discountNum != null" >
-        discount_num = #{discountNum,jdbcType=INTEGER},
+      <if test="author != null" >
+        author = #{author,jdbcType=VARCHAR},
+      </if>
+      <if test="price != null" >
+        price = #{price,jdbcType=INTEGER},
+      </if>
+      <if test="stock != null" >
+        stock = #{stock,jdbcType=INTEGER},
       </if>
       <if test="deleted != null" >
         deleted = #{deleted,jdbcType=BIT},
-      </if>
-      <if test="validTime != null" >
-        valid_time = #{validTime,jdbcType=INTEGER},
       </if>
       <if test="createTime != null" >
         create_time = #{createTime,jdbcType=TIMESTAMP},
@@ -255,22 +320,36 @@
       <if test="updateTime != null" >
         update_time = #{updateTime,jdbcType=TIMESTAMP},
       </if>
-      <if test="endTime != null" >
-        end_time = #{endTime,jdbcType=TIMESTAMP},
+      <if test="description != null" >
+        description = #{description,jdbcType=LONGVARCHAR},
       </if>
     </set>
     where id = #{id,jdbcType=INTEGER}
   </update>
-  <update id="updateByPrimaryKey" parameterType="cvter.intern.model.DiscountInfo" >
-    update discount_info
+  <update id="updateByPrimaryKeyWithBLOBs" parameterType="cvter.intern.model.Book" >
+    update book_info
     set uid = #{uid,jdbcType=VARCHAR},
-      discount_price = #{discountPrice,jdbcType=INTEGER},
-      discount_num = #{discountNum,jdbcType=INTEGER},
+      name = #{name,jdbcType=VARCHAR},
+      author = #{author,jdbcType=VARCHAR},
+      price = #{price,jdbcType=INTEGER},
+      stock = #{stock,jdbcType=INTEGER},
       deleted = #{deleted,jdbcType=BIT},
-      valid_time = #{validTime,jdbcType=INTEGER},
       create_time = #{createTime,jdbcType=TIMESTAMP},
       update_time = #{updateTime,jdbcType=TIMESTAMP},
-      end_time = #{endTime,jdbcType=TIMESTAMP}
+      description = #{description,jdbcType=LONGVARCHAR}
     where id = #{id,jdbcType=INTEGER}
   </update>
+  <update id="updateByPrimaryKey" parameterType="cvter.intern.model.Book" >
+    update book_info
+    set uid = #{uid,jdbcType=VARCHAR},
+      name = #{name,jdbcType=VARCHAR},
+      author = #{author,jdbcType=VARCHAR},
+      price = #{price,jdbcType=INTEGER},
+      stock = #{stock,jdbcType=INTEGER},
+      deleted = #{deleted,jdbcType=BIT},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      update_time = #{updateTime,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+
 </mapper>

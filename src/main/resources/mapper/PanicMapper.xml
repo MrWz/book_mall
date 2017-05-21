@@ -1,11 +1,13 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="cvter.intern.dao.UserInfoMapper" >
-  <resultMap id="BaseResultMap" type="cvter.intern.model.UserInfo" >
+<mapper namespace="cvter.intern.dao.PanicDao" >
+  <resultMap id="BaseResultMap" type="cvter.intern.model.Panic" >
     <id column="id" property="id" jdbcType="INTEGER" />
     <result column="uid" property="uid" jdbcType="VARCHAR" />
-    <result column="name" property="name" jdbcType="VARCHAR" />
-    <result column="password" property="password" jdbcType="VARCHAR" />
+    <result column="nums" property="nums" jdbcType="TINYINT" />
+    <result column="cur_price" property="curPrice" jdbcType="INTEGER" />
+    <result column="start_time" property="startTime" jdbcType="TIMESTAMP" />
+    <result column="end_time" property="endTime" jdbcType="TIMESTAMP" />
     <result column="deleted" property="deleted" jdbcType="BIT" />
     <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
     <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
@@ -69,15 +71,15 @@
     </where>
   </sql>
   <sql id="Base_Column_List" >
-    id, uid, name, password, deleted, create_time, update_time
+    id, uid, nums, cur_price, start_time, end_time, deleted, create_time, update_time
   </sql>
-  <select id="selectByExample" resultMap="BaseResultMap" parameterType="cvter.intern.model.UserInfoExample" >
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="cvter.intern.model.PanicInfoExample" >
     select
     <if test="distinct" >
       distinct
     </if>
     <include refid="Base_Column_List" />
-    from user_info
+    from panic_info
     <if test="_parameter != null" >
       <include refid="Example_Where_Clause" />
     </if>
@@ -86,37 +88,33 @@
     </if>
   </select>
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
-    select
+    select 
     <include refid="Base_Column_List" />
-    from user_info
+    from panic_info
     where uid = #{uid,jdbcType=VARCHAR}
-  </select>
-  <select id="selectByName" resultMap="BaseResultMap" parameterType="java.lang.String" >
-    select
-    <include refid="Base_Column_List" />
-    from user_info
-    where name = #{name,jdbcType=VARCHAR}
   </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
-    delete from user_info
+    delete from panic_info
     where uid = #{uid,jdbcType=VARCHAR}
   </delete>
-  <delete id="deleteByExample" parameterType="cvter.intern.model.UserInfoExample" >
-    delete from user_info
+  <delete id="deleteByExample" parameterType="cvter.intern.model.PanicInfoExample" >
+    delete from panic_info
     <if test="_parameter != null" >
       <include refid="Example_Where_Clause" />
     </if>
   </delete>
-  <insert id="insert" parameterType="cvter.intern.model.UserInfo" >
-    insert into user_info (uid, name,
-      password, deleted, create_time,
-      update_time)
-    values (#{uid,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR},
-      #{password,jdbcType=VARCHAR}, #{deleted,jdbcType=BIT}, #{createTime,jdbcType=TIMESTAMP},
-      #{updateTime,jdbcType=TIMESTAMP})
+  <insert id="insert" parameterType="cvter.intern.model.Panic" >
+    insert into panic_info (id, uid, nums, 
+      cur_price, start_time, end_time, 
+      deleted, create_time, update_time
+      )
+    values (#{id,jdbcType=INTEGER}, #{uid,jdbcType=VARCHAR}, #{nums,jdbcType=TINYINT}, 
+      #{curPrice,jdbcType=INTEGER}, #{startTime,jdbcType=TIMESTAMP}, #{endTime,jdbcType=TIMESTAMP}, 
+      #{deleted,jdbcType=BIT}, #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP}
+      )
   </insert>
-  <insert id="insertSelective" parameterType="cvter.intern.model.UserInfo" >
-    insert into user_info
+  <insert id="insertSelective" parameterType="cvter.intern.model.Panic" >
+    insert into panic_info
     <trim prefix="(" suffix=")" suffixOverrides="," >
       <if test="id != null" >
         id,
@@ -124,11 +122,17 @@
       <if test="uid != null" >
         uid,
       </if>
-      <if test="name != null" >
-        name,
+      <if test="nums != null" >
+        nums,
       </if>
-      <if test="password != null" >
-        password,
+      <if test="curPrice != null" >
+        cur_price,
+      </if>
+      <if test="startTime != null" >
+        start_time,
+      </if>
+      <if test="endTime != null" >
+        end_time,
       </if>
       <if test="deleted != null" >
         deleted,
@@ -147,11 +151,17 @@
       <if test="uid != null" >
         #{uid,jdbcType=VARCHAR},
       </if>
-      <if test="name != null" >
-        #{name,jdbcType=VARCHAR},
+      <if test="nums != null" >
+        #{nums,jdbcType=TINYINT},
       </if>
-      <if test="password != null" >
-        #{password,jdbcType=VARCHAR},
+      <if test="curPrice != null" >
+        #{curPrice,jdbcType=INTEGER},
+      </if>
+      <if test="startTime != null" >
+        #{startTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="endTime != null" >
+        #{endTime,jdbcType=TIMESTAMP},
       </if>
       <if test="deleted != null" >
         #{deleted,jdbcType=BIT},
@@ -164,14 +174,14 @@
       </if>
     </trim>
   </insert>
-  <select id="countByExample" parameterType="cvter.intern.model.UserInfoExample" resultType="java.lang.Integer" >
-    select count(*) from user_info
+  <select id="countByExample" parameterType="cvter.intern.model.PanicInfoExample" resultType="java.lang.Integer" >
+    select count(*) from panic_info
     <if test="_parameter != null" >
       <include refid="Example_Where_Clause" />
     </if>
   </select>
   <update id="updateByExampleSelective" parameterType="map" >
-    update user_info
+    update panic_info
     <set >
       <if test="record.id != null" >
         id = #{record.id,jdbcType=INTEGER},
@@ -179,11 +189,17 @@
       <if test="record.uid != null" >
         uid = #{record.uid,jdbcType=VARCHAR},
       </if>
-      <if test="record.name != null" >
-        name = #{record.name,jdbcType=VARCHAR},
+      <if test="record.nums != null" >
+        nums = #{record.nums,jdbcType=TINYINT},
       </if>
-      <if test="record.password != null" >
-        password = #{record.password,jdbcType=VARCHAR},
+      <if test="record.curPrice != null" >
+        cur_price = #{record.curPrice,jdbcType=INTEGER},
+      </if>
+      <if test="record.startTime != null" >
+        start_time = #{record.startTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.endTime != null" >
+        end_time = #{record.endTime,jdbcType=TIMESTAMP},
       </if>
       <if test="record.deleted != null" >
         deleted = #{record.deleted,jdbcType=BIT},
@@ -200,11 +216,13 @@
     </if>
   </update>
   <update id="updateByExample" parameterType="map" >
-    update user_info
+    update panic_info
     set id = #{record.id,jdbcType=INTEGER},
       uid = #{record.uid,jdbcType=VARCHAR},
-      name = #{record.name,jdbcType=VARCHAR},
-      password = #{record.password,jdbcType=VARCHAR},
+      nums = #{record.nums,jdbcType=TINYINT},
+      cur_price = #{record.curPrice,jdbcType=INTEGER},
+      start_time = #{record.startTime,jdbcType=TIMESTAMP},
+      end_time = #{record.endTime,jdbcType=TIMESTAMP},
       deleted = #{record.deleted,jdbcType=BIT},
       create_time = #{record.createTime,jdbcType=TIMESTAMP},
       update_time = #{record.updateTime,jdbcType=TIMESTAMP}
@@ -212,17 +230,23 @@
       <include refid="Update_By_Example_Where_Clause" />
     </if>
   </update>
-  <update id="updateByPrimaryKeySelective" parameterType="cvter.intern.model.UserInfo" >
-    update user_info
+  <update id="updateByPrimaryKeySelective" parameterType="cvter.intern.model.Panic" >
+    update panic_info
     <set >
       <if test="uid != null" >
         uid = #{uid,jdbcType=VARCHAR},
       </if>
-      <if test="name != null" >
-        name = #{name,jdbcType=VARCHAR},
+      <if test="nums != null" >
+        nums = #{nums,jdbcType=TINYINT},
       </if>
-      <if test="password != null" >
-        password = #{password,jdbcType=VARCHAR},
+      <if test="curPrice != null" >
+        cur_price = #{curPrice,jdbcType=INTEGER},
+      </if>
+      <if test="startTime != null" >
+        start_time = #{startTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="endTime != null" >
+        end_time = #{endTime,jdbcType=TIMESTAMP},
       </if>
       <if test="deleted != null" >
         deleted = #{deleted,jdbcType=BIT},
@@ -236,11 +260,13 @@
     </set>
     where id = #{id,jdbcType=INTEGER}
   </update>
-  <update id="updateByPrimaryKey" parameterType="cvter.intern.model.UserInfo" >
-    update user_info
+  <update id="updateByPrimaryKey" parameterType="cvter.intern.model.Panic" >
+    update panic_info
     set uid = #{uid,jdbcType=VARCHAR},
-      name = #{name,jdbcType=VARCHAR},
-      password = #{password,jdbcType=VARCHAR},
+      nums = #{nums,jdbcType=TINYINT},
+      cur_price = #{curPrice,jdbcType=INTEGER},
+      start_time = #{startTime,jdbcType=TIMESTAMP},
+      end_time = #{endTime,jdbcType=TIMESTAMP},
       deleted = #{deleted,jdbcType=BIT},
       create_time = #{createTime,jdbcType=TIMESTAMP},
       update_time = #{updateTime,jdbcType=TIMESTAMP}

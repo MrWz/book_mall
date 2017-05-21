@@ -1,5 +1,6 @@
 package cvter.intern.service;
-import cvter.intern.model.UserInfo;
+import cvter.intern.model.User;
+
 import java.util.List;
 
 /**
@@ -10,17 +11,17 @@ public interface UserService {
 
     public Boolean checkRegister(String username,String password);
 
-    public UserInfo selectByName(String name);
+    public User selectByName(String name);
 
-    public int save(UserInfo record);
+    public int save(User record);
 
-    public UserInfo checkAdminLogin(String uid,String username,String password);
+    public User checkAdminLogin(String uid, String username, String password);
 
-    UserInfo selectByUid(String uid);
+    User selectByUid(String uid);
 
-    int update(UserInfo record);
+    int update(User record);
 
     int deleteByUid(String uid);
 
-    List<UserInfo> selectAll(int m,int n);
+    List<User> selectAll(int m, int n);
 }
