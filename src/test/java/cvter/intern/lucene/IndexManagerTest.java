@@ -34,7 +34,7 @@ public class IndexManagerTest {
 
     private static DataSource dataSource;
     private static List<Index> bookData;
-    private static IndexManager indexManager;
+    private static IndexManager indexManager = IndexManager.builder(IndexDaoImpl.class);
 
 
     static {
