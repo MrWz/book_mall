@@ -2,25 +2,16 @@ package cvter.intern.model;
 
 import java.util.Date;
 
-public class HobbyInfo {
+public class UserRole {
     private Integer id;
 
-    private String uid;
+    private String userUid;
 
-    private String description;
+    private String roleUid;
 
     private Boolean deleted;
 
     private Date createTime;
-
-    public HobbyInfo(Integer id, String uid, String description, Boolean deleted, Date createTime, Date updateTime) {
-        this.id = id;
-        this.uid = uid;
-        this.description = description;
-        this.deleted = deleted;
-        this.createTime = createTime;
-        this.updateTime = updateTime;
-    }
 
     private Date updateTime;
 
@@ -32,20 +23,20 @@ public class HobbyInfo {
         this.id = id;
     }
 
-    public String getUid() {
-        return uid;
+    public String getUserUid() {
+        return userUid;
     }
 
-    public void setUid(String uid) {
-        this.uid = uid == null ? null : uid.trim();
+    public void setUserUid(String userUid) {
+        this.userUid = userUid == null ? null : userUid.trim();
     }
 
-    public String getDescription() {
-        return description;
+    public String getRoleUid() {
+        return roleUid;
     }
 
-    public void setDescription(String description) {
-        this.description = description == null ? null : description.trim();
+    public void setRoleUid(String roleUid) {
+        this.roleUid = roleUid == null ? null : roleUid.trim();
     }
 
     public Boolean getDeleted() {

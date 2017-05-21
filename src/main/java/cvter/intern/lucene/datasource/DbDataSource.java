@@ -2,7 +2,7 @@ package cvter.intern.lucene.datasource;
 
 import cvter.intern.lucene.model.BookIndex;
 import cvter.intern.lucene.model.Index;
-import cvter.intern.model.BookInfo;
+import cvter.intern.model.Book;
 import cvter.intern.service.BookService;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
@@ -43,10 +43,10 @@ public class DbDataSource implements DataSource {
         BookService bookService = context.getBean(BookService.class);
 
         indices = new ArrayList<>();
-        List<BookInfo> books = bookService.selectAll(0,1);
+        List<Book> books = bookService.selectByPaginate(0,1);
         for (int i = 1; i < books.size(); i++) {
-            BookInfo bookInfo = books.get(i);
-            indices.add(new BookIndex(bookInfo.getUid(), bookInfo.getName(), bookInfo.getAuthor(), bookInfo.getDescription()));
+            Book book = books.get(i);
+            indices.add(new BookIndex(book.getUid(), book.getName(), book.getAuthor(), book.getDescription()));
         }
     }
 }
