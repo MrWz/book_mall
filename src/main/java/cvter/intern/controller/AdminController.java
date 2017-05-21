@@ -1,15 +1,10 @@
 package cvter.intern.controller;
 
-import cvter.intern.model.UserInfo;
 import cvter.intern.service.UserService;
-import cvter.intern.utils.TIMEUtil;
-import cvter.intern.utils.UIDUtil;
 import org.springframework.stereotype.Controller;
-import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import javax.annotation.Resource;
-import java.util.Date;
 
 /**
  * Created by cvter on 2017/5/18.
@@ -21,16 +16,16 @@ public class AdminController {
     private UserService userService;
 
     @RequestMapping("/login")
-    public String login(){
+    public String login() {
         return "adminlogin";
     }
 
     @RequestMapping("/index")
-    public String index(){
+    public String index() {
 
         //UserInfo userInfo=new UserInfo(3, UIDUtil.getRandomUID(),"admin","min", false,new Date(0),new Date(0));
-      //  userService.save(userInfo);
-       // userInfo=userService.checkAdminLogin(uid,)
+        //  userService.save(userInfo);
+        // userInfo=userService.checkAdminLogin(uid,)
 
         return "index";
     }

@@ -15,7 +15,7 @@ import java.util.List;
  * Created by cvter on 2017/5/17.
  */
 @Service
-public class UserServiceImpl implements UserService{
+public class UserServiceImpl implements UserService {
     @Autowired
     private UserInfoMapper userInfoMapper;
 
@@ -34,8 +34,7 @@ public class UserServiceImpl implements UserService{
                 String mdPassword= Md5SaltUtil.getMD5(password,uid);
                 if(mdPwd.equals(mdPassword)){
                     return true;
-                }
-                else{//密码错误
+                } else {//密码错误
                     return false;
                 }
             }
@@ -103,9 +102,9 @@ public class UserServiceImpl implements UserService{
     /**
      * 验证用户登录
      */
-    public UserInfo checkAdminLogin(String uid,String username, String password) {
-        UserInfo userInfo=userInfoMapper.selectByPrimaryKey(uid);
-        if(userInfo!=null&&userInfo.getName().equals(username)&&userInfo.getPassword().equals(password)){
+    public UserInfo checkAdminLogin(String uid, String username, String password) {
+        UserInfo userInfo = userInfoMapper.selectByPrimaryKey(uid);
+        if (userInfo != null && userInfo.getName().equals(username) && userInfo.getPassword().equals(password)) {
             return userInfo;
         }
         return null;

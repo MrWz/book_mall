@@ -2,16 +2,13 @@ package cvter.intern.controller;
 
 import cvter.intern.model.Msg;
 import cvter.intern.service.UserService;
-import cvter.intern.utils.JSONUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import java.util.HashMap;
 
 /**
  * Created by cvter on 2017/5/18.
