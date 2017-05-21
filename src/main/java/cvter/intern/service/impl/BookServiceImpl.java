@@ -54,8 +54,7 @@ public class BookServiceImpl implements BookService {
     /**
      * 查询全部记录，采用分表查询
      */
-    public List<BookInfo> selectAll() {
-        return null;
+    public List<BookInfo> selectAll(int m,int n) {
+        return bookInfoMapper.selectAll(m,n);
     }
-
 }
