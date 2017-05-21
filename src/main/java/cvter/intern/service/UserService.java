@@ -22,5 +22,5 @@ public interface UserService {
 
     int deleteByUid(String uid);
 
-    List<UserInfo> selectAll();
+    List<UserInfo> selectAll(int m,int n);
 }

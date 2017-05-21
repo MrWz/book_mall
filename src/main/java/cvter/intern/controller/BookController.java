@@ -5,6 +5,8 @@ import cvter.intern.lucene.service.IndexBookService;
 import cvter.intern.lucene.service.impl.IndexBookServiceImpl;
 import cvter.intern.model.BookInfo;
 import cvter.intern.model.Msg;
+import cvter.intern.service.impl.BookServiceImpl;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -20,9 +22,20 @@ import java.util.List;
  */
 @Controller
 @RequestMapping("/book/v1")
+public class BookController {
+
+    @Autowired
+    private BookServiceImpl bookService;
+
 public class BookController extends BaseController {
     @RequestMapping("/list")
-    public String list() {
+    public String list(){
+        List<BookInfo> allBook=bookService.selectAll(0,1);
+
+        System.out.println("allBook");
+        for(BookInfo book:allBook){
+            System.out.println(book.getName());
+        }
         return "list";
     }
 
@@ -50,7 +63,6 @@ public class BookController extends BaseController {
 
         List<BookInfo> bookInfos = indexBookService.searchBookPaginated("summary", BookIndex.DESCRIPTION, pn, 5);
 
-        return Msg.success().add("bookInfos", bookInfos);
     }
 
     /**

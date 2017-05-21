@@ -39,7 +39,7 @@
 </nav>
 
 <div class="container">
-    <form id="loginForm" action="/user/v1/register" method="post" class="form-horizontal" onsubmit="">
+    <form id="registerForm">
         <div class="form-group">
             <label for="loginAccount" class="col-xs-12 col-md-2 col-md-offset-3 control-label">
                 <span class="text-muted">用户名：</span>
@@ -69,7 +69,7 @@
                 <span class="text-muted">确认密码：</span>
             </label>
             <div class="col-xs-12 col-md-3">
-                <input type="password" name="password" id="ReLoginPassword" class="form-control" required="required" maxlength="32"/>
+                <input type="password" name="repassword" id="ReLoginPassword" class="form-control" required="required" maxlength="32"/>
             </div>
             <div class="col-xs-12 col-md-6 col-md-offset-5">
                 <p class="help-block" style="margin-bottom: 0;font-size: 12px;color: #f00;"></p>
@@ -78,7 +78,7 @@
 
         <div class="form-group">
             <div class="col-xs-3 col-md-1 col-md-offset-5">
-                <input type="submit" class="btn btn-primary mybtn" value="确认" />
+                <input type="button" class="btn btn-primary mybtn" value="确认" id="registerBtn" />
             </div>
             <div class="col-xs-3 col-md-1">
                 <input type="reset" class="btn btn-primary mybtn" value="重置" />
@@ -91,8 +91,27 @@
     </form>
 </div>
 
-<script type="text/javascript" src="../bootstrap3/js/jquery-1.11.2.min.js" ></script>
-<script type="text/javascript" src="../bootstrap3/js/bootstrap.min.js" ></script>
-<center>${myJson}</center>
+<script src="https://cdn.bootcss.com/jquery/1.12.4/jquery.min.js"></script>
+<script type="text/javascript" src="../bootstrap3/js/bootstrap.min.js"></script>
+
+<div id="responseText">${myJson}</div>
 </body>
+
+<script>
+    $(function () {
+        $("#registerBtn").click(function () {
+            $.ajax({
+                type: "POST",
+                url: "/user/v1/register",
+                data: $('#registerForm').serialize(),// 你的formid
+                error: function (request) {
+                    alert("Connection error");
+                },
+                success: function (result) {
+                    $("#responseText").html("<h1>" +result.data.description + "</h1>");
+                }
+            });
+        })
+    })
+</script>
 </html>

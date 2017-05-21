@@ -43,7 +43,7 @@ public class DbDataSource implements DataSource {
         BookService bookService = context.getBean(BookService.class);
 
         indices = new ArrayList<>();
-        List<BookInfo> books = bookService.selectAll();
+        List<BookInfo> books = bookService.selectAll(0,1);
         for (int i = 1; i < books.size(); i++) {
             BookInfo bookInfo = books.get(i);
             indices.add(new BookIndex(bookInfo.getUid(), bookInfo.getName(), bookInfo.getAuthor(), bookInfo.getDescription()));
