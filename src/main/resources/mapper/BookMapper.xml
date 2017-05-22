@@ -143,13 +143,13 @@
   </delete>
 
   <insert id="insert" parameterType="cvter.intern.model.Book" >
-    insert into book_info (id, uid, name,
+    insert into book_info (uid, name,
       author, price, stock, 
-      deleted, create_time, update_time, 
+      create_time, update_time,
       description)
     values (#{uid,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR},
       #{author,jdbcType=VARCHAR}, #{price,jdbcType=INTEGER}, #{stock,jdbcType=INTEGER}, 
-      #{deleted,jdbcType=BIT}, #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP}, 
+      now(), now(),
       #{description,jdbcType=LONGVARCHAR})
   </insert>
   <insert id="insertSelective" parameterType="cvter.intern.model.Book" >

@@ -21,7 +21,7 @@
     </tr>
     <tr>
         <td>书名：</td>
-        <td><input type = text name="bookname" size = 32/></td>
+        <td><input type = text name="name" size = 32/></td>
     </tr>
     <tr>
         <td>作者：</td>

@@ -7,11 +7,7 @@ import cvter.intern.service.BookService;
 import cvter.intern.service.UserService;
 import cvter.intern.utils.UIDUtil;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.ModelMap;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import java.util.Date;
@@ -34,46 +30,42 @@ public class AdminController extends BaseController {
 
     @ResponseBody
     @RequestMapping("/Index")
-    public Msg index(String username, String password) {
-        boolean flag=userService.checkAdimLogin(username, password);
-        if (flag) {
+    public Msg index(@RequestParam String username, @RequestParam String password) {
+        if (userService.checkAdimLogin(username, password)) {
             return Msg.success().add("description","您已登录成功");
         }
         throw new BusinessException(50000,"用户名或密码错误");
-           // return Msg.fail().add("description","用户名或密码错误");
     }
-    @RequestMapping(value = "/book/add",method = RequestMethod.GET)
-    public String bookAdd() {
-    return "bookAdd";
-}
+
     @ResponseBody
-    @RequestMapping(value = "/book/add", method = RequestMethod.POST)
-    public Msg bookAdd(@RequestParam String bookname, @RequestParam String author, @RequestParam int price,
-                       @RequestParam int stock,String description){
-        Date date=new Date();
-        Book bookInfo=new Book(UIDUtil.getRandomUID(),bookname,author,price,stock,false,date,date,description);
-        bookService.save(bookInfo);
-        return Msg.success().add("description","图书上架成功");
-}
-
-
-
-    @RequestMapping(value = "/book/del", method = RequestMethod.GET)
-    public String book_del() {
-        return "bookDel";
+    @RequestMapping(value = "/book/add",method = RequestMethod.POST)
+    public Msg bookAdd(Book book) {
+    if(bookService.save(book)){
+        return Msg.success().setMessage("图书上架成功");
     }
+        return Msg.success().setMessage("图书上架失败");
+    }
+
+    @ResponseBody
     @RequestMapping(value = "/book/del", method = RequestMethod.POST)
-    public String bookDel(Book bookInfo) {
-        return "bookDel";
+    public Msg bookDel(@RequestParam String uid) {
+        if(bookService.bookDel(uid)){
+            return Msg.success().setMessage("图书删除成功");
+        }
+        return Msg.success().setMessage("图书删除失败");
     }
 
-//    @RequestMapping("/book_/djust/price")
-//    public String book/Adjus/Price() {
-//        return "book_adjust_price";
-//    }
-//
-//    @RequestMapping("/book/adjust/stock")
-//    public String bookAdjustPrice() {
-//        return "book_adjust_stock";
-//    }
+    @ResponseBody
+    @RequestMapping(value = "/book/adjust/price",method = RequestMethod.POST)
+    public Msg bookAdjustPrice(@RequestParam String uid,@RequestParam int price) {
+        bookService.bookAdjustPrice(uid,price);
+        return Msg.success().setMessage("图书调价成功");
+    }
+
+    @ResponseBody
+    @RequestMapping(value="/book/adjust/stock",method = RequestMethod.POST)
+    public Msg bookAdjustStock(@RequestParam String uid,@RequestParam int stock) {
+        bookService.bookAdjustStock(uid,stock);
+        return Msg.success().setMessage("图书调库存成功");
+    }
 }
