@@ -18,7 +18,7 @@ public interface UserService {
 
     public int save(User record);
 
-    public User checkAdminLogin(String uid, String username, String password);
+    public boolean checkAdimLogin(String username,String password);
 
     User selectByUid(String uid);
 

@@ -1,8 +1,8 @@
 package cvter.intern.lucene;
 
 import cvter.intern.lucene.dao.impl.IndexDaoImpl;
-import cvter.intern.lucene.datasource.DbDataSource;
 import cvter.intern.lucene.datasource.DataSource;
+import cvter.intern.lucene.datasource.DbDataSource;
 import cvter.intern.lucene.model.BookIndex;
 import cvter.intern.lucene.model.Index;
 import cvter.intern.service.BookService;

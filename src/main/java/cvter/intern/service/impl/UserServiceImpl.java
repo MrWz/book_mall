@@ -62,8 +62,8 @@ public class UserServiceImpl implements UserService {
     }
 
     /*
-     * 验证登录是否成功
-     * */
+         * 验证登录是否成功
+         * */
     @Override
     public Boolean checkLogin(String username, String password) {
         Boolean flag = StringUtils.isAnyBlank(username, password);
@@ -129,6 +129,21 @@ public class UserServiceImpl implements UserService {
         return userDao.insert(record);
     }
 
+//        @Override
+public boolean checkAdimLogin(String username, String password) {
+
+
+      if(StringUtils.isAnyEmpty(username,password)){
+          throw new ParameterException("用户名或密码不为空");
+      }
+      User userInfo=userDao.selectByName(username);
+
+      if(password.equals(userInfo.getPassword())){
+            return true;
+        }
+        
+       return false;
+}
     /**
      * 删除记录
      */

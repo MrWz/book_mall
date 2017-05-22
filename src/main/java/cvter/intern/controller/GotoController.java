@@ -2,6 +2,7 @@ package cvter.intern.controller;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 
 /**
  * 该Controller用于页面的跳转
@@ -26,4 +27,5 @@ public class GotoController extends BaseController {
     public String bookDetails(){
         return "detail";
     }
+
 }

@@ -1,27 +1,27 @@
 <%--
   Created by IntelliJ IDEA.
   User: cvter
-  Date: 2017/5/18
-  Time: 10:03
+  Date: 2017/5/19
+  Time: 18:58
   To change this template use File | Settings | File Templates.
 --%>
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page contentType="text/html;charset=UTF-8" language="java" isELIgnored="false"%>
 <html>
-<title>CVTE管理员登陆页面</title>
+<title>CVTE管理员注册页面</title>
 <head>
     <meta charset="UTF-8">
     <title>Insert title here</title>
 </head>
 <body>
 
-<form action="/admin/v1/index" method = post>
+<form action="/admin/v1/Index" method = "post">
     <table>
         <tr>
-            <td colspan = 2>CVTE管理员登陆页面</td>
+            <td colspan = 2>CVTE管理员注册页面</td>
         </tr>
         <tr>
             <td>账号：</td>
-            <td><input type = text name = user size = 16/></td>
+            <td><input type = text name = username size = 16/></td>
         </tr>
         <tr>
             <td>密码：</td>
@@ -32,5 +32,6 @@
         </tr>
     </table>
 </form>
+<center>${myJson}</center>
 </body>
 </html>
