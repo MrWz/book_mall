@@ -11,7 +11,7 @@ public interface BookService {
 
     BookInfo selectByUid(String uid);
 
-    List<BookInfo> selectAll();
+    List<BookInfo> selectAll(int m,int n);
 
     int save(BookInfo bookInfo);
 

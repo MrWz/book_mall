@@ -14,7 +14,7 @@
 </head>
 <body>
 
-<form action="/admin/v1/book_add" method="post">
+<form id="bookAddForm">
     <table>
     <tr>
         <td colspan = 2>请添加上架图书详情</td>
@@ -40,10 +40,29 @@
         <td><input type = text name = "description" size = 32/></td>
     </tr>
     <tr>
-        <td><input type = submit value = 添加></td>
+        <td><input type = button value = 添加 id="bookAddBtn"></td>
     </tr>
 </table>
 </form>
-<center>${myJson}</center>
+<script src="https://cdn.bootcss.com/jquery/1.12.4/jquery.min.js"></script>
+<script type="text/javascript" src="../bootstrap3/js/bootstrap.min.js"></script>
+<div id="responseText">${myJson}</div>
 </body>
+<script>
+    $(function () {
+        $("#bookAddBtn").click(function () {
+            $.ajax({
+                type: "POST",
+                url: "/admin/v1/book/add",
+                data: $('#bookAddForm').serialize(),// 你的formid
+                error: function (request) {
+                    alert("bookAdd error");
+                },
+                success: function (result) {
+                    $("#responseText").html("<h1>" +result.data.description + "</h1>");
+                }
+            });
+        })
+    })
+</script>
 </html>

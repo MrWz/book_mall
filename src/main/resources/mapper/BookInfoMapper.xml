@@ -117,6 +117,14 @@
     from book_info
     where uid = #{uid,jdbcType=VARCHAR}
   </select>
+
+  <select id="selectAll" resultMap="ResultMapWithBLOBs" parameterType="java.lang.Integer">
+    select
+    *
+    from book_info
+    LIMIT #{m,jdbcType=INTEGER},#{n,jdbcType=INTEGER}
+  </select>
+
   <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
     delete from book_info
     where uid = #{uid,jdbcType=VARCHAR}

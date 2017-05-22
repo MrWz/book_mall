@@ -3,6 +3,7 @@ package cvter.intern.service.impl;
 import cvter.intern.dao.UserInfoMapper;
 import cvter.intern.model.UserInfo;
 import cvter.intern.service.UserService;
+import cvter.intern.utils.Md5SaltUtil;
 import cvter.intern.utils.UIDUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -14,7 +15,7 @@ import java.util.List;
  * Created by cvter on 2017/5/17.
  */
 @Service
-public class UserServiceImpl implements UserService{
+public class UserServiceImpl implements UserService {
     @Autowired
     private UserInfoMapper userInfoMapper;
 
@@ -24,26 +25,19 @@ public class UserServiceImpl implements UserService{
          * */
     @Override
     public Boolean checkLogin(String username, String password) {
-        if(username!=null){
             UserInfo userInfo=selectByName(username);
             if(userInfo==null){//用户不存在
                 return false;
             } else{//用户已存在
                 String mdPwd=userInfo.getPassword();
-//                if(MD5Util.verifyMD5(password,mdPwd)){
-//                    return true;
-//                }
-                if(password.equals(mdPwd)){
+                String uid=userInfo.getUid();
+                String mdPassword= Md5SaltUtil.getMD5(password,uid);
+                if(mdPwd.equals(mdPassword)){
                     return true;
-                }
-                else{//密码错误
+                } else {//密码错误
                     return false;
                 }
             }
-        }
-        else{
-            return false;
-        }
     }
 
     /*
@@ -51,25 +45,19 @@ public class UserServiceImpl implements UserService{
      * */
     @Override
     public Boolean checkRegister(String username, String password) {
-        if(username!=null){
             UserInfo userInfo=selectByName(username);
             if(userInfo==null){//用户不存在
-               // String mdPassword= MD5Util.getMD5(password);
+                String uid=UIDUtil.getRandomUID();
+                String mdPassword= Md5SaltUtil.getMD5(password,uid);
                 Date date=new Date();
-                UserInfo user=new UserInfo(UIDUtil.getRandomUID(),username,password,false,date,date);
+                UserInfo user=new UserInfo(uid,username,mdPassword,false,date,date);
                 save(user);
                 return true;
             }
             else{//用户已存在
-                System.out.println("======用户存在");
                 return false;
             }
         }
-        else{
-            return false;
-        }
-
-    }
 
     @Override
     public UserInfo selectByName(String name) {
@@ -118,6 +106,16 @@ public boolean checkAdimLogin(String username, String password) {
     /**
      * 查询全部记录，采用分表查询
      */
-    public List<UserInfo> selectAll() {return null;}
+    public List<UserInfo> selectAll(int m,int n) {return userInfoMapper.selectAll(m,n);}
 
+    /**
+     * 验证用户登录
+     */
+    public UserInfo checkAdminLogin(String uid, String username, String password) {
+        UserInfo userInfo = userInfoMapper.selectByPrimaryKey(uid);
+        if (userInfo != null && userInfo.getName().equals(username) && userInfo.getPassword().equals(password)) {
+            return userInfo;
+        }
+        return null;
+    }
 }

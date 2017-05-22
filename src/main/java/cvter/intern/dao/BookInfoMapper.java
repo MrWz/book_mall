@@ -2,6 +2,8 @@ package cvter.intern.dao;
 
 import cvter.intern.model.BookInfo;
 
+import java.util.List;
+
 public interface BookInfoMapper {
 
     /**
@@ -23,5 +25,10 @@ public interface BookInfoMapper {
      * 查询记录
      */
     BookInfo selectByPrimaryKey(String uid);
+
+    /**
+     * 查询全部记录
+     */
+    List<BookInfo> selectAll(int m,int n);
 
 }
