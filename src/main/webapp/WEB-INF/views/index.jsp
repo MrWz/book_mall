@@ -210,7 +210,7 @@
                         <a href="">关于我们</a>
                     </li>
                     <li style="margin-top: 10px;">
-                        <a href="/admin/index">后台管理</a>
+                        <a href="/admin/v1/login">后台管理</a>
                     </li>
                 </ul>
             </div>
@@ -346,7 +346,7 @@
         $('#userLoginBtn').click(function () {
             $.ajax({
                 type: "POST",
-                url: "/user/v1/login",
+                url: "http://localhost:8080/user/v1/login",
                 data: $('#loginModal form').serialize(),// 你的formid
                 error: function (request) {
                     alert("Connection error");

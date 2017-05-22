@@ -14,9 +14,19 @@ public class Book extends AbstractParent{
 
     private String description;
 
-    public Book() {
-        super();
+    public Book(String uid, String name, String author, Integer price, Integer stock, Boolean deleted, Date createTime, Date updateTime, String description) {
+        this.uid = uid;
+        this.name = name;
+        this.author = author;
+        this.price = price;
+        this.stock = stock;
+        this.deleted = deleted;
+        this.createTime = createTime;
+        this.updateTime = updateTime;
+        this.description = description;
     }
+
+    public Book() {super();}
 
     public Book(String uid, Date createTime, Date updateTime, Boolean deleted, String name, String author, Integer price, Integer stock, String description) {
         super(uid, createTime, updateTime, deleted);

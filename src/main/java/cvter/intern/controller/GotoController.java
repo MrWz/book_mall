@@ -2,6 +2,7 @@ package cvter.intern.controller;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 
 /**
  * 该Controller用于页面的跳转
@@ -17,8 +18,15 @@ public class GotoController extends BaseController {
         return "index";
     }
 
-    @RequestMapping("/admin/index")
-    public String adminIndex() {
-        return "admin/manager";
-    }
+//    @RequestMapping(value = "/admin/Index",method= RequestMethod.GET)
+//    public String adminLogin() {
+//        System.out.println("++++++++++");
+//        return "adminLogin";
+//    }
+//
+//    @RequestMapping(value = "/admin/Index",method= RequestMethod.POST)
+//    public String adminIndex() {
+//        System.out.println("-------");
+//        return "admin/manager";
+
 }
