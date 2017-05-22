@@ -13,9 +13,13 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.web.servlet.MvcResult;
 
 import javax.annotation.Resource;
 import java.util.Date;
+
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 /**
  * Created by cvter on 2017/5/16.
@@ -44,6 +48,10 @@ public class Asawqwq{
     //@Autowired
     //private RoleService roleService;
 
+    @Test
+    public void bookDel(){
+
+    }
     @Test
     public void testSelectRole(){
 //        RoleInfoExample example = new RoleInfoExample();

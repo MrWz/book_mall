@@ -18,15 +18,15 @@ public class GotoController extends BaseController {
         return "index";
     }
 
-//    @RequestMapping(value = "/admin/Index",method= RequestMethod.GET)
+//    @RequestMapping(value = "/admin/index",method= RequestMethod.GET)
 //    public String adminLogin() {
-//        System.out.println("++++++++++");
+//        //System.out.println("++++++++++");
 //        return "adminLogin";
 //    }
-//
-//    @RequestMapping(value = "/admin/Index",method= RequestMethod.POST)
-//    public String adminIndex() {
-//        System.out.println("-------");
-//        return "admin/manager";
 
+    @RequestMapping(value = "/admin/index")
+    public String adminIndex() {
+        System.out.println("-------");
+        return "admin/manager";
+    }
 }

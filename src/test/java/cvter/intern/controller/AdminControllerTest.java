@@ -49,14 +49,21 @@ public class AdminControllerTest {
     public void book_add() throws Exception {
         MvcResult mvcResult = mockMvc.perform((
                 post("/admin/v1/book_add").
-                        param("bookname", "java编程思想").
+                        param("name", "java编程思想").
                         param("author", "unknown").
                         param("price", "108").
                         param("stock", "2").
                         param("description", "-------------")))
                 .andExpect(status().isOk())
                 .andReturn();
+    }
+        @Test
+                public void bookDel() throws Exception{
+            MvcResult mvcResult = mockMvc.perform(
+            post("admin/v1/bookDel").
+                    param("uid"))
+            .andExpect(status().isOk())
+                    .andReturn();
+        }
 
     }
-
-}
