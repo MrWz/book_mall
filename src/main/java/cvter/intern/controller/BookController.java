@@ -2,6 +2,7 @@ package cvter.intern.controller;
 
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import cvter.intern.authorization.annotation.Authorization;
 import cvter.intern.lucene.IndexManager;
 import cvter.intern.lucene.dao.impl.IndexDaoImpl;
 import cvter.intern.lucene.model.BookIndex;
@@ -92,6 +93,7 @@ public class BookController extends BaseController {
      * @param tokenUid
      * @return
      */
+    @Authorization
     @ResponseBody
     @RequestMapping(path = {"/panic"}, method = RequestMethod.POST)
     public Msg bookPanic(@RequestParam String userUid,
@@ -103,7 +105,7 @@ public class BookController extends BaseController {
         books.add(new Book());
         books.add(new Book());
 
-        return Msg.success().add("fromServer", "Hello").add("books", books);
+        return Msg.success().add("books", books);
 
     }
 }

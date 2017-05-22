@@ -26,4 +26,13 @@
         <property name="suffix" value=".jsp"/>
     </bean>
 
+    <!-- 配置拦截器 -->
+    <mvc:interceptors>
+        <!--身份验证的拦截器-->
+        <mvc:interceptor>
+            <mvc:mapping path="/**"/>
+            <bean class="cvter.intern.authorization.interceptor.AuthorizationInterceptor"/>
+        </mvc:interceptor>
+    </mvc:interceptors>
+
 </beans>
