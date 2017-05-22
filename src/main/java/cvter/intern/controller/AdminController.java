@@ -48,10 +48,10 @@ public class AdminController extends BaseController {
 }
     @ResponseBody
     @RequestMapping(value = "/book/add", method = RequestMethod.POST)
-    public Msg bookAdd(@RequestParam String bookname, @RequestParam String author, @RequestParam int price,
+    public Msg bookAdd(@RequestParam String name, @RequestParam String author, @RequestParam int price,
                        @RequestParam int stock,String description){
         Date date=new Date();
-        Book bookInfo=new Book(UIDUtil.getRandomUID(),bookname,author,price,stock,false,date,date,description);
+        Book bookInfo=new Book(UIDUtil.getRandomUID(),name,author,price,stock,false,date,date,description);
         bookService.save(bookInfo);
         return Msg.success().add("description","图书上架成功");
 }

@@ -28,11 +28,10 @@ public class UserController extends BaseController {
         boolean flag = userService.checkLogin(username, password);
         if (flag) {
             session.setAttribute("isLogin", "true");
-            return Msg.success().add("description", "请去首页进行选购");
+            return Msg.success().setMessage("请去首页进行选购").add("userinfo", userService.selectByName(username));
 
-        } else {
-            return Msg.fail().add("description", "用户名或者密码错误");
         }
+        return Msg.fail().setMessage("用户名或者密码错误");
     }
 
     @ResponseBody
@@ -43,9 +42,8 @@ public class UserController extends BaseController {
             session.setAttribute("isLogin", "true");
             return Msg.success().add("description", "注册成功");
 
-        } else {
-            return Msg.fail().add("description", "用户名已存在");
         }
+        return Msg.fail().add("description", "用户名已存在");
     }
 
     @Authorization

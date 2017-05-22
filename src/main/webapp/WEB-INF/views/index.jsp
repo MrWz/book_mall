@@ -42,15 +42,18 @@
                         <span class="badge">4</span>
                     </a>
                 </li>
-                <li>
+                <li class="unLogin">
                     <a href="#" data-toggle="modal" data-target="#loginModal" data-whatever="login">
                         <span class="glyphicon glyphicon-log-in"></span> 登录
                     </a>
                 </li>
-                <li>
+                <li class="unLogin">
                     <a href="#" data-toggle="modal" data-target="#registerModal" data-whatever="register">
                         <span class="glyphicon glyphicon-edit"></span> 注册
                     </a>
+                </li>
+                <li class="Login">
+                    <a href="#"></a>
                 </li>
             </ul>
             <form class="navbar-form navbar-right">
@@ -210,7 +213,7 @@
                         <a href="">关于我们</a>
                     </li>
                     <li style="margin-top: 10px;">
-                        <a href="/admin/v1/login">后台管理</a>
+                        <a href="/admin/index">后台管理</a>
                     </li>
                 </ul>
             </div>
@@ -343,27 +346,63 @@
 <script src="https://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 <script>
     $(function () {
+
+        //1、页面加载完成后获取数据
+        $.ajax({
+            type: "POST",
+            url: "/book/v1/list",
+            data: "pn=1",
+            error: function (request) {
+                alert("Connection error");
+            },
+            success: function (result) {
+                //1、解析并显示书籍
+                build_book_table(result);
+
+                //2、显示分页
+                build_page_table(result);
+
+            }
+        });
+
+        function build_book_table(result) {
+            var books = result.data.page.list;
+            $.each(books, function (index, item) {
+                alert(item.name);
+            })
+
+        }
+
+        function build_page_table(result) {
+
+        }
+
         $('#userLoginBtn').click(function () {
             $.ajax({
                 type: "POST",
-                url: "http://localhost:8080/user/v1/login",
+                url: "/user/v1/login",
                 data: $('#loginModal form').serialize(),// 你的formid
                 error: function (request) {
                     alert("Connection error");
                 },
                 success: function (data) {
-//                $("#commonLayout_appcreshi").parent().html(data);
-                    alert(data.code + "---" + data.message + "---" +data.data.description);
+                    var code = data.code;
+                    switch (code) {
+                        case (200):
+                            $('#loginModal').modal('hide');
+                            $('.unLogin').hide();
+                            $('.Login a').text(data.data.userinfo.name);
+                            break;
+                        case (500):
+                            alert(data.message);
+                            break;
+                    }
 
                 }
             });
             return false;
         });
-    });
-</script>
 
-<script>
-    $(function () {
         $('#userRegisterBtn').click(function () {
             $.ajax({
                 type: "POST",
@@ -373,8 +412,17 @@
                     alert("Connection error");
                 },
                 success: function (data) {
-//                $("#commonLayout_appcreshi").parent().html(data);
-                    alert(data.code + "---" + data.message + "---" +data.data.description);
+                    var code = data.code;
+                    switch (code) {
+                        case (200):
+                            $('#loginModal').modal('hide');
+                            $('.unLogin').hide();
+                            $('.Login a').text("nihao");
+                            break;
+                        case (500):
+                            alert(data.message);
+                            break;
+                    }
                 }
             });
             return false;
