@@ -21,4 +21,9 @@ public class GotoController extends BaseController {
     public String adminIndex() {
         return "admin/manager";
     }
+
+    @RequestMapping("/bookDetails")
+    public String bookDetails(){
+        return "detail";
+    }
 }

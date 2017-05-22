@@ -7,6 +7,9 @@ import java.util.List;
  * Created by cvter on 2017/5/17.
  */
 public interface UserService {
+
+    public Boolean buy(String userUid,String bookUid,int num);
+
     public Boolean checkLogin(String username,String password);
 
     public Boolean checkRegister(String username,String password);

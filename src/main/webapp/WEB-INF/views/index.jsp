@@ -100,7 +100,7 @@
                                 <span>作者：<a href="#">陈昊鹏</a></span>
                             </p>
                             <p>
-                                <a href="#">查看详情</a>
+                                <a href="/bookDetails">查看详情</a>
                                 <span class="pull-right" style="margin-right: 10px; color: darkred">￥108</span>
                             </p>
                         </div>

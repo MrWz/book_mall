@@ -2,10 +2,7 @@ package cvter.intern.controller;
 
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
-import cvter.intern.lucene.IndexManager;
-import cvter.intern.lucene.dao.impl.IndexDaoImpl;
 import cvter.intern.lucene.model.BookIndex;
-import cvter.intern.lucene.model.Index;
 import cvter.intern.lucene.service.IndexBookService;
 import cvter.intern.lucene.service.impl.IndexBookServiceImpl;
 import cvter.intern.model.Book;
@@ -35,7 +32,7 @@ public class BookController extends BaseController {
     @ResponseBody
     @RequestMapping("/list")
     public Msg list(){
-//        List<Book> allBook=bookService.selectByPaginate(0,4);
+        List<Book> alllBook=bookService.selectByPaginate(0,4);
         PageHelper.startPage(2,5);
         List<Book> allBook=bookService.selectAll();
         PageInfo page = new PageInfo(allBook, 5);
@@ -44,18 +41,10 @@ public class BookController extends BaseController {
             System.out.println(item.getId());
         }
         long total = page.getTotal(); //获取总记录数
-        System.out.println("页数：" + page.getPageNum());
-        System.out.println("页数：" + page.getPages());
-        System.out.println("页大小：" + page.getPageSize());
-        System.out.println("EndRoW：" + page.getEndRow());
-        System.out.println("PrePage：" + page.getPrePage());
-        System.out.println("AllMessage：" + page.getList());
-        System.out.println("PrePage：" + page.toString());
-
        return Msg.success().add("page",page);
 //        return "list";
     }
-
+    
     /**
      * 图书搜索
      *

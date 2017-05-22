@@ -57,4 +57,20 @@ public class UserController extends BaseController {
             return Msg.fail().add("description", "用户名已存在");
         }
     }
+
+    /*
+    * 购买处理
+    * */
+    @ResponseBody
+    @RequestMapping(path = {"/buy"})
+    public Msg buy(String userUid,String bookUid,int num){
+
+        boolean flag=userService.buy(userUid,bookUid,num);
+
+        if(flag){
+            return Msg.success().add("description","请您在15分钟内前往支付界面支付");
+        }
+
+        return Msg.fail().add("description","库存不足");
+    }
 }

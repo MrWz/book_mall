@@ -195,14 +195,36 @@
                 </button>
                 <h3 class="modal-title">购买支付</h3>
             </div>
-            <div class="modal-body">
-                <h4 id="bookPrice">您需支付￥108</h4>
-            </div>
+
             <div class="modal-body">
                 <form class="form-group">
-                    <div class="text-right">
-                        <button class="btn btn-info">立即支付</button>
-                        <button class="btn btn-danger" data-dismiss="modal">取消</button>
+                    <div class="form-group">
+                        <label for="">用户Uid</label>
+                        <input class="form-control" name="userUid" type="text" required placeholder="6-15位字母或数字">
+                        <span id="" class="help-block text-warning"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="">书Uid</label>
+                        <input class="form-control" name="bookUid" type="text" required placeholder="6-15位字母或数字">
+                        <span id="" class="help-block text-warning"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="">购买数量</label>
+                        <input class="form-control" name="num" type="text" required placeholder="6-15位字母或数字">
+                        <span id="" class="help-block text-warning"></span>
+                    </div>
+                    <div class="modal-body">
+                        <h4 id="bookPrice">您需支付￥108</h4>
+                    </div>
+                    <div class="modal-body">
+                        <form class="form-group">
+                            <div class="text-right">
+                                <button class="btn btn-info" id="buyBtn">立即支付</button>
+                                <button class="btn btn-danger" data-dismiss="modal">取消</button>
+                            </div>
+                        </form>
                     </div>
                 </form>
             </div>
@@ -216,5 +238,25 @@
 
 </script>
 
+<script>
+    $(function () {
+        $('#buyBtn').click(function () {
+            $.ajax({
+                type: "POST",
+                url: "/user/v1/buy",
+                data: $('#buyModal form').serialize(),// 你的formid
+                error: function (request) {
+                    alert("Connection error");
+                },
+                success: function (data) {
+//                $("#commonLayout_appcreshi").parent().html(data);
+                    alert(data.code + "---" + data.message + "---" +data.data.description);
+
+                }
+            });
+            return false;
+        });
+    });
+</script>
 </body>
 </html>
