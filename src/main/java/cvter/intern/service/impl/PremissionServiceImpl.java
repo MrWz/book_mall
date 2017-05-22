@@ -1,7 +1,7 @@
 package cvter.intern.service.impl;
 
-import cvter.intern.dao.PremissionInfoMapper;
-import cvter.intern.model.PremissionInfo;
+import cvter.intern.dao.PremissionDao;
+import cvter.intern.model.Premission;
 import cvter.intern.service.PremissionService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,7 +17,7 @@ import java.util.List;
 public class PremissionServiceImpl implements PremissionService {
 
     @Resource
-    private PremissionInfoMapper premissionInfoMapper;
+    private PremissionDao premissionDao;
 
     public PremissionServiceImpl() {
         super();
@@ -26,33 +26,33 @@ public class PremissionServiceImpl implements PremissionService {
     /**
      * 增加记录
      */
-    public int save(PremissionInfo premissionInfo) {
-        return premissionInfoMapper.insert(premissionInfo);
+    public int save(Premission premission) {
+        return premissionDao.insert(premission);
     }
 
     /**
      * 删除记录
      */
     public int deleteByUid(String uid) {
-        return premissionInfoMapper.deleteByPrimaryKey(uid);
+        return premissionDao.deleteByPrimaryKey(uid);
     }
 
     /**
      * 更新记录
      */
-    public int update(PremissionInfo premissionInfo) {
-        return premissionInfoMapper.updateByPrimaryKey(premissionInfo);
+    public int update(Premission premission) {
+        return premissionDao.updateByPrimaryKey(premission);
     }
 
     /**
      * 查询记录
-     */public PremissionInfo selectByUid(String uid) {
-        return premissionInfoMapper.selectByPrimaryKey(uid);
+     */public Premission selectByUid(String uid) {
+        return premissionDao.selectByPrimaryKey(uid);
     }
 
     /**
      * 增加记录记录
-     */public List<PremissionInfo> selectAll() {
+     */public List<Premission> selectAll() {
         return null;
     }
 }

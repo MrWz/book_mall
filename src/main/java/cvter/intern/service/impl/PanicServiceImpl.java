@@ -1,7 +1,7 @@
 package cvter.intern.service.impl;
 
-import cvter.intern.dao.PanicInfoMapper;
-import cvter.intern.model.PanicInfo;
+import cvter.intern.dao.PanicDao;
+import cvter.intern.model.Panic;
 import cvter.intern.service.PanicService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -16,39 +16,39 @@ import java.util.List;
 public class PanicServiceImpl implements PanicService{
 
     @Autowired
-    private PanicInfoMapper panicInfoMapper;
+    private PanicDao panicDao;
 
     /**
      * 增加记录
      */
-    public int save(PanicInfo record)
+    public int save(Panic record)
     {
-        return panicInfoMapper.insert(record);
+        return panicDao.insert(record);
     }
 
     /**
      * 删除记录
      */
     public int deleteByUid(String uid) {
-        return panicInfoMapper.deleteByPrimaryKey(uid);
+        return panicDao.deleteByPrimaryKey(uid);
     }
 
     /**
      * 更新记录
      */
-    public int update(PanicInfo record) {return panicInfoMapper.updateByPrimaryKey(record);}
+    public int update(Panic record) {return panicDao.updateByPrimaryKey(record);}
 
     /**
      * 查询
      */
-    public PanicInfo selectByUID(String uid) {
-        return panicInfoMapper.selectByPrimaryKey(uid);
+    public Panic selectByUID(String uid) {
+        return panicDao.selectByPrimaryKey(uid);
     }
 
     /**
      * 查询全部记录，采用分表查询
      */
-    public List<PanicInfo> selectAll() {
+    public List<Panic> selectAll() {
         return null;
     }
 }

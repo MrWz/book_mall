@@ -1,6 +1,7 @@
 package cvter.intern.controller;
 
-import cvter.intern.model.BookInfo;
+import cvter.intern.exception.BusinessException;
+import cvter.intern.model.Book;
 import cvter.intern.model.Msg;
 import cvter.intern.service.BookService;
 import cvter.intern.service.UserService;
@@ -20,7 +21,7 @@ import java.util.Date;
  */
 @Controller
 @RequestMapping("/admin/v1")
-public class AdminController {
+public class AdminController extends BaseController {
     @Resource
     private UserService userService;
     @Resource
@@ -38,9 +39,9 @@ public class AdminController {
         if (flag) {
             return Msg.success().add("description","您已登录成功");
         }
-            return Msg.fail().add("description","用户名或密码错误");
+        throw new BusinessException(50000,"用户名或密码错误");
+           // return Msg.fail().add("description","用户名或密码错误");
     }
-
     @RequestMapping(value = "/book/add",method = RequestMethod.GET)
     public String bookAdd() {
     return "bookAdd";
@@ -50,10 +51,11 @@ public class AdminController {
     public Msg bookAdd(@RequestParam String bookname, @RequestParam String author, @RequestParam int price,
                        @RequestParam int stock,String description){
         Date date=new Date();
-        BookInfo bookInfo=new BookInfo(UIDUtil.getRandomUID(),bookname,author,price,stock,false,date,date,description);
+        Book bookInfo=new Book(UIDUtil.getRandomUID(),bookname,author,price,stock,false,date,date,description);
         bookService.save(bookInfo);
         return Msg.success().add("description","图书上架成功");
 }
+
 
 
     @RequestMapping(value = "/book/del", method = RequestMethod.GET)
@@ -61,7 +63,7 @@ public class AdminController {
         return "bookDel";
     }
     @RequestMapping(value = "/book/del", method = RequestMethod.POST)
-    public String bookDel(BookInfo bookInfo) {
+    public String bookDel(Book bookInfo) {
         return "bookDel";
     }
 

@@ -1,11 +1,10 @@
 package cvter.intern.service.impl;
 
-import cvter.intern.dao.RoleInfoMapper;
-import cvter.intern.model.RoleInfo;
+import cvter.intern.dao.RoleDao;
+import cvter.intern.model.Role;
 import cvter.intern.service.RoleService;
 
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.util.List;
@@ -18,7 +17,7 @@ import java.util.List;
 public class RoleServiceImpl implements RoleService {
 
     @Resource
-    private RoleInfoMapper roleInfoMapper;
+    private RoleDao roleDao;
 
     public RoleServiceImpl() {
         super();
@@ -27,33 +26,33 @@ public class RoleServiceImpl implements RoleService {
     /**
      * 增加记录
      */
-    public int save(RoleInfo roleInfo) {
-        return roleInfoMapper.insert(roleInfo);
+    public int save(Role role) {
+        return roleDao.insert(role);
     }
 
     /**
      * 删除记录
      */
     public int deleteByUid(String uid) {
-        return roleInfoMapper.deleteByPrimaryKey(uid);
+        return roleDao.deleteByPrimaryKey(uid);
     }
 
     /**
      * 更新记录
      */
-    public int update(RoleInfo roleInfo) {
-        return roleInfoMapper.updateByPrimaryKey(roleInfo);
+    public int update(Role role) {
+        return roleDao.updateByPrimaryKey(role);
     }
 
     /**
      * 查询记录
      */
-    public RoleInfo selectByUid(String uid) {
-        return roleInfoMapper.selectByPrimaryKey(uid);
+    public Role selectByUid(String uid) {
+        return roleDao.selectByPrimaryKey(uid);
     }
 
     //分表查询
-    public List<RoleInfo> selectAll() {
+    public List<Role> selectAll() {
         return null;
     }
 }

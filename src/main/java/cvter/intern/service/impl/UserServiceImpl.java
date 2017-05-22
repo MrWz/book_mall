@@ -1,10 +1,12 @@
 package cvter.intern.service.impl;
 
-import cvter.intern.dao.UserInfoMapper;
-import cvter.intern.model.UserInfo;
+import cvter.intern.dao.UserDao;
+import cvter.intern.exception.ParameterException;
+import cvter.intern.model.User;
 import cvter.intern.service.UserService;
 import cvter.intern.utils.Md5SaltUtil;
 import cvter.intern.utils.UIDUtil;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -17,7 +19,7 @@ import java.util.List;
 @Service
 public class UserServiceImpl implements UserService {
     @Autowired
-    private UserInfoMapper userInfoMapper;
+    private UserDao userDao;
 
 
     /*
@@ -25,12 +27,12 @@ public class UserServiceImpl implements UserService {
          * */
     @Override
     public Boolean checkLogin(String username, String password) {
-            UserInfo userInfo=selectByName(username);
-            if(userInfo==null){//用户不存在
+            User user =selectByName(username);
+            if(user ==null){//用户不存在
                 return false;
             } else{//用户已存在
-                String mdPwd=userInfo.getPassword();
-                String uid=userInfo.getUid();
+                String mdPwd=user.getPassword();
+                String uid=user.getUid();
                 String mdPassword= Md5SaltUtil.getMD5(password,uid);
                 if(mdPwd.equals(mdPassword)){
                     return true;
@@ -45,12 +47,12 @@ public class UserServiceImpl implements UserService {
      * */
     @Override
     public Boolean checkRegister(String username, String password) {
-            UserInfo userInfo=selectByName(username);
+            User userInfo=selectByName(username);
             if(userInfo==null){//用户不存在
                 String uid=UIDUtil.getRandomUID();
                 String mdPassword= Md5SaltUtil.getMD5(password,uid);
                 Date date=new Date();
-                UserInfo user=new UserInfo(uid,username,mdPassword,false,date,date);
+                User user=new User(uid,username,mdPassword,false,date,date);
                 save(user);
                 return true;
             }
@@ -60,8 +62,8 @@ public class UserServiceImpl implements UserService {
         }
 
     @Override
-    public UserInfo selectByName(String name) {
-        return userInfoMapper.selectByName(name);
+    public User selectByName(String name) {
+        return userDao.selectByName(name);
     }
 
 
@@ -69,52 +71,58 @@ public class UserServiceImpl implements UserService {
      * 增加记录
      */
 
-    public int save(UserInfo record) {
-        return userInfoMapper.insert(record);
+    public int save(User record) {
+        return userDao.insert(record);
     }
 
 //        @Override
 public boolean checkAdimLogin(String username, String password) {
-    UserInfo userInfo=userInfoMapper.selectByName(username);
 
-        if(password.equals(userInfo.getPassword())){
+
+      if(StringUtils.isAnyEmpty(username,password)){
+          throw new ParameterException("用户名或密码不为空");
+      }
+      User userInfo=userDao.selectByName(username);
+
+      if(password.equals(userInfo.getPassword())){
             return true;
         }
-        return false;
+        
+       return false;
 }
     /**
      * 删除记录
      */
     public int deleteByUid(String uid) {
-        return userInfoMapper.deleteByPrimaryKey(uid);
+        return userDao.deleteByPrimaryKey(uid);
     }
 
     /**
      * 更新记录
      */
-    public int update(UserInfo record) {
-        return userInfoMapper.updateByPrimaryKey(record);
+    public int update(User record) {
+        return userDao.updateByPrimaryKey(record);
     }
 
     /**
      * 查询
      */
-    public UserInfo selectByUid(String uid) {
-        return userInfoMapper.selectByPrimaryKey(uid);
+    public User selectByUid(String uid) {
+        return userDao.selectByPrimaryKey(uid);
     }
 
     /**
      * 查询全部记录，采用分表查询
      */
-    public List<UserInfo> selectAll(int m,int n) {return userInfoMapper.selectAll(m,n);}
+    public List<User> selectAll(int m, int n) {return userDao.selectAll(m,n);}
 
     /**
      * 验证用户登录
      */
-    public UserInfo checkAdminLogin(String uid, String username, String password) {
-        UserInfo userInfo = userInfoMapper.selectByPrimaryKey(uid);
-        if (userInfo != null && userInfo.getName().equals(username) && userInfo.getPassword().equals(password)) {
-            return userInfo;
+    public User checkAdminLogin(String uid, String username, String password) {
+        User user = userDao.selectByPrimaryKey(uid);
+        if (user != null && user.getName().equals(username) && user.getPassword().equals(password)) {
+            return user;
         }
         return null;
     }

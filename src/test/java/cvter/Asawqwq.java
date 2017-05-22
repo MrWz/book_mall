@@ -1,9 +1,9 @@
 package cvter;
 
-import cvter.intern.dao.PanicInfoMapper;
-import cvter.intern.dao.RoleInfoMapper;
-import cvter.intern.model.PanicInfo;
-import cvter.intern.model.RoleInfo;
+import cvter.intern.dao.PanicDao;
+import cvter.intern.dao.RoleDao;
+import cvter.intern.model.Panic;
+import cvter.intern.model.Role;
 import cvter.intern.model.RoleInfoExample;
 import cvter.intern.service.DiscountService;
 import cvter.intern.service.PanicService;
@@ -25,13 +25,13 @@ import java.util.Date;
 public class Asawqwq{
 
     @Autowired
-    private RoleInfoMapper roleInfoMapper;
+    private RoleDao roleInfoMapper;
 
     @Autowired
     private RoleService roleService;
 
     @Autowired
-    private PanicInfoMapper panicInfoMapper;
+    private PanicDao panicInfoMapper;
 
     @Autowired
     private PanicService panicService;

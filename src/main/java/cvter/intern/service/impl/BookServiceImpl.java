@@ -1,7 +1,7 @@
 package cvter.intern.service.impl;
 
-import cvter.intern.dao.BookInfoMapper;
-import cvter.intern.model.BookInfo;
+import cvter.intern.dao.BookDao;
+import cvter.intern.model.Book;
 import cvter.intern.service.BookService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,7 +17,7 @@ import java.util.List;
 public class BookServiceImpl implements BookService {
 
     @Resource
-    private BookInfoMapper bookInfoMapper;
+    private BookDao bookDao;
 
     public BookServiceImpl() {
         super();
@@ -26,35 +26,40 @@ public class BookServiceImpl implements BookService {
     /**
      * 增加记录
      */
-    public int save(BookInfo bookInfo) {
-        return bookInfoMapper.insert(bookInfo);
+    public int save(Book book) {
+        return bookDao.insert(book);
     }
 
     /**
      * 删除记录
      */
     public int deleteByUid(String uid) {
-        return bookInfoMapper.deleteByPrimaryKey(uid);
+        return bookDao.deleteByPrimaryKey(uid);
+    }
+
+    @Override
+    public List<Book> selectAll() {
+        return bookDao.selectAll();
     }
 
     /**
      * 更新记录
      */
-    public int update(BookInfo bookInfo) {
-        return bookInfoMapper.updateByPrimaryKey(bookInfo);
+    public int update(Book book) {
+        return bookDao.updateByPrimaryKey(book);
     }
 
     /**
      * 查询
      */
-    public BookInfo selectByUid(String uid) {
-        return bookInfoMapper.selectByPrimaryKey(uid);
+    public Book selectByUid(String uid) {
+        return bookDao.selectByPrimaryKey(uid);
     }
 
     /**
      * 查询全部记录，采用分表查询
      */
-    public List<BookInfo> selectAll(int m,int n) {
-        return bookInfoMapper.selectAll(m,n);
+    public List<Book> selectByPaginate(int m, int n) {
+        return bookDao.selectByPaginate(m,n);
     }
 }

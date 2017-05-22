@@ -1,6 +1,6 @@
 package cvter.intern.service;
 
-import cvter.intern.model.BookInfo;
+import cvter.intern.model.Book;
 
 import java.util.List;
 
@@ -9,13 +9,16 @@ import java.util.List;
  */
 public interface BookService {
 
-    BookInfo selectByUid(String uid);
+    Book selectByUid(String uid);
 
-    List<BookInfo> selectAll(int m,int n);
+    List<Book> selectByPaginate(int m, int n);
 
-    int save(BookInfo bookInfo);
+    int save(Book book);
 
-    int update(BookInfo bookInfo);
+    int update(Book book);
 
     int deleteByUid(String uid);
+
+    List<Book> selectAll();
+
 }

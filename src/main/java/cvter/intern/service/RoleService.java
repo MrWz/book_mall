@@ -1,6 +1,6 @@
 package cvter.intern.service;
 
-import cvter.intern.model.RoleInfo;
+import cvter.intern.model.Role;
 
 import java.util.List;
 
@@ -9,13 +9,13 @@ import java.util.List;
  */
 public interface RoleService {
 
-    int save(RoleInfo roleInfo);
+    int save(Role role);
 
     int deleteByUid(String uid);
 
-    int update(RoleInfo roleInfo);
+    int update(Role role);
 
-    RoleInfo selectByUid(String uid);
+    Role selectByUid(String uid);
 
-    List<RoleInfo> selectAll();
+    List<Role> selectAll();
 }

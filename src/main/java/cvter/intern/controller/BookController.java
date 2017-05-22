@@ -1,10 +1,14 @@
 package cvter.intern.controller;
 
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import cvter.intern.lucene.IndexManager;
 import cvter.intern.lucene.dao.impl.IndexDaoImpl;
 import cvter.intern.lucene.model.BookIndex;
 import cvter.intern.lucene.model.Index;
-import cvter.intern.model.BookInfo;
+import cvter.intern.lucene.service.IndexBookService;
+import cvter.intern.lucene.service.impl.IndexBookServiceImpl;
+import cvter.intern.model.Book;
 import cvter.intern.model.Msg;
 import cvter.intern.service.impl.BookServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,27 +22,38 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import java.util.ArrayList;
 import java.util.List;
 
-import java.util.List;
-
 /**
  * Created by cvter on 2017/5/18.
  */
 @Controller
 @RequestMapping("/book/v1")
-public class BookController {
+public class BookController extends BaseController {
 
     @Autowired
     private BookServiceImpl bookService;
 
+    @ResponseBody
     @RequestMapping("/list")
-    public String list(){
-        List<BookInfo> allBook=bookService.selectAll(0,1);
+    public Msg list(){
+//        List<Book> allBook=bookService.selectByPaginate(0,4);
+        PageHelper.startPage(2,5);
+        List<Book> allBook=bookService.selectAll();
+        PageInfo page = new PageInfo(allBook, 5);
 
-        System.out.println("allBook");
-        for(BookInfo book:allBook){
-            System.out.println(book.getName());
+        for(Book item : allBook) {
+            System.out.println(item.getId());
         }
-        return "list";
+        long total = page.getTotal(); //获取总记录数
+        System.out.println("页数：" + page.getPageNum());
+        System.out.println("页数：" + page.getPages());
+        System.out.println("页大小：" + page.getPageSize());
+        System.out.println("EndRoW：" + page.getEndRow());
+        System.out.println("PrePage：" + page.getPrePage());
+        System.out.println("AllMessage：" + page.getList());
+        System.out.println("PrePage：" + page.toString());
+
+       return Msg.success().add("page",page);
+//        return "list";
     }
 
     /**
@@ -50,24 +65,22 @@ public class BookController {
      * @return
      */
     @ResponseBody
-    @RequestMapping(path = {"/search"}, method = RequestMethod.GET)
-    public Msg bookSearch(@RequestParam(required = false) String bookName,
-                          @RequestParam(required = false) String bookAuthor,
-                          @RequestParam(required = false) String bookDescription) {
+    @RequestMapping(path = {"/search"})
+    public Msg bookSearch(
+            @RequestParam(value = "pn", defaultValue = "1") Integer pn,
+            @RequestParam(required = false) String bookName,
+            @RequestParam(required = false) String bookAuthor,
+            @RequestParam(required = false) String bookDescription) throws Exception {
 
         if (StringUtils.isEmpty(bookName) && StringUtils.isEmpty(bookAuthor) && StringUtils.isEmpty(bookDescription)) {
             return Msg.fail().setCode(400);
         }
 
-        try {
-            IndexManager indexManager = IndexManager.builder(IndexDaoImpl.class);
-            List<Index> bookList = indexManager.searchIndexTopN("summary", BookIndex.DESCRIPTION, 100);
+        IndexBookService indexBookService = new IndexBookServiceImpl();
 
-            return Msg.success().add("bookList", bookList);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return Msg.fail();
-        }
+        List<Book> bookInfos = indexBookService.searchBookPaginated("summary", BookIndex.DESCRIPTION, pn, 5);
+
+        return Msg.success().add("bookList", bookInfos);
 
     }
 
@@ -85,12 +98,12 @@ public class BookController {
                          @RequestParam String bookUid,
                          @RequestParam String tokenUid) {
 
-        List<BookInfo> bookInfos = new ArrayList<>();
-        bookInfos.add(new BookInfo());
-        bookInfos.add(new BookInfo());
-        bookInfos.add(new BookInfo());
+        List<Book> books = new ArrayList<>();
+        books.add(new Book());
+        books.add(new Book());
+        books.add(new Book());
 
-        return Msg.success().add("fromServer", "Hello").add("bookInfos", bookInfos);
+        return Msg.success().add("fromServer", "Hello").add("books", books);
 
     }
 }

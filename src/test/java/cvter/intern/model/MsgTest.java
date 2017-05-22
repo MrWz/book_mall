@@ -11,7 +11,7 @@ public class MsgTest {
     public void success() throws Exception {
         System.out.println(Msg.success()
                 .add("a", "b")
-                .add("bookInfo", new BookInfo())
+                .add("bookInfo", new Book())
         );
     }
 
@@ -19,7 +19,7 @@ public class MsgTest {
     public void fail() throws Exception {
         System.out.println(Msg.fail()
                 .add("a", "b")
-                .add("bookInfo", new BookInfo())
+                .add("bookInfo", new Book())
         );
     }
 

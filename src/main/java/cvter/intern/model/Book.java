@@ -2,10 +2,7 @@ package cvter.intern.model;
 
 import java.util.Date;
 
-public class BookInfo {
-    private Integer id;
-
-    private String uid;
+public class Book extends AbstractParent{
 
     private String name;
 
@@ -15,11 +12,9 @@ public class BookInfo {
 
     private Integer stock;
 
-    private Boolean deleted;
+    private String description;
 
-    private Date createTime;
-
-    public BookInfo(String uid, String name, String author, Integer price, Integer stock, Boolean deleted, Date createTime, Date updateTime, String description) {
+    public Book(String uid, String name, String author, Integer price, Integer stock, Boolean deleted, Date createTime, Date updateTime, String description) {
         this.uid = uid;
         this.name = name;
         this.author = author;
@@ -31,27 +26,15 @@ public class BookInfo {
         this.description = description;
     }
 
-    public BookInfo(){
-        super();
-    }
-    private Date updateTime;
+    public Book() {super();}
 
-    private String description;
-
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
-    public String getUid() {
-        return uid;
-    }
-
-    public void setUid(String uid) {
-        this.uid = uid == null ? null : uid.trim();
+    public Book(String uid, Date createTime, Date updateTime, Boolean deleted, String name, String author, Integer price, Integer stock, String description) {
+        super(uid, createTime, updateTime, deleted);
+        this.name = name;
+        this.author = author;
+        this.price = price;
+        this.stock = stock;
+        this.description = description;
     }
 
     public String getName() {
@@ -84,30 +67,6 @@ public class BookInfo {
 
     public void setStock(Integer stock) {
         this.stock = stock;
-    }
-
-    public Boolean getDeleted() {
-        return deleted;
-    }
-
-    public void setDeleted(Boolean deleted) {
-        this.deleted = deleted;
-    }
-
-    public Date getCreateTime() {
-        return createTime;
-    }
-
-    public void setCreateTime(Date createTime) {
-        this.createTime = createTime;
-    }
-
-    public Date getUpdateTime() {
-        return updateTime;
-    }
-
-    public void setUpdateTime(Date updateTime) {
-        this.updateTime = updateTime;
     }
 
     public String getDescription() {

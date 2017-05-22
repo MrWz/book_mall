@@ -1,6 +1,6 @@
 package cvter.intern.service;
 
-import cvter.intern.model.HobbyInfo;
+import cvter.intern.model.Hobby;
 
 import java.util.List;
 
@@ -8,13 +8,13 @@ import java.util.List;
  * Created by cvter on 2017/5/17.
  */
 public interface HobbyService {
-    public int save(HobbyInfo record);
+    public int save(Hobby record);
 
-    HobbyInfo selectByUID(String uid);
+    Hobby selectByUID(String uid);
 
-    int update(HobbyInfo record);
+    int update(Hobby record);
 
     int deleteByUid(String uid);
 
-    List<HobbyInfo> selectAll();
+    List<Hobby> selectAll();
 }

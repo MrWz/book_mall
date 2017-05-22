@@ -47,7 +47,7 @@
                     alert("Connection error");
                 },
                 success: function (result) {
-                    $("#responseText").html("<h1>" +result.data.description + "</h1>");
+                    $("#responseText").html("<h1>" +result.toString() + "</h1>");
                 }
             });
         })

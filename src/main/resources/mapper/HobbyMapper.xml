@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="cvter.intern.dao.HobbyInfoMapper" >
-  <resultMap id="BaseResultMap" type="cvter.intern.model.HobbyInfo" >
+<mapper namespace="cvter.intern.dao.HobbyDao" >
+  <resultMap id="BaseResultMap" type="cvter.intern.model.Hobby" >
     <id column="id" property="id" jdbcType="INTEGER" />
     <result column="uid" property="uid" jdbcType="VARCHAR" />
     <result column="description" property="description" jdbcType="VARCHAR" />
@@ -100,7 +100,7 @@
       <include refid="Example_Where_Clause" />
     </if>
   </delete>
-  <insert id="insert" parameterType="cvter.intern.model.HobbyInfo" >
+  <insert id="insert" parameterType="cvter.intern.model.Hobby" >
     insert into hobby_info (id, uid, description, 
       deleted, create_time, update_time
       )
@@ -108,7 +108,7 @@
       #{deleted,jdbcType=BIT}, #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP}
       )
   </insert>
-  <insert id="insertSelective" parameterType="cvter.intern.model.HobbyInfo" >
+  <insert id="insertSelective" parameterType="cvter.intern.model.Hobby" >
     insert into hobby_info
     <trim prefix="(" suffix=")" suffixOverrides="," >
       <if test="id != null" >
@@ -195,7 +195,7 @@
       <include refid="Update_By_Example_Where_Clause" />
     </if>
   </update>
-  <update id="updateByPrimaryKeySelective" parameterType="cvter.intern.model.HobbyInfo" >
+  <update id="updateByPrimaryKeySelective" parameterType="cvter.intern.model.Hobby" >
     update hobby_info
     <set >
       <if test="uid != null" >
@@ -216,7 +216,7 @@
     </set>
     where id = #{id,jdbcType=INTEGER}
   </update>
-  <update id="updateByPrimaryKey" parameterType="cvter.intern.model.HobbyInfo" >
+  <update id="updateByPrimaryKey" parameterType="cvter.intern.model.Hobby" >
     update hobby_info
     set uid = #{uid,jdbcType=VARCHAR},
       description = #{description,jdbcType=VARCHAR},

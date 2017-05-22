@@ -1,12 +1,13 @@
 package cvter.intern.lucene;
 
+import cvter.intern.exception.BusinessException;
+import cvter.intern.exception.ExceptionCode;
 import cvter.intern.lucene.dao.IndexDao;
 import cvter.intern.lucene.datasource.DataSource;
 import cvter.intern.lucene.model.Index;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 import java.util.Properties;
@@ -18,35 +19,25 @@ import java.util.Properties;
  */
 public class IndexManager {
 
-    public static String INDEX_DIR = "D:/lucene/luceneIndex";         //索引目录
-    public static int nDocs = 100;                                   //搜索数目
+    public static String INDEX_DIR = null;         //索引目录
+    public static int nDocs;                                    //搜索数目
 
     private static IndexDao indexDao;
     private static IndexManager indexManager;
     private static Logger logger = LoggerFactory.getLogger(IndexManager.class);
 
-    private IndexManager(Class<IndexDao> clazz) throws IllegalAccessException, InstantiationException {
+    private IndexManager(Class<IndexDao> clazz) throws Exception {
 
         //加载配置文件
         Properties prop = new Properties();
         InputStream is = IndexManager.class.getClassLoader().getResourceAsStream("common.properties");
-        System.out.println(is);
-        try {
-            prop.load(is);
-            System.out.println(prop);
-//
-            INDEX_DIR = prop.getProperty("indexPath", "luceneIndex");
-            nDocs = Integer.parseInt(prop.getProperty("nDocs", "100"));
 
-            indexDao = clazz.newInstance();
-        } catch (IllegalAccessException e) {
-            logger.error("实例化Impl对象失败");
-        } catch (InstantiationException e) {
-            logger.error("实例化Impl对象失败");
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        prop.load(is);
 
+        INDEX_DIR = prop.getProperty("indexPath", "D:/lucene/luceneIndex");
+        nDocs = Integer.parseInt(prop.getProperty("nDocs", "1000"));
+
+        indexDao = clazz.newInstance();
     }
 
     /**
@@ -54,9 +45,13 @@ public class IndexManager {
      *
      * @return 返回索引管理器对象
      */
-    public static <T extends IndexDao> IndexManager builder(Class<T> clazz) throws InstantiationException, IllegalAccessException {
+    public static <T extends IndexDao> IndexManager builder(Class<T> clazz) {
         if (indexManager == null) {
-            indexManager = new IndexManager((Class<IndexDao>) clazz);
+            try {
+                indexManager = new IndexManager((Class<IndexDao>) clazz);
+            } catch (Exception e) {
+                throw new BusinessException(10000, "全文检索初始化异常" + e.getMessage());
+            }
         }
         return indexManager;
     }
@@ -72,7 +67,7 @@ public class IndexManager {
         try {
             return indexDao.createIndex(dataSource);
         } catch (Exception e) {
-            return false;
+            throw new BusinessException(ExceptionCode.EX_10000.getCode(), "创建索引异常");
         }
     }
 
@@ -90,7 +85,7 @@ public class IndexManager {
         try {
             return indexDao.searchIndexTopN(text, queryField, nDocs);
         } catch (Exception e) {
-            return null;
+            throw new BusinessException(ExceptionCode.EX_10000.getCode(), "搜索TopN异常" + e.getMessage());
         }
     }
 
@@ -109,7 +104,7 @@ public class IndexManager {
         try {
             return indexDao.searchIndexPaginated(text, queryField, currentPage, pageSize);
         } catch (Exception e) {
-            return null;
+            throw new BusinessException(ExceptionCode.EX_10000.getCode(), "分页搜索异常" + e.getMessage());
         }
     }
 

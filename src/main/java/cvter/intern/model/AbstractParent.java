@@ -11,7 +11,18 @@ public abstract class AbstractParent {
     protected String uid;               //对应表中UID字段
     protected Date createTime;          //对应表中create_time字段
     protected Date updateTime;          //对应表中update_time字段
-    protected int deleted;              //对应表中deleted字段
+    protected Boolean deleted;              //对应表中deleted字段
+
+    public AbstractParent() {
+        super();
+    }
+
+    public AbstractParent(String uid, Date createTime, Date updateTime, Boolean deleted) {
+        this.uid = uid;
+        this.createTime = createTime;
+        this.updateTime = updateTime;
+        this.deleted = deleted;
+    }
 
     public int getId() {
         return id;
@@ -45,11 +56,11 @@ public abstract class AbstractParent {
         this.updateTime = updateTime;
     }
 
-    public int getDeleted() {
+    public Boolean getDeleted() {
         return deleted;
     }
 
-    public void setDeleted(int deleted) {
+    public void setDeleted(Boolean deleted) {
         this.deleted = deleted;
     }
 }

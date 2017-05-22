@@ -329,7 +329,7 @@
                         <span id="" class="help-block text-warning"></span>
                     </div>
                     <div class="text-right">
-                        <button class="btn btn-primary">提交</button>
+                        <button class="btn btn-primary" id="userRegisterBtn">提交</button>
                         <button class="btn btn-danger" data-dismiss="modal">取消</button>
                     </div>
                     <a href="#" data-toggle="modal" data-dismiss="modal" data-target="#loginModal">已有账号？点我登录</a>
@@ -353,7 +353,28 @@
                 },
                 success: function (data) {
 //                $("#commonLayout_appcreshi").parent().html(data);
-                    alert(data.code + "---" + data.message);
+                    alert(data.code + "---" + data.message + "---" +data.data.description);
+
+                }
+            });
+            return false;
+        });
+    });
+</script>
+
+<script>
+    $(function () {
+        $('#userRegisterBtn').click(function () {
+            $.ajax({
+                type: "POST",
+                url: "/user/v1/register",
+                data: $('#registerModal form').serialize(),// 你的formid
+                error: function (request) {
+                    alert("Connection error");
+                },
+                success: function (data) {
+//                $("#commonLayout_appcreshi").parent().html(data);
+                    alert(data.code + "---" + data.message + "---" +data.data.description);
                 }
             });
             return false;
