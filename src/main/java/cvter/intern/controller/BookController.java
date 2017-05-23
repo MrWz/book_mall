@@ -57,10 +57,11 @@ public class BookController extends BaseController {
     @ResponseBody
     @RequestMapping(path={"/search"})
     public Msg bookSearch(
-            @RequestParam(value="pn", defaultValue="1") Integer pn,
-            @RequestParam(required=false) String bookName,
-            @RequestParam(required=false) String bookAuthor,
-            @RequestParam(required=false) String bookDescription) throws Exception {
+
+            @RequestParam(value = "pa", defaultValue = "1") Integer pn,
+            @RequestParam(required = false) String bookName,
+            @RequestParam(required = false) String bookAuthor,
+            @RequestParam(required = false) String bookDescription) throws Exception {
 
         if (StringUtils.isEmpty(bookName) && StringUtils.isEmpty(bookAuthor) && StringUtils.isEmpty(bookDescription)) {
             return Msg.fail().setCode(400);

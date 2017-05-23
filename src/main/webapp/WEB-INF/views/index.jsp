@@ -210,7 +210,7 @@
                         <a href="">关于我们</a>
                     </li>
                     <li style="margin-top: 10px;">
-                        <a href="/admin/v1/login">后台管理</a>
+                        <a href="/admin/index">后台管理</a>
                     </li>
                 </ul>
             </div>

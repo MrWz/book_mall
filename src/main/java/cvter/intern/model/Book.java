@@ -1,8 +1,9 @@
 package cvter.intern.model;
 
+import java.io.Serializable;
 import java.util.Date;
 
-public class Book extends AbstractParent{
+public class Book extends AbstractParent implements Serializable{
 
     private String name;
 
@@ -75,5 +76,21 @@ public class Book extends AbstractParent{
 
     public void setDescription(String description) {
         this.description = description == null ? null : description.trim();
+    }
+
+    @Override
+    public String toString() {
+        return "Book{" +
+                "name='" + name + '\'' +
+                ", author='" + author + '\'' +
+                ", id=" + id +
+                ", price=" + price +
+                ", stock=" + stock +
+                ", uid='" + uid + '\'' +
+                ", description='" + description + '\'' +
+                ", createTime=" + createTime +
+                ", updateTime=" + updateTime +
+                ", deleted=" + deleted +
+                '}';
     }
 }

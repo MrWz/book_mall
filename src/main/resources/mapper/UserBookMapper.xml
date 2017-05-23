@@ -73,19 +73,11 @@
   <sql id="Base_Column_List" >
     id, user_uid, book_uid, buy_price, buy_nums, buy_way, deleted, create_time, update_time
   </sql>
-  <select id="selectByExample" resultMap="BaseResultMap" parameterType="cvter.intern.model.UserBookExample" >
+  <select id="selectByUserUid" resultMap="BaseResultMap" parameterType="java.lang.String" >
     select
-    <if test="distinct" >
-      distinct
-    </if>
     <include refid="Base_Column_List" />
     from user_book
-    <if test="_parameter != null" >
-      <include refid="Example_Where_Clause" />
-    </if>
-    <if test="orderByClause != null" >
-      order by ${orderByClause}
-    </if>
+    where user_uid = #{useUid}
   </select>
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
     select 

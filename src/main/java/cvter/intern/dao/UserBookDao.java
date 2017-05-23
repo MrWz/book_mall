@@ -16,7 +16,7 @@ public interface UserBookDao {
 
     int insertSelective(cvter.intern.model.UserBook record);
 
-    List<cvter.intern.model.UserBook> selectByExample(UserBookExample example);
+    List<cvter.intern.model.UserBook> selectByUserUid(String userUid);
 
     cvter.intern.model.UserBook selectByPrimaryKey(Integer id);
 
