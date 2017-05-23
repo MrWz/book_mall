@@ -11,6 +11,8 @@ import cvter.intern.utils.RedisLock;
 import cvter.intern.utils.UIDUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+//import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
@@ -39,8 +41,8 @@ public class UserServiceImpl implements UserService {
     @Autowired
     private UserBookDao userBookDao;
 
-//    @Autowired
-//    RedisTemplate redisTemplate;
+    @Autowired
+    RedisTemplate redisTemplate;
 
     /*
     * 购买图书(订单处理)
@@ -51,20 +53,21 @@ public class UserServiceImpl implements UserService {
         if (flag) {
             throw new ParameterException();
         }
-
         Date date=new Date();
         Book book=bookDao.selectByPrimaryKey(bookUid);
-//        RedisLock lock = new RedisLock(redisTemplate, "mykey", 10000, 20000);
-//
-//        try{
-//            if(lock.lock()){
-//                //需要同步代码
-//            }
-//        }catch (InterruptedException e) {
-//                e.printStackTrace();
-//            }finally {
-//            lock.unlock();
-//        }
+
+        RedisLock lock = new RedisLock(redisTemplate, "mykey", 10000, 20000);
+
+        try{
+            if(lock.lock()){
+                
+                //需要同步代码
+            }
+        }catch (InterruptedException e) {
+                e.printStackTrace();
+            }finally {
+            lock.unlock();
+        }
 
 
         int newStock=book.getStock() - num;
@@ -77,7 +80,7 @@ public class UserServiceImpl implements UserService {
 
 
         List<UserBook> userBookList=userBookDao.selectByUserUid(userUid);
-        for(UserBook tmp:userBookList){
+        for (UserBook tmp : userBookList) {
 //            System.out.println("++++++++"+tmp.getBuyNums());
         }
         UserBook userBook=new UserBook(userUid, bookUid, book.getPrice(), num, false, false, date, date);
@@ -106,8 +109,8 @@ public class UserServiceImpl implements UserService {
             UserRole userRole=userRoleDao.selectByUserUid(uid);
 
             Role role=roleDao.selectByPrimaryKey(userRole.getRoleUid());
-            if(role.getDescription().equals(ROLE_1.getRole())){//权限不对，抛出异常
-                throw new BusinessException(ExceptionCode.EX_30001.getCode(),ExceptionCode.EX_30001.getMessage());
+            if (role.getDescription().equals(ROLE_1.getRole())) {//权限不对，抛出异常
+                throw new BusinessException(ExceptionCode.EX_30001.getCode(), ExceptionCode.EX_30001.getMessage());
             }
             /*
             * 验证密码正确性
@@ -117,14 +120,14 @@ public class UserServiceImpl implements UserService {
             if (mdPwd.equals(mdPassword)) {
                 return true;
             }
-                return false;////密码错误
+            return false;////密码错误
         }
         return false;//用户不存在
     }
 
-        /*
-         * 验证注册是否成功
-         * */
+    /*
+     * 验证注册是否成功
+     * */
     @Override
     public Boolean checkRegister(String username, String password) {
         Boolean flag=StringUtils.isAnyBlank(username, password);

@@ -70,6 +70,5 @@ public class UserController extends BaseController {
         session.removeAttribute("isLogin");
 
         return Msg.success().setMessage("注销成功");
-
     }
 }
