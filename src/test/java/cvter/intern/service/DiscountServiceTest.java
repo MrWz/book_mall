@@ -15,7 +15,7 @@ import static org.junit.Assert.*;
  * Created by cvter on 2017/5/17.
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = "classpath:spring-mybatis.xml")
+@ContextConfiguration(locations = {"classpath:spring-mybatis.xml","classpath:spring-mvc.xml"})
 @Service
 public class DiscountServiceTest {
 
