@@ -15,7 +15,7 @@ import java.util.UUID;
  * Created by cvter on 2017/5/23.
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = {"classpath:spring-redis.xml","classpath:spring-mybatis.xml"})
+@ContextConfiguration(locations = {"classpath:spring-mybatis.xml"})
 public class RedisTest {
 
     @Autowired
