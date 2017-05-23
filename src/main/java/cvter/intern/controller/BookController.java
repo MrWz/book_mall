@@ -30,7 +30,7 @@ public class BookController extends BaseController {
     @ResponseBody
     @RequestMapping("/list")
     public Msg list(@RequestParam(defaultValue = "1") Integer pn) {
-        PageHelper.startPage(pn, 5);
+        PageHelper.startPage(pn, 7);
         List<Book> allBook = bookService.selectAll();
         PageInfo page = new PageInfo(allBook, 5);
 
@@ -56,7 +56,7 @@ public class BookController extends BaseController {
     @ResponseBody
     @RequestMapping(path = {"/search"})
     public Msg bookSearch(
-            @RequestParam(value = "pn", defaultValue = "1") Integer pn,
+            @RequestParam(value = "pa", defaultValue = "1") Integer pn,
             @RequestParam(required = false) String bookName,
             @RequestParam(required = false) String bookAuthor,
             @RequestParam(required = false) String bookDescription) throws Exception {

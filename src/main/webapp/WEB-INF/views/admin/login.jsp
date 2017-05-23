@@ -5,9 +5,7 @@
     <meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>CVTE图书商城_欢迎登录</title>
-    <link rel="icon" href="../imgs/favicon.ico" type="image/icon"/>
     <link rel="stylesheet" href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css"/>
-    <link rel="stylesheet" href="assert/css/mycss.css"/>
 </head>
 <body>
 <nav class="navbar navbar-default  navbar-static-top" role="navigation" id="nav-top-id">
@@ -83,7 +81,7 @@
 </div>
 
 <script src="https://cdn.bootcss.com/jquery/1.12.4/jquery.min.js"></script>
-<script type="text/javascript" src="../bootstrap3/js/bootstrap.min.js"></script>
+<script src="https://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 <div id="responseText"></div>
 </body>
 
@@ -98,7 +96,7 @@
                     alert("Connection error");
                 },
                 success: function (result) {
-                    $("#responseText").html("<h1>" +result.data.description + "</h1>");
+                    $("#responseText").html("<h1>" + result.data.description + "</h1>");
                 }
             });
         })

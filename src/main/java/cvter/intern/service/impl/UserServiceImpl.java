@@ -89,7 +89,6 @@ public boolean checkAdimLogin(String username, String password) {
       if(password.equals(userInfo.getPassword())){
             return true;
         }
-        
        return false;
 }
     /**

@@ -34,7 +34,7 @@
         <table class="table table-hover">
             <thead>
             <tr>
-                <th>#</th>
+                <th><input type="checkbox"/></th>
                 <th>书名</th>
                 <th>作者</th>
                 <th>价格</th>
@@ -167,10 +167,10 @@
                 //1、解析并显示书籍
                 build_book_table(result);
 
-                build_page_info(result);
                 //2、显示分页信息
+                build_page_info(result);
 
-                //2、显示分页条信息
+                //3、显示分页条信息
                 build_page_nav(result);
 
             }
@@ -199,8 +199,6 @@
                 .append(bookStock)
                 .append(bookTd)
                 .appendTo("tbody");
-
-//                alert(item.name);
         })
 
     }

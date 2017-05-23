@@ -13,12 +13,17 @@ public interface BookService {
 
     List<Book> selectByPaginate(int m, int n);
 
-    int save(Book book);
+    boolean save(Book book);
 
-    int update(Book book);
+    boolean update(Book book);
 
-    int deleteByUid(String uid);
+    boolean deleteByUid(String uid);
 
     List<Book> selectAll();
 
+    public boolean bookDel(String uid);
+
+    public boolean bookAdjustPrice(String uid,int price);
+
+    public void bookAdjustStock(String uid,int stock);
 }

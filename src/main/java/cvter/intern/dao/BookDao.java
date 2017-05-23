@@ -10,17 +10,17 @@ public interface BookDao {
     /**
      * 增加记录
      */
-    int insert(Book record);
+    boolean insert(Book record);
 
     /**
      * 删除记录
      */
-    int deleteByPrimaryKey(String uid);
+    boolean deleteByPrimaryKey(String uid);
 
     /**
      * 更新记录
      */
-    int updateByPrimaryKey(Book record);
+    boolean updateByPrimaryKey(Book record);
 
     /**
      * 查询记录
