@@ -35,10 +35,12 @@ public class BookController extends BaseController {
      */
     @ResponseBody
     @RequestMapping("/list")
-    public Msg list(@RequestParam(defaultValue = "1") Integer pn) {
-        PageHelper.startPage(pn, 7);
+    public Msg list(@RequestParam(defaultValue = "1") Integer pn,
+                    @RequestParam(defaultValue = "7") Integer pageSize,
+                    @RequestParam(defaultValue = "5") Integer navigatePages) {
+        PageHelper.startPage(pn, pageSize);
         List<Book> allBook = bookService.selectAll();
-        PageInfo page = new PageInfo(allBook, 5);
+        PageInfo page = new PageInfo(allBook, navigatePages);
 
         return Msg.success().add("page", page);
     }

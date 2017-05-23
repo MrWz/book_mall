@@ -2,7 +2,7 @@ package cvter.intern.model;
 
 import java.util.Date;
 
-public class Premission extends AbstractParent{
+public class Premission extends AbstractParent {
     private String description;
 
     public Premission() {
@@ -20,5 +20,17 @@ public class Premission extends AbstractParent{
 
     public void setDescription(String description) {
         this.description = description == null ? null : description.trim();
+    }
+
+    @Override
+    public String toString() {
+        return "Premission{" +
+                "description='" + description + '\'' +
+                ", id=" + id +
+                ", uid='" + uid + '\'' +
+                ", createTime=" + createTime +
+                ", updateTime=" + updateTime +
+                ", deleted=" + deleted +
+                '}';
     }
 }

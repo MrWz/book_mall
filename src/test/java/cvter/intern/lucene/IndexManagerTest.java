@@ -24,7 +24,7 @@ import static org.junit.Assert.fail;
  * Created by cvter on 2017/5/19.
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = {"classpath:spring-mybatis.xml"})
+@ContextConfiguration(locations = {"classpath:applicationContext.xml"})
 public class IndexManagerTest {
 
     @Autowired

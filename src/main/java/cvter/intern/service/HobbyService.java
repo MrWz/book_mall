@@ -8,7 +8,7 @@ import java.util.List;
  * Created by cvter on 2017/5/17.
  */
 public interface HobbyService {
-    public int save(Hobby record);
+    int save(Hobby record);
 
     Hobby selectByUID(String uid);
 

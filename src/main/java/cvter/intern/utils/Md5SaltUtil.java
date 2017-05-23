@@ -13,14 +13,13 @@ public class Md5SaltUtil {
 
     private static Logger logger = LoggerFactory.getLogger(Md5SaltUtil.class);
 
-    private static final String[] GOAL = {"0", "1", "2", "3", "4", "5",
-            "6", "7", "8", "9", "a", "b", "c", "d", "e", "f"};
+    private static final String[] GOAL = {"0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "a", "b", "c", "d", "e", "f"};
 
     /**
      * 根据对象和盐值获取MD5
      *
      * @param object 明文
-     * @param salt 盐值
+     * @param salt   盐值
      * @return
      */
     public static String getMD5(String object, String salt) {
@@ -38,7 +37,7 @@ public class Md5SaltUtil {
      * 在加密对象后加盐
      *
      * @param object 明文
-     * @param salt 盐值
+     * @param salt   盐值
      * @return
      */
     private static String addSalt(String object, String salt) {

@@ -2,7 +2,7 @@ package cvter.intern.model;
 
 import java.util.Date;
 
-public class Book extends AbstractParent{
+public class Book extends AbstractParent {
 
     private String name;
 
@@ -13,6 +13,10 @@ public class Book extends AbstractParent{
     private Integer stock;
 
     private String description;
+
+    public Book() {
+
+    }
 
     public Book(String uid, String name, String author, Integer price, Integer stock, Boolean deleted, Date createTime, Date updateTime, String description) {
         this.uid = uid;
@@ -25,8 +29,6 @@ public class Book extends AbstractParent{
         this.updateTime = updateTime;
         this.description = description;
     }
-
-    public Book() {super();}
 
     public Book(String uid, Date createTime, Date updateTime, Boolean deleted, String name, String author, Integer price, Integer stock, String description) {
         super(uid, createTime, updateTime, deleted);

@@ -13,7 +13,7 @@ import java.util.List;
  */
 @Service
 
-public class PanicServiceImpl implements PanicService{
+public class PanicServiceImpl implements PanicService {
 
     @Autowired
     private PanicDao panicDao;
@@ -21,8 +21,7 @@ public class PanicServiceImpl implements PanicService{
     /**
      * 增加记录
      */
-    public int save(Panic record)
-    {
+    public int save(Panic record) {
         return panicDao.insert(record);
     }
 
@@ -36,7 +35,9 @@ public class PanicServiceImpl implements PanicService{
     /**
      * 更新记录
      */
-    public int update(Panic record) {return panicDao.updateByPrimaryKey(record);}
+    public int update(Panic record) {
+        return panicDao.updateByPrimaryKey(record);
+    }
 
     /**
      * 查询
