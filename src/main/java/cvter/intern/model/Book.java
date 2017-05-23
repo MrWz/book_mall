@@ -1,8 +1,9 @@
 package cvter.intern.model;
 
+import java.io.Serializable;
 import java.util.Date;
 
-public class Book extends AbstractParent{
+public class Book extends AbstractParent implements Serializable{
 
     private String name;
 
