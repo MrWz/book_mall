@@ -27,6 +27,12 @@ public class BookController extends BaseController {
     @Autowired
     private BookServiceImpl bookService;
 
+    /**
+     * 获取图书列表
+     *
+     * @param pn
+     * @return
+     */
     @ResponseBody
     @RequestMapping("/list")
     public Msg list(@RequestParam(defaultValue = "1") Integer pn) {
@@ -37,13 +43,95 @@ public class BookController extends BaseController {
         return Msg.success().add("page", page);
     }
 
+    /**
+     * 获取图书详情
+     *
+     * @param uid
+     * @return
+     */
     @ResponseBody
-    @RequestMapping(value = "/{uid}", method = RequestMethod.GET)
+    @RequestMapping(value = "/detail/{uid}", method = RequestMethod.GET)
     public Msg list(@PathVariable String uid) {
         Book book = bookService.selectByUid(uid);
 
         return Msg.success().add("book", book);
     }
+
+    /**
+     * 购买图书
+     *
+     * @param bookuid
+     * @param nums
+     * @return
+     */
+//    @Authorization
+    @ResponseBody
+    @RequestMapping(value = "/buy", method = RequestMethod.POST)
+    public Msg buy(@RequestParam String bookuid, @RequestParam String nums) {
+
+        return Msg.fail().setMessage("接口正在处理中");
+    }
+
+    /**
+     * 获取购物车详情
+     *
+     * @param bookuid
+     * @param nums
+     * @return
+     */
+//    @Authorization
+    @ResponseBody
+    @RequestMapping(value = "/shopcar", method = RequestMethod.GET)
+    public Msg shopCarGet(@RequestParam String bookuid, @RequestParam String nums) {
+
+        return Msg.fail().setMessage("接口正在处理中");
+    }
+
+    /**
+     * 删除购物车
+     *
+     * @param bookuid
+     * @param nums
+     * @return
+     */
+//    @Authorization
+    @ResponseBody
+    @RequestMapping(value = "/shopcar", method = RequestMethod.DELETE)
+    public Msg shopCarDelete(@RequestParam String bookuid, @RequestParam String nums) {
+
+        return Msg.fail().setMessage("接口正在处理中");
+    }
+
+    /**
+     * 更新购物车
+     *
+     * @param bookuid
+     * @param nums
+     * @return
+     */
+//    @Authorization
+    @ResponseBody
+    @RequestMapping(value = "/shopcar", method = RequestMethod.PUT)
+    public Msg shopCarPut(@RequestParam String bookuid, @RequestParam String nums) {
+
+        return Msg.fail().setMessage("接口正在处理中");
+    }
+
+    /**
+     * 添加购物车
+     *
+     * @param bookuid
+     * @param nums
+     * @return
+     */
+//    @Authorization
+    @ResponseBody
+    @RequestMapping(value = "/shopcar", method = RequestMethod.POST)
+    public Msg shopCarPost(@RequestParam String bookuid, @RequestParam String nums) {
+
+        return Msg.fail().setMessage("接口正在处理中");
+    }
+
 
     /**
      * 图书搜索
@@ -62,7 +150,7 @@ public class BookController extends BaseController {
             @RequestParam(required = false) String bookDescription) throws Exception {
 
         if (StringUtils.isEmpty(bookName) && StringUtils.isEmpty(bookAuthor) && StringUtils.isEmpty(bookDescription)) {
-            return Msg.fail().setCode(400);
+            return Msg.fail().setMessage("传参错误");
         }
 
         IndexBookService indexBookService = new IndexBookServiceImpl();

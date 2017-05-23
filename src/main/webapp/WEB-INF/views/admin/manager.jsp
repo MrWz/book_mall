@@ -27,14 +27,15 @@
         <p>
             <span><script>document.write(new Date());</script></span>
             <span class="pull-right">
-                    <button class="btn btn-primary" id="book_add_btn">新增</button>
-                    <button class="btn btn-danger">下架</button>
+                    <button class="btn btn-primary" id="book_add_btn">新增图书</button>
+                    <button class="btn btn-default" id="log_off_btn">退出管理</button>
                 </span>
         </p>
         <table class="table table-hover">
             <thead>
             <tr>
-                <th><input type="checkbox"/></th>
+                <%--<th><input type="checkbox"/></th>--%>
+                <th>#</th>
                 <th>书名</th>
                 <th>作者</th>
                 <th>价格</th>
@@ -114,6 +115,7 @@
             </div>
             <div class="modal-body">
                 <form class="form-group">
+                    <input type="hidden" name="uid" id="bookuid_input">
                     <div class="form-group">
                         <label for="">书名</label>
                         <input class="form-control" id="bookname_input" name="name" required type="text" placeholder="">
@@ -150,9 +152,32 @@
 <script>
 
     var totalRecord;
+    var currentPage;
+
     $(function () {
         //去首页
         to_page(1);
+
+        $("#log_off_btn").click(function () {
+            $.ajax({
+                type: "POST",
+                url: "/admin/v1/logoff",
+                data: null,
+                error: function (request) {
+                    alert("Connection error");
+                },
+                success: function (result) {
+
+                    if (result.code == 200) {
+                        alert(result.message);
+                        location.href = "/admin/login";
+                    } else {
+                        alert(result.message);
+                    }
+
+                }
+            });
+        });
     });
 
     function to_page(pn) {
@@ -164,6 +189,7 @@
                 alert("Connection error");
             },
             success: function (result) {
+
                 //1、解析并显示书籍
                 build_book_table(result);
 
@@ -181,17 +207,19 @@
         $("tbody").empty();
         var books = result.data.page.list;
         $.each(books, function (index, item) {
-            var bookCk = $("<td></td>").append($("<input type='checkbox'>"));
+            var bookCk = $("<td></td>").append(item.id);//$("<input type='checkbox'>")
             var bookName = $("<td></td>").append(item.name);
             var bookAuthor = $("<td></td>").append(item.author);
-            var bookPrice = $("<td></td>").append(item.price);
+            var bookPrice = $("<td></td>").append("￥" + item.price);
             var bookStock = $("<td></td>").append(item.stock);
             var editBtn = $("<button>编辑</button>").addClass("btn btn-info btn-sm edit_btn");
             editBtn.attr("edit-id", item.uid);
+            var panicBtn = $("<button>发布抢购</button>").addClass("btn btn-primary btn-sm panic_btn");
+            panicBtn.attr("panic-id", item.uid);
 
             var delBtn = $("<button>下架</button>").addClass("btn btn-danger btn-sm delete_btn");
             delBtn.attr("delete-id", item.uid).attr("bookname", item.name);
-            var bookTd = $("<td></td>").append(editBtn).append(" ").append(delBtn);
+            var bookTd = $("<td></td>").append(panicBtn).append(" ").append(editBtn).append(" ").append(delBtn);
             $("<tr></tr>").append(bookCk)
                 .append(bookName)
                 .append(bookAuthor)
@@ -249,6 +277,7 @@
         $.each(result.data.page.navigatepageNums, function (index, item) {
             var numLi = $("<li></li>").append($("<a></a>").append(item));
             if (result.data.page.pageNum == item) {
+                currentPage = item;
                 numLi.addClass("active");
             }
             numLi.click(function () {
@@ -290,13 +319,14 @@
     function getBook(bookuid) {
         $.ajax({
             type: "GET",
-            url: "/book/v1/" + bookuid,
+            url: "/book/v1/detail/" + bookuid,
             data: null,
             error: function (request) {
                 alert("Connection error");
             },
             success: function (result) {
                 var book = result.data.book;
+                $("#bookuid_input").val(book.uid);
                 $("#bookname_input").val(book.name);
                 $("#author_input").val(book.author);
                 $("#price_input").val(book.price);
@@ -306,15 +336,68 @@
         });
     }
     $("#book_update_btn").click(function () {
-        alert("OK");
-
+        $.ajax({
+            type: "PUT",
+            url: "/admin/v1/book/adjust",
+            data: $("#bookUpdateModal form").serialize(),
+            error: function (request) {
+                alert("Connection error");
+            },
+            success: function (result) {
+                alert(result.message);
+                $("#bookUpdateModal").modal("hide");
+                to_page(currentPage);
+            }
+        });
         return false;
     });
 
     $(document).on("click", ".delete_btn", function () {
 //        alert($(this).attr("delete-id"));
-        confirm("确定删除 " + $(this).attr("bookname") + " 吗？");
+        if (confirm("确定删除 " + $(this).attr("bookname") + " 吗？")) {
+            del_book($(this).attr("delete-id"))
+        }
+
+        return false;
     });
+    function del_book(uids) {
+        $.ajax({
+            type: "DELETE",
+            url: "/admin/v1/book/del/" + uids,
+            data: null,
+            error: function (request) {
+                alert("Connection error");
+            },
+            success: function (result) {
+                alert(result.message);
+                to_page(currentPage);
+            }
+        });
+    }
+
+    $(document).on("click", ".panic_btn", function () {
+//        alert($(this).attr("delete-id"));
+        if (confirm("确定发布 " + $(this).attr("panic-id") + " 抢购吗？")) {
+            panic_book($(this).attr("panic-id"))
+        }
+
+        return false;
+    });
+
+    function panic_book(uids) {
+        $.ajax({
+            type: "PUT",
+            url: "/admin/v1/book/panic/" + uids,
+            data: null,
+            error: function (request) {
+                alert("Connection error");
+            },
+            success: function (result) {
+                alert(result.message);
+            }
+        });
+    }
+
 </script>
 
 </body>

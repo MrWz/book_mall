@@ -1,5 +1,6 @@
 package cvter.intern.controller;
 
+import cvter.intern.authorization.annotation.Authorization;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 
@@ -12,13 +13,24 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @RequestMapping("/")
 public class GotoController extends BaseController {
 
-    @RequestMapping("/index")
+    @RequestMapping
     public String index() {
         return "index";
     }
 
-    @RequestMapping(value = "/admin/index")
+    @Authorization
+    @RequestMapping(value = "/admin")
     public String adminIndex() {
         return "admin/manager";
+    }
+
+    @RequestMapping(value = "/admin/login")
+    public String adminLogin() {
+        return "admin/login";
+    }
+
+    @RequestMapping(value = "/book/detail")
+    public String detail() {
+        return "detail";
     }
 }
