@@ -6,10 +6,12 @@ import cvter.intern.model.Msg;
 import cvter.intern.service.BookService;
 import cvter.intern.service.UserService;
 import cvter.intern.utils.UIDUtil;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import javax.sql.DataSource;
 import java.util.Date;
 
 /**
