@@ -1,6 +1,8 @@
 package cvter.intern.authorization.interceptor;
 
+import cvter.intern.authorization.manager.TokenManager;
 import cvter.intern.authorization.annotation.Authorization;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
@@ -16,6 +18,9 @@ import java.lang.reflect.Method;
  * 自定义拦截器，对请求进行身份验证
  */
 public class AuthorizationInterceptor extends HandlerInterceptorAdapter {
+
+    @Autowired
+    private TokenManager manager;
 
     public boolean preHandle(HttpServletRequest request,
                              HttpServletResponse response, Object handler) throws Exception {

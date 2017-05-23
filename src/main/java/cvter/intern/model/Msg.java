@@ -8,13 +8,16 @@ import java.util.Map;
  */
 public class Msg {
 
+    private static final int SUCCESS = 200;
+    private static final int FAIL = 500;
+
     private int code;
     private String message;
     private Map<String, Object> data = new HashMap<>();
 
     public static Msg success() {
         Msg msg = new Msg();
-        msg.setCode(200);
+        msg.setCode(SUCCESS);
         msg.setMessage("处理成功");
 
         return msg;
@@ -22,7 +25,7 @@ public class Msg {
 
     public static Msg fail() {
         Msg msg = new Msg();
-        msg.setCode(500);
+        msg.setCode(FAIL);
         msg.setMessage("处理异常");
 
         return msg;

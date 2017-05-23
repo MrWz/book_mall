@@ -10,8 +10,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
-import java.util.List;
 import java.util.Date;
+import java.util.List;
+
 /**
  * Created by cvter on 2017/5/17.
  */
@@ -22,7 +23,8 @@ public class BookServiceImpl implements BookService {
     @Resource
     private BookDao bookDao;
     @Resource
-    private  BookService bookService;
+    private BookService bookService;
+
     public BookServiceImpl() {
         super();
     }
@@ -31,41 +33,44 @@ public class BookServiceImpl implements BookService {
      * 增加记录
      */
     public boolean save(Book book) {
-        if(StringUtils.isAnyBlank(book.getName(),book.getAuthor(),book.getPrice()+"",book.getStock()+"",book.getDescription())){
+        if (StringUtils.isAnyBlank(book.getName(), book.getAuthor(), book.getPrice() + "", book.getStock() + "", book.getDescription())) {
             throw new ParameterException("参数为空");
         }
         book.setUid(UIDUtil.getRandomUID());
         return bookDao.insert(book);
     }
+
     /**
      * 删除图书
-     * */
-    public boolean bookDel(String uid){
-        if(StringUtils.isBlank(uid)){
+     */
+    public boolean bookDel(String uid) {
+        if (StringUtils.isBlank(uid)) {
             throw new ParameterException("参数为空");
         }
         return bookService.deleteByUid(uid);
     }
+
     /**
      * 修改价钱
-     * */
-    public boolean bookAdjustPrice(String uid,int price){
-        if(StringUtils.isAnyBlank(uid,price+"")){
+     */
+    public boolean bookAdjustPrice(String uid, int price) {
+        if (StringUtils.isAnyBlank(uid, price + "")) {
             throw new ParameterException("参数为空");
         }
-        Book book=bookService.selectByUid(uid);
+        Book book = bookService.selectByUid(uid);
         book.setPrice(price);
         book.setUpdateTime(new Date());
         return bookService.update(book);
     }
+
     /**
      * 修改库存
-     * */
-    public void bookAdjustStock(String uid,int stock){
-        if(StringUtils.isAnyBlank(uid,stock+"")){
+     */
+    public void bookAdjustStock(String uid, int stock) {
+        if (StringUtils.isAnyBlank(uid, stock + "")) {
             throw new ParameterException("参数为空");
         }
-        Book book=bookService.selectByUid(uid);
+        Book book = bookService.selectByUid(uid);
         book.setStock(stock);
         book.setUpdateTime(new Date());
         bookService.update(book);
@@ -101,6 +106,6 @@ public class BookServiceImpl implements BookService {
      * 查询全部记录，采用分表查询
      */
     public List<Book> selectByPaginate(int m, int n) {
-        return bookDao.selectByPaginate(m,n);
+        return bookDao.selectByPaginate(m, n);
     }
 }

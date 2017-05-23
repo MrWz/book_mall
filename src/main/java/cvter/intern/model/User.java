@@ -2,7 +2,7 @@ package cvter.intern.model;
 
 import java.util.Date;
 
-public class User extends AbstractParent{
+public class User extends AbstractParent {
 
     private String name;
 
@@ -17,6 +17,7 @@ public class User extends AbstractParent{
         this.name = name;
         this.password = password;
     }
+
     public String getName() {
         return name;
     }
@@ -31,5 +32,18 @@ public class User extends AbstractParent{
 
     public void setPassword(String password) {
         this.password = password == null ? null : password.trim();
+    }
+
+    @Override
+    public String toString() {
+        return "User{" +
+                "name='" + name + '\'' +
+                ", password='" + password + '\'' +
+                ", id=" + id +
+                ", uid='" + uid + '\'' +
+                ", createTime=" + createTime +
+                ", updateTime=" + updateTime +
+                ", deleted=" + deleted +
+                '}';
     }
 }

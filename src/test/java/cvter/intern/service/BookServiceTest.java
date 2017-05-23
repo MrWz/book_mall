@@ -14,14 +14,15 @@ import java.util.Date;
  * Created by cvter on 2017/5/22.
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = "classpath:spring-mybatis.xml")
+@ContextConfiguration(locations = "classpath:applicationContext.xml")
 public class BookServiceTest {
 
     @Autowired
-    BookService bookService;
+    private BookService bookService;
 
     @Test
     public void selectByUid() throws Exception {
+        System.out.println(bookService.selectByUid("fdb991ee90f4433ca6ac335ba6b6cd59"));
     }
 
     @Test

@@ -2,20 +2,21 @@ package cvter.intern.service;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import javax.annotation.Resource;
 
-import static org.junit.Assert.*;
-
 /**
- * Created by cvter on 2017/5/17.
+ * 测试DiscountService
  */
 @RunWith(SpringJUnit4ClassRunner.class)
+<<<<<<< HEAD
 @ContextConfiguration(locations = {"classpath:spring-mybatis.xml","classpath:spring-mvc.xml"})
+=======
+@ContextConfiguration(locations = "classpath:applicationContext.xml")
+>>>>>>> temp
 @Service
 public class DiscountServiceTest {
 
@@ -24,7 +25,7 @@ public class DiscountServiceTest {
 
     @Test
     public void save() throws Exception {
-       // discountService.save()
+        // discountService.save()
     }
 
     @Test

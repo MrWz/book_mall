@@ -2,7 +2,7 @@ package cvter.intern.model;
 
 import java.util.Date;
 
-public class Hobby extends AbstractParent{
+public class Hobby extends AbstractParent {
 
     private String description;
 
@@ -21,5 +21,17 @@ public class Hobby extends AbstractParent{
 
     public void setDescription(String description) {
         this.description = description == null ? null : description.trim();
+    }
+
+    @Override
+    public String toString() {
+        return "Hobby{" +
+                "description='" + description + '\'' +
+                ", id=" + id +
+                ", uid='" + uid + '\'' +
+                ", createTime=" + createTime +
+                ", updateTime=" + updateTime +
+                ", deleted=" + deleted +
+                '}';
     }
 }
