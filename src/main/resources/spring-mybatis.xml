@@ -11,6 +11,7 @@
 
     <!-- 自动扫描 -->
     <context:component-scan base-package="cvter.intern.service"/>
+    <context:component-scan base-package="cvter.intern.redis.service"/>
 
     <!-- 加载一个properties文件 -->
     <bean id="propertyConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
