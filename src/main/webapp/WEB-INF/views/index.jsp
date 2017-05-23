@@ -353,7 +353,7 @@
                 },
                 success: function (data) {
 //                $("#commonLayout_appcreshi").parent().html(data);
-                    alert(data.code + "---" + data.message + "---" +data.data.description);
+                    alert(data.code + "---" + data.message);
 
                 }
             });
@@ -374,7 +374,7 @@
                 },
                 success: function (data) {
 //                $("#commonLayout_appcreshi").parent().html(data);
-                    alert(data.code + "---" + data.message + "---" +data.data.description);
+                    alert(data.code + "---" + data.message);
                 }
             });
             return false;

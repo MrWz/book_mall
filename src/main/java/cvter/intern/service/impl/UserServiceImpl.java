@@ -1,6 +1,8 @@
 package cvter.intern.service.impl;
 
 import cvter.intern.dao.*;
+import cvter.intern.exception.BusinessException;
+import cvter.intern.exception.ExceptionCode;
 import cvter.intern.exception.ParameterException;
 import cvter.intern.model.*;
 import cvter.intern.service.UserService;
@@ -68,7 +70,8 @@ public class UserServiceImpl implements UserService {
     public Boolean checkLogin(String username, String password) {
         Boolean flag = StringUtils.isAnyBlank(username, password);
         if (flag) {
-            throw new ParameterException();
+            throw new ParameterException(ExceptionCode.EX_10001.getMessage());
+//             throw new BusinessException();
         }
         User user = selectByName(username);
         if (user == null) {//用户不存在

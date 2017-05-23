@@ -15,8 +15,17 @@ public enum ExceptionCode {
 
     //应该添加具体的业务异常
     EX_10000(10000, "业务异常"),
+
+
+
+
     EX_10001(10001, "参数异常"),
-    EX_10002(10002, "Unknown异常");
+    EX_10002(10002, "Unknown异常"),
+    /*
+    * 数字2开头为普通用户异常
+    * 数字3开头为管理员用户异常
+    * */
+    EX_20000(20000, "普通用户异常");
 
     private int code;
     private String message;
@@ -28,8 +37,8 @@ public enum ExceptionCode {
      * @param message 状态码描述
      */
     ExceptionCode(int code, String message) {
-        this.code = code;
-        this.message = message;
+        this.code=code;
+        this.message=message;
     }
 
     /**

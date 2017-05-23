@@ -2,6 +2,7 @@ package cvter.intern.controller;
 
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import cvter.intern.authorization.annotation.Authorization;
 import cvter.intern.lucene.model.BookIndex;
 import cvter.intern.lucene.service.IndexBookService;
 import cvter.intern.lucene.service.impl.IndexBookServiceImpl;
@@ -31,20 +32,20 @@ public class BookController extends BaseController {
 
     @ResponseBody
     @RequestMapping("/list")
-    public Msg list(){
-        List<Book> alllBook=bookService.selectByPaginate(0,4);
-        PageHelper.startPage(2,5);
+    public Msg list() {
+        List<Book> alllBook=bookService.selectByPaginate(0, 4);
+        PageHelper.startPage(2, 5);
         List<Book> allBook=bookService.selectAll();
-        PageInfo page = new PageInfo(allBook, 5);
+        PageInfo page=new PageInfo(allBook, 5);
 
-        for(Book item : allBook) {
+        for (Book item : allBook) {
             System.out.println(item.getId());
         }
-        long total = page.getTotal(); //获取总记录数
-       return Msg.success().add("page",page);
+        long total=page.getTotal(); //获取总记录数
+        return Msg.success().add("page", page);
 //        return "list";
     }
-    
+
     /**
      * 图书搜索
      *
@@ -54,20 +55,20 @@ public class BookController extends BaseController {
      * @return
      */
     @ResponseBody
-    @RequestMapping(path = {"/search"})
+    @RequestMapping(path={"/search"})
     public Msg bookSearch(
-            @RequestParam(value = "pn", defaultValue = "1") Integer pn,
-            @RequestParam(required = false) String bookName,
-            @RequestParam(required = false) String bookAuthor,
-            @RequestParam(required = false) String bookDescription) throws Exception {
+            @RequestParam(value="pn", defaultValue="1") Integer pn,
+            @RequestParam(required=false) String bookName,
+            @RequestParam(required=false) String bookAuthor,
+            @RequestParam(required=false) String bookDescription) throws Exception {
 
         if (StringUtils.isEmpty(bookName) && StringUtils.isEmpty(bookAuthor) && StringUtils.isEmpty(bookDescription)) {
             return Msg.fail().setCode(400);
         }
 
-        IndexBookService indexBookService = new IndexBookServiceImpl();
+        IndexBookService indexBookService=new IndexBookServiceImpl();
 
-        List<Book> bookInfos = indexBookService.searchBookPaginated("summary", BookIndex.DESCRIPTION, pn, 5);
+        List<Book> bookInfos=indexBookService.searchBookPaginated("summary", BookIndex.DESCRIPTION, pn, 5);
 
         return Msg.success().add("bookList", bookInfos);
 
@@ -81,18 +82,19 @@ public class BookController extends BaseController {
      * @param tokenUid
      * @return
      */
+    @Authorization
     @ResponseBody
-    @RequestMapping(path = {"/panic"}, method = RequestMethod.POST)
+    @RequestMapping(path={"/panic"}, method=RequestMethod.POST)
     public Msg bookPanic(@RequestParam String userUid,
                          @RequestParam String bookUid,
                          @RequestParam String tokenUid) {
 
-        List<Book> books = new ArrayList<>();
+        List<Book> books=new ArrayList<>();
         books.add(new Book());
         books.add(new Book());
         books.add(new Book());
 
-        return Msg.success().add("fromServer", "Hello").add("books", books);
+        return Msg.success().add("books", books);
 
     }
 }
