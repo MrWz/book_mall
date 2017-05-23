@@ -1,8 +1,8 @@
 package cvter.intern.controller;
 
+import cvter.intern.authorization.annotation.Authorization;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 
 /**
  * 该Controller用于页面的跳转
@@ -13,20 +13,24 @@ import org.springframework.web.bind.annotation.RequestMethod;
 @RequestMapping("/")
 public class GotoController extends BaseController {
 
-    @RequestMapping("/index")
+    @RequestMapping
     public String index() {
         return "index";
     }
 
-//    @RequestMapping(value = "/admin/index",method= RequestMethod.GET)
-//    public String adminLogin() {
-//        //System.out.println("++++++++++");
-//        return "adminLogin";
-//    }
-
-    @RequestMapping(value = "/admin/index")
+    @Authorization
+    @RequestMapping(value = "/admin")
     public String adminIndex() {
-        System.out.println("-------");
         return "admin/manager";
+    }
+
+    @RequestMapping(value = "/admin/login")
+    public String adminLogin() {
+        return "admin/login";
+    }
+
+    @RequestMapping(value = "/book/detail")
+    public String detail() {
+        return "detail";
     }
 }

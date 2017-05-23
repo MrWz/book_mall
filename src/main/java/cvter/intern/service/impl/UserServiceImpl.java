@@ -28,6 +28,8 @@ public class UserServiceImpl implements UserService {
     @Override
     public Boolean checkLogin(String username, String password) {
             User user =selectByName(username);
+
+
             if(user ==null){//用户不存在
                 return false;
             } else{//用户已存在

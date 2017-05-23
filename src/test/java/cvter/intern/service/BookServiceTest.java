@@ -1,43 +1,61 @@
 package cvter.intern.service;
 
-import org.junit.Assert;
+import cvter.intern.model.Book;
+import cvter.intern.utils.UIDUtil;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.test.context.transaction.TransactionConfiguration;
-import org.springframework.test.context.web.WebAppConfiguration;
-import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Date;
 
 /**
  * Created by cvter on 2017/5/22.
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = "classpath:spring-mybatis.xml")
-@Service
 public class BookServiceTest {
 
     @Autowired
-    private BookService bookService;
-
-
+    BookService bookService;
 
     @Test
-    public void testDelete(){
-        Object[][] params = {
-                {"1",0},
-                {"2",0},
-                {"3",1},
-                {"51312",1},
-                {"15135126",1},
-        };
-        for (int i = 0; i < params.length; i++) {
-            String id = (String) params[i][0];
-            int expResult = (int) params[i][1];
-            Boolean status = bookService.deleteByUid(id);
-            Assert.assertEquals(id,status);
-        }
+    public void selectByUid() throws Exception {
     }
+
+    @Test
+    public void selectByPaginate() throws Exception {
+    }
+
+    @Test
+    public void save() throws Exception {
+        for (int i = 0; i < 1000; i++) {
+            Book book = new Book();
+            book.setUid(UIDUtil.getRandomUID());
+            book.setName("书名" + (i + 1));
+            book.setAuthor("作者" + (i + 1));
+            book.setDescription("描述" + (i + 1));
+            book.setPrice(10 + i);
+            book.setStock(i + 1);
+            book.setDeleted(false);
+            book.setCreateTime(new Date());
+            book.setUpdateTime(new Date());
+            bookService.save(book);
+        }
+        System.out.println("OK");
+    }
+
+    @Test
+    public void update() throws Exception {
+    }
+
+    @Test
+    public void deleteByUid() throws Exception {
+    }
+
+    @Test
+    public void selectAll() throws Exception {
+    }
+
 }
