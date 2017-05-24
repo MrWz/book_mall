@@ -16,7 +16,17 @@ public enum ExceptionCode {
     //应该添加具体的业务异常
     EX_10000(10000, "业务异常"),
     EX_10001(10001, "参数异常"),
-    EX_10002(10002, "Unknown异常");
+    EX_10002(10002, "Unknown异常"),
+
+    /*
+   * 普通用户异常
+   * */
+    EX_20001(20001, "权限异常"),//管理员帐号不能从普通用户登录界面登录
+    EX_20002(20002, "当前访问量过大,请您在试一下"),//购买时未获得锁
+    /*
+    * 管理员异常
+    * */
+    EX_30001(30001, "权限异常");//管理员帐号不能从普通用户登录界面登录
 
     private int code;
     private String message;
@@ -28,8 +38,8 @@ public enum ExceptionCode {
      * @param message 状态码描述
      */
     ExceptionCode(int code, String message) {
-        this.code = code;
-        this.message = message;
+        this.code=code;
+        this.message=message;
     }
 
     /**

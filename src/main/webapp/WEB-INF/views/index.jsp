@@ -88,6 +88,7 @@
         </div>
 
         <div class="col-md-6 column">
+
             <div class="row" id="bookList"></div>
 
             <div class="text-right" id="page_nav_area"></div>
@@ -368,12 +369,12 @@
                             $('#loginModal').modal('hide');
                             $('.unLogin').hide();
                             $('.Login a').text(data.data.userinfo.name);
+                            alert(data.message);
                             break;
                         case (500):
                             alert(data.message);
                             break;
                     }
-
                 }
             });
             return false;
@@ -393,7 +394,8 @@
                         case (200):
                             $('#loginModal').modal('hide');
                             $('.unLogin').hide();
-                            $('.Login a').text("nihao");
+                            $('.Login a').text(data.data.userinfo.name);
+                            alert(data.message);
                             break;
                         case (500):
                             alert(data.message);
