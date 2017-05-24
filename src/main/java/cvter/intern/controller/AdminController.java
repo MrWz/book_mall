@@ -1,14 +1,15 @@
 package cvter.intern.controller;
 
 import cvter.intern.authorization.annotation.Authorization;
+import cvter.intern.authorization.manager.TokenManager;
+import cvter.intern.authorization.model.TokenModel;
 import cvter.intern.exception.BusinessException;
 import cvter.intern.model.Book;
 import cvter.intern.model.Msg;
-import cvter.intern.model.Panic;
+import cvter.intern.model.User;
 import cvter.intern.service.BookService;
 import cvter.intern.service.PanicService;
 import cvter.intern.service.UserService;
-import cvter.intern.utils.UIDUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -34,11 +35,18 @@ public class AdminController extends BaseController {
     @Resource
     private PanicService panicService;
 
+    @Autowired
+    TokenManager tokenManager;
+
     @ResponseBody
     @RequestMapping(value = "/login", method = RequestMethod.POST)
     public Msg login(HttpSession session, @RequestParam String username, @RequestParam String password) {
         if (userService.checkAdimLogin(username, password)) {
-            session.setAttribute("isLogin", "true");
+            User user = userService.selectByName(username);
+            // 生成一个 token，保存用户登录状态
+            TokenModel model = tokenManager.createToken(user.getUid());
+            session.setAttribute("UID", model.toString());
+            session.setAttribute("user", user);
             return Msg.success().setMessage("您已登录成功");
         }
         throw new BusinessException(50000, "用户名或密码错误");
@@ -48,11 +56,13 @@ public class AdminController extends BaseController {
     @ResponseBody
     @RequestMapping(value = "/logoff", method = RequestMethod.POST)
     public Msg logoff(HttpSession session) {
-        session.removeAttribute("isLogin");
+        User user = (User) session.getAttribute("user");
+
+        tokenManager.deleteToken(user.getUid());
         return Msg.success().setMessage("成功退出");
     }
 
-//    @Authorization
+    @Authorization
     @ResponseBody
     @RequestMapping(value = "/book/add", method = RequestMethod.POST)
     public Msg bookAdd(Book book) {
@@ -86,7 +96,6 @@ public class AdminController extends BaseController {
     @RequestMapping(value="/book/panic",method = RequestMethod.POST)
     public  Msg bookPanic(int nums,int curPrice,String startTime,String endTime, String uid){
 
-        //System.out.println(strToDateLong(pbook.getStartTime()));
         if(panicService.bookPanic(nums,curPrice,startTime,endTime,uid)){
             return Msg.success().setMessage("抢购发布成功");
         }

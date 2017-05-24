@@ -18,50 +18,54 @@ import java.util.List;
  */
 @Service
 public class UserServiceImpl implements UserService {
+
     @Autowired
     private UserDao userDao;
 
-
-    /*
-         * 验证登录是否成功
-         * */
+    /**
+     * 验证登录是否成功
+     *
+     * @param username
+     * @param password
+     * @return
+     */
     @Override
     public Boolean checkLogin(String username, String password) {
-            User user =selectByName(username);
+        User user = selectByName(username);
 
 
-            if(user ==null){//用户不存在
-                return false;
-            } else{//用户已存在
-                String mdPwd=user.getPassword();
-                String uid=user.getUid();
-                String mdPassword= Md5SaltUtil.getMD5(password,uid);
-                if(mdPwd.equals(mdPassword)){
-                    return true;
-                } else {//密码错误
-                    return false;
-                }
-            }
+        if (user == null) { //用户不存在
+            return false;
+        } else { //用户已存在
+            String mdPwd = user.getPassword();
+            String uid = user.getUid();
+            String mdPassword = Md5SaltUtil.getMD5(password, uid);
+
+            return mdPwd.equals(mdPassword);
+        }
     }
 
-    /*
+    /**
      * 验证注册是否成功
-     * */
+     *
+     * @param username
+     * @param password
+     * @return
+     */
     @Override
     public Boolean checkRegister(String username, String password) {
-            User userInfo=selectByName(username);
-            if(userInfo==null){//用户不存在
-                String uid=UIDUtil.getRandomUID();
-                String mdPassword= Md5SaltUtil.getMD5(password,uid);
-                Date date=new Date();
-                User user=new User(uid,username,mdPassword,false,date,date);
-                save(user);
-                return true;
-            }
-            else{//用户已存在
-                return false;
-            }
+        User userInfo = selectByName(username);
+        if (userInfo == null) { //用户不存在
+            String uid = UIDUtil.getRandomUID();
+            String mdPassword = Md5SaltUtil.getMD5(password, uid);
+            Date date = new Date();
+            User user = new User(uid, username, mdPassword, false, date, date);
+            save(user);
+            return true;
+        } else { //用户已存在
+            return false;
         }
+    }
 
     @Override
     public User selectByName(String name) {
@@ -71,26 +75,29 @@ public class UserServiceImpl implements UserService {
 
     /**
      * 增加记录
+     *
+     * @param record
+     * @return
      */
-
     public int save(User record) {
         return userDao.insert(record);
     }
 
-//        @Override
-public boolean checkAdimLogin(String username, String password) {
+    //        @Override
+    public boolean checkAdimLogin(String username, String password) {
 
 
-      if(StringUtils.isAnyEmpty(username,password)){
-          throw new ParameterException("用户名或密码不为空");
-      }
-      User userInfo=userDao.selectByName(username);
+        if (StringUtils.isAnyEmpty(username, password)) {
+            throw new ParameterException("用户名或密码不为空");
+        }
+        User userInfo = userDao.selectByName(username);
 
-      if(password.equals(userInfo.getPassword())){
+        if (password.equals(userInfo.getPassword())) {
             return true;
         }
-       return false;
-}
+        return false;
+    }
+
     /**
      * 删除记录
      */
@@ -115,7 +122,9 @@ public boolean checkAdimLogin(String username, String password) {
     /**
      * 查询全部记录，采用分表查询
      */
-    public List<User> selectAll(int m, int n) {return userDao.selectAll(m,n);}
+    public List<User> selectAll(int m, int n) {
+        return userDao.selectAll(m, n);
+    }
 
     /**
      * 验证用户登录

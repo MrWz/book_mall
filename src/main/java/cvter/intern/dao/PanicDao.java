@@ -10,7 +10,7 @@ public interface PanicDao {
     boolean insert(Panic record);
     
     /**
-     * 删除记录
+     * 删除记录（减库存）
      */
     int deleteByPrimaryKey(String uid);
 
@@ -20,7 +20,7 @@ public interface PanicDao {
     int updateByPrimaryKey(Panic record);
 
     /**
-     * 查询
+     * 查询抢购对象
      */
     Panic selectByPrimaryKey(String  uid);
 

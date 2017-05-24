@@ -2,7 +2,7 @@ package cvter.intern.model;
 
 import java.util.Date;
 
-public class Role extends AbstractParent{
+public class Role extends AbstractParent {
     private String description;
 
     public Role() {
@@ -20,5 +20,17 @@ public class Role extends AbstractParent{
 
     public void setDescription(String description) {
         this.description = description == null ? null : description.trim();
+    }
+
+    @Override
+    public String toString() {
+        return "Role{" +
+                "description='" + description + '\'' +
+                ", id=" + id +
+                ", uid='" + uid + '\'' +
+                ", createTime=" + createTime +
+                ", updateTime=" + updateTime +
+                ", deleted=" + deleted +
+                '}';
     }
 }

@@ -21,10 +21,14 @@ public interface BookService {
 
     List<Book> selectAll();
 
-    public boolean bookDel(String uid);
+    boolean bookDel(String uid);
 
-    public boolean bookAdjustPrice(String uid,int price);
+    boolean bookAdjustPrice(String uid, int price);
 
+<<<<<<< HEAD
     public void bookAdjustStock(String uid,int stock);
 
+=======
+    void bookAdjustStock(String uid, int stock);
+>>>>>>> d0177a6af3a4d86a3d13c1a3e6f1d1332e4e3e09
 }

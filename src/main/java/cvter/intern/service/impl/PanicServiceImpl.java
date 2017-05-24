@@ -6,7 +6,7 @@ import cvter.intern.model.Book;
 import cvter.intern.model.Panic;
 import cvter.intern.service.BookService;
 import cvter.intern.service.PanicService;
-import cvter.intern.utils.TIMEUtil;
+import cvter.intern.utils.TimeUtil;
 import cvter.intern.utils.UIDUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.lucene.util.LuceneTestCase;
@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
+import java.sql.Time;
 import java.text.ParsePosition;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -25,7 +26,7 @@ import java.util.List;
  */
 @Service
 
-public class PanicServiceImpl implements PanicService{
+public class PanicServiceImpl implements PanicService {
 
     @Autowired
     private PanicDao panicDao;
@@ -52,7 +53,9 @@ public class PanicServiceImpl implements PanicService{
     /**
      * 更新记录
      */
-    public int update(Panic record) {return panicDao.updateByPrimaryKey(record);}
+    public int update(Panic record) {
+        return panicDao.updateByPrimaryKey(record);
+    }
 
     /**
      * 查询
@@ -105,7 +108,7 @@ public class PanicServiceImpl implements PanicService{
         book.setUpdateTime(date);
         bookService.update(book);
 
-        Panic pbook=new Panic(nums,curPrice, TIMEUtil.strToDateLong(startTime),TIMEUtil.strToDateLong(endTime),date,date);
+        Panic pbook=new Panic(nums,curPrice, TimeUtil.strToDateLong(startTime),TimeUtil.strToDateLong(endTime),date,date);
         pbook.setUid(UIDUtil.getRandomUID());
         return panicService.save(pbook);
     }
