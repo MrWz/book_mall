@@ -25,16 +25,15 @@ public class IndexBookServiceImpl implements IndexBookService {
 
     @Override
     public List<Book> searchBookPaginated(String text, String queryField, int currentPage, int pageSize) throws Exception {
-        List<Book> Books = null;
 
         return getBook(indexManager.searchIndexPaginated(text, queryField, currentPage, pageSize));
     }
 
     private List<Book> getBook(List<Index> bookIndeics) {
-        List<Book> Books = null;
+        List<Book> books = null;
 
         if (bookIndeics.size() > 0) {
-            Books = new ArrayList<>();
+            books = new ArrayList<>();
             for (Index index :
                     bookIndeics) {
                 if (index instanceof BookIndex) {
@@ -43,10 +42,10 @@ public class IndexBookServiceImpl implements IndexBookService {
                     book.setName(((BookIndex) index).getName());
                     book.setAuthor(((BookIndex) index).getAuthor());
                     book.setDescription(((BookIndex) index).getDescription());
-                    Books.add(book);
+                    books.add(book);
                 }
             }
         }
-        return Books;
+        return books;
     }
 }

@@ -198,13 +198,13 @@
 
                     <div class="form-group">
                         <label for="">书Uid</label>
-                        <input class="form-control" name="bookUid" type="text" required placeholder="6-15位字母或数字">
+                        <input class="form-control" name="bookuid" type="text" required placeholder="6-15位字母或数字">
                         <span id="" class="help-block text-warning"></span>
                     </div>
 
                     <div class="form-group">
                         <label for="">购买数量</label>
-                        <input class="form-control" name="num" type="text" required placeholder="6-15位字母或数字">
+                        <input class="form-control" name="nums" type="text" required placeholder="6-15位字母或数字">
                         <span id="" class="help-block text-warning"></span>
                     </div>
                     <div class="modal-body">
@@ -263,7 +263,7 @@
         $('#buyBtn').click(function () {
             $.ajax({
                 type: "POST",
-                url: "/user/v1/buy",
+                url: "/book/v1/buy",
                 data: $('#buyModal form').serialize(),// 你的formid
                 error: function (request) {
                     alert("请您先去登录");

@@ -21,9 +21,9 @@ public interface BookService {
 
     List<Book> selectAll();
 
-    public boolean bookDel(String uid);
+    boolean bookDel(String uid);
 
-    public boolean bookAdjustPrice(String uid,int price);
+    boolean bookAdjustPrice(String uid, int price);
 
-    public void bookAdjustStock(String uid,int stock);
+    void bookAdjustStock(String uid, int stock);
 }

@@ -1,5 +1,7 @@
 package cvter.intern.service.impl;
 
+import cvter.intern.authorization.manager.RedisTokenManager;
+import cvter.intern.authorization.model.TokenModel;
 import cvter.intern.dao.*;
 import cvter.intern.exception.BusinessException;
 import cvter.intern.exception.ExceptionCode;
@@ -7,16 +9,16 @@ import cvter.intern.exception.ParameterException;
 import cvter.intern.model.*;
 import cvter.intern.service.UserService;
 import cvter.intern.utils.Md5SaltUtil;
-import cvter.intern.utils.RedisLock;
 import cvter.intern.utils.UIDUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
+import redis.clients.jedis.JedisPool;
 
 import java.util.Date;
 import java.util.List;
 
+import static cvter.intern.exception.ExceptionCode.EX_10001;
 import static cvter.intern.utils.RoleUtil.ROLE_1;
 import static cvter.intern.utils.RoleUtil.ROLE_2;
 
@@ -41,7 +43,11 @@ public class UserServiceImpl implements UserService {
     private UserBookDao userBookDao;
 
     @Autowired
-    RedisTemplate redisTemplate;
+    private JedisPool jedisPool;
+
+
+    @Autowired
+    RedisTokenManager redisTokenManager;
 
     /*
     * 购买图书(订单处理)
@@ -50,32 +56,25 @@ public class UserServiceImpl implements UserService {
     public Boolean buy(String userUid, String bookUid, int num) {
         Boolean flag=StringUtils.isAnyBlank(userUid, bookUid);
         if (flag) {
-            System.out.println("-------------参数为空");
-            throw new ParameterException();
+            throw new ParameterException(EX_10001.getMessage());
         }
         Date date=new Date();
         Book book=bookDao.selectByPrimaryKey(bookUid);
 
-        RedisLock lock = new RedisLock(redisTemplate, "mykey", 10000, 20000);
-
-        try{
-            if(lock.lock()){
-                //需要同步代码
-                int newStock=book.getStock() - num;
-                if (newStock < 0) {
-                    return false;
-                }
-                book.setStock(newStock);
-                book.setUpdateTime(date);
-                bookDao.updateByPrimaryKey(book);
-                System.out.println("----------------------同步代码");
-
+        boolean lockStatus=redisTokenManager.getLock("redisKey","had");
+        if(lockStatus){
+            int newStock=book.getStock() - num;
+            if (newStock < 0) {
+                return false;
             }
-        }catch (InterruptedException e) {
-                e.printStackTrace();
-            }finally {
-            lock.unlock();
+            book.setStock(newStock);
+            book.setUpdateTime(date);
+            bookDao.updateByPrimaryKey(book);
         }
+        else{
+           throw new BusinessException(ExceptionCode.EX_20002.getCode(), ExceptionCode.EX_20002.getMessage());
+        }
+        redisTokenManager.unLock("redisKey");
 
         List<UserBook> userBookList=userBookDao.selectByUserUid(userUid);
         for (UserBook tmp : userBookList) {
@@ -95,7 +94,7 @@ public class UserServiceImpl implements UserService {
     public Boolean checkLogin(String username, String password) {
         Boolean flag=StringUtils.isAnyBlank(username, password);
         if (flag) {
-            throw new ParameterException(ExceptionCode.EX_10001.getMessage());
+            throw new ParameterException(EX_10001.getMessage());
         }
         User user=selectByName(username);
         if (user != null) {

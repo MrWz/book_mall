@@ -177,7 +177,6 @@ public class RedisLock {
                 使用随机的等待时间可以一定程度上保证公平性
              */
             Thread.sleep(DEFAULT_ACQUIRY_RESOLUTION_MILLIS);
-
         }
         return false;
     }

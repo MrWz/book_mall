@@ -39,11 +39,11 @@ public class DbDataSource implements DataSource {
      */
     public void loadDataFromDB() {
 
-        ApplicationContext context = new ClassPathXmlApplicationContext("classpath:spring-mybatis.xml");
+        ApplicationContext context = new ClassPathXmlApplicationContext("classpath:applicationContext.xml");
         BookService bookService = context.getBean(BookService.class);
 
         indices = new ArrayList<>();
-        List<Book> books = bookService.selectByPaginate(0,1);
+        List<Book> books = bookService.selectByPaginate(0, 1);
         for (int i = 1; i < books.size(); i++) {
             Book book = books.get(i);
             indices.add(new BookIndex(book.getUid(), book.getName(), book.getAuthor(), book.getDescription()));

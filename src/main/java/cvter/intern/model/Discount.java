@@ -2,7 +2,7 @@ package cvter.intern.model;
 
 import java.util.Date;
 
-public class Discount extends AbstractParent{
+public class Discount extends AbstractParent {
 
     private Integer discountPrice;
 
@@ -54,5 +54,20 @@ public class Discount extends AbstractParent{
 
     public void setEndTime(Date endTime) {
         this.endTime = endTime;
+    }
+
+    @Override
+    public String toString() {
+        return "Discount{" +
+                "discountPrice=" + discountPrice +
+                ", id=" + id +
+                ", discountNum=" + discountNum +
+                ", validTime=" + validTime +
+                ", uid='" + uid + '\'' +
+                ", endTime=" + endTime +
+                ", createTime=" + createTime +
+                ", updateTime=" + updateTime +
+                ", deleted=" + deleted +
+                '}';
     }
 }

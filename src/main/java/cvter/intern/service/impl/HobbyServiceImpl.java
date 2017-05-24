@@ -12,8 +12,9 @@ import java.util.List;
  * Created by cvter on 2017/5/17.
  */
 @Service
-public class HobbyServiceImpl implements HobbyService{
-@Autowired
+public class HobbyServiceImpl implements HobbyService {
+
+    @Autowired
     private HobbyDao hobbyDao;
 
     /**
@@ -33,7 +34,9 @@ public class HobbyServiceImpl implements HobbyService{
     /**
      * 更新记录
      */
-    public int update(Hobby record) {return hobbyDao.updateByPrimaryKey(record);}
+    public int update(Hobby record) {
+        return hobbyDao.updateByPrimaryKey(record);
+    }
 
     /**
      * 查询

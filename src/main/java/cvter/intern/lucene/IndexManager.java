@@ -19,7 +19,7 @@ import java.util.Properties;
  */
 public class IndexManager {
 
-    public static String INDEX_DIR = null;         //索引目录
+    public static String INDEX_DIR = "";         //索引目录
     public static int nDocs;                                    //搜索数目
 
     private static IndexDao indexDao;
@@ -30,7 +30,7 @@ public class IndexManager {
 
         //加载配置文件
         Properties prop = new Properties();
-        InputStream is = IndexManager.class.getClassLoader().getResourceAsStream("common.properties");
+        InputStream is = IndexManager.class.getClassLoader().getResourceAsStream("conf/common.properties");
 
         prop.load(is);
 
