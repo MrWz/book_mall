@@ -12,7 +12,8 @@ import java.util.List;
  * Created by cvter on 2017/5/17.
  */
 @Service
-public class DiscountServiceImpl implements DiscountService{
+public class DiscountServiceImpl implements DiscountService {
+
     @Autowired
     private DiscountDao discountDao;
 

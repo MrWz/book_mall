@@ -2,7 +2,7 @@ package cvter.intern.model;
 
 import java.util.Date;
 
-public class Panic extends AbstractParent{
+public class Panic extends AbstractParent {
     private Byte nums;
 
     private Integer curPrice;
@@ -55,4 +55,18 @@ public class Panic extends AbstractParent{
         this.endTime = endTime;
     }
 
+    @Override
+    public String toString() {
+        return "Panic{" +
+                "nums=" + nums +
+                ", curPrice=" + curPrice +
+                ", id=" + id +
+                ", startTime=" + startTime +
+                ", endTime=" + endTime +
+                ", uid='" + uid + '\'' +
+                ", createTime=" + createTime +
+                ", updateTime=" + updateTime +
+                ", deleted=" + deleted +
+                '}';
+    }
 }

@@ -3,12 +3,12 @@ package cvter.intern.lucene.model;
 /**
  * Created by cvter on 2017/5/18.
  */
-public class BookIndex implements Index{
+public class BookIndex implements Index {
 
-    public static String UID = "uid";
-    public static String NAME = "name";
-    public static String AUTHOR = "author";
-    public static String DESCRIPTION = "description";
+    public static final String UID = "uid";
+    public static final String NAME = "name";
+    public static final String AUTHOR = "author";
+    public static final String DESCRIPTION = "description";
 
     private String uid;
     private String name;
