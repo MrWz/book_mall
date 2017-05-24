@@ -104,13 +104,13 @@
     </if>
   </delete>
   <insert id="insert" parameterType="cvter.intern.model.Panic" >
-    insert into panic_info (id, uid, nums, 
+    insert into panic_info (uid, nums,
       cur_price, start_time, end_time, 
-      deleted, create_time, update_time
+      create_time, update_time
       )
-    values (#{id,jdbcType=INTEGER}, #{uid,jdbcType=VARCHAR}, #{nums,jdbcType=TINYINT}, 
-      #{curPrice,jdbcType=INTEGER}, #{startTime,jdbcType=TIMESTAMP}, #{endTime,jdbcType=TIMESTAMP}, 
-      #{deleted,jdbcType=BIT}, #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP}
+    values (#{uid,jdbcType=VARCHAR}, #{nums,jdbcType=TINYINT},
+      #{curPrice,jdbcType=INTEGER}, #{startTime,jdbcType=TIMESTAMP}, #{endTime,jdbcType=TIMESTAMP},
+      now(), now()
       )
   </insert>
   <insert id="insertSelective" parameterType="cvter.intern.model.Panic" >

@@ -3,7 +3,7 @@ package cvter.intern.model;
 import java.util.Date;
 
 public class Panic extends AbstractParent{
-    private Byte nums;
+    private int nums;
 
     private Integer curPrice;
 
@@ -15,15 +15,16 @@ public class Panic extends AbstractParent{
         super();
     }
 
-    public Panic(String uid, Byte nums, Integer curPrice, Date startTime, Date endTime, Boolean deleted, Date createTime, Date updateTime) {
-        super(uid, createTime, updateTime, deleted);
+    public Panic(int nums, int curPrice, Date startTime, Date endTime,Date createTime, Date updateTime) {
+        this.createTime = createTime;
+        this.updateTime = updateTime;
         this.nums = nums;
         this.curPrice = curPrice;
         this.startTime = startTime;
         this.endTime = endTime;
     }
 
-    public Byte getNums() {
+    public int getNums() {
         return nums;
     }
 
@@ -31,7 +32,7 @@ public class Panic extends AbstractParent{
         this.nums = nums;
     }
 
-    public Integer getCurPrice() {
+    public int getCurPrice() {
         return curPrice;
     }
 

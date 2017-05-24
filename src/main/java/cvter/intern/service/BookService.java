@@ -26,4 +26,5 @@ public interface BookService {
     public boolean bookAdjustPrice(String uid,int price);
 
     public void bookAdjustStock(String uid,int stock);
+
 }

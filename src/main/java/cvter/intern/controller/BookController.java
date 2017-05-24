@@ -3,10 +3,7 @@ package cvter.intern.controller;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import cvter.intern.authorization.annotation.Authorization;
-import cvter.intern.lucene.IndexManager;
-import cvter.intern.lucene.dao.impl.IndexDaoImpl;
 import cvter.intern.lucene.model.BookIndex;
-import cvter.intern.lucene.model.Index;
 import cvter.intern.lucene.service.IndexBookService;
 import cvter.intern.lucene.service.impl.IndexBookServiceImpl;
 import cvter.intern.model.Book;
@@ -15,10 +12,7 @@ import cvter.intern.service.impl.BookServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.StringUtils;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,29 +27,111 @@ public class BookController extends BaseController {
     @Autowired
     private BookServiceImpl bookService;
 
+    /**
+     * 获取图书列表
+     *
+     * @param pn
+     * @return
+     */
     @ResponseBody
     @RequestMapping("/list")
-    public Msg list(){
-//        List<Book> allBook=bookService.selectByPaginate(0,4);
-        PageHelper.startPage(2,5);
-        List<Book> allBook=bookService.selectAll();
+    public Msg list(@RequestParam(defaultValue = "1") Integer pn) {
+        PageHelper.startPage(pn, 7);
+        List<Book> allBook = bookService.selectAll();
         PageInfo page = new PageInfo(allBook, 5);
 
-        for(Book item : allBook) {
-            System.out.println(item.getId());
-        }
-        long total = page.getTotal(); //获取总记录数
-        System.out.println("页数：" + page.getPageNum());
-        System.out.println("页数：" + page.getPages());
-        System.out.println("页大小：" + page.getPageSize());
-        System.out.println("EndRoW：" + page.getEndRow());
-        System.out.println("PrePage：" + page.getPrePage());
-        System.out.println("AllMessage：" + page.getList());
-        System.out.println("PrePage：" + page.toString());
-
-       return Msg.success().add("page",page);
-//        return "list";
+        return Msg.success().add("page", page);
     }
+
+    /**
+     * 获取图书详情
+     *
+     * @param uid
+     * @return
+     */
+    @ResponseBody
+    @RequestMapping(value = "/detail/{uid}", method = RequestMethod.GET)
+    public Msg list(@PathVariable String uid) {
+        Book book = bookService.selectByUid(uid);
+
+        return Msg.success().add("book", book);
+    }
+
+    /**
+     * 购买图书
+     *
+     * @param bookuid
+     * @param nums
+     * @return
+     */
+//    @Authorization
+    @ResponseBody
+    @RequestMapping(value = "/buy", method = RequestMethod.POST)
+    public Msg buy(@RequestParam String bookuid, @RequestParam String nums) {
+
+        return Msg.fail().setMessage("接口正在处理中");
+    }
+
+    /**
+     * 获取购物车详情
+     *
+     * @param bookuid
+     * @param nums
+     * @return
+     */
+//    @Authorization
+    @ResponseBody
+    @RequestMapping(value = "/shopcar", method = RequestMethod.GET)
+    public Msg shopCarGet(@RequestParam String bookuid, @RequestParam String nums) {
+
+        return Msg.fail().setMessage("接口正在处理中");
+    }
+
+    /**
+     * 删除购物车
+     *
+     * @param bookuid
+     * @param nums
+     * @return
+     */
+//    @Authorization
+    @ResponseBody
+    @RequestMapping(value = "/shopcar", method = RequestMethod.DELETE)
+    public Msg shopCarDelete(@RequestParam String bookuid, @RequestParam String nums) {
+
+        return Msg.fail().setMessage("接口正在处理中");
+    }
+
+    /**
+     * 更新购物车
+     *
+     * @param bookuid
+     * @param nums
+     * @return
+     */
+//    @Authorization
+    @ResponseBody
+    @RequestMapping(value = "/shopcar", method = RequestMethod.PUT)
+    public Msg shopCarPut(@RequestParam String bookuid, @RequestParam String nums) {
+
+        return Msg.fail().setMessage("接口正在处理中");
+    }
+
+    /**
+     * 添加购物车
+     *
+     * @param bookuid
+     * @param nums
+     * @return
+     */
+//    @Authorization
+    @ResponseBody
+    @RequestMapping(value = "/shopcar", method = RequestMethod.POST)
+    public Msg shopCarPost(@RequestParam String bookuid, @RequestParam String nums) {
+
+        return Msg.fail().setMessage("接口正在处理中");
+    }
+
 
     /**
      * 图书搜索
@@ -74,7 +150,7 @@ public class BookController extends BaseController {
             @RequestParam(required = false) String bookDescription) throws Exception {
 
         if (StringUtils.isEmpty(bookName) && StringUtils.isEmpty(bookAuthor) && StringUtils.isEmpty(bookDescription)) {
-            return Msg.fail().setCode(400);
+            return Msg.fail().setMessage("传参错误");
         }
 
         IndexBookService indexBookService = new IndexBookServiceImpl();

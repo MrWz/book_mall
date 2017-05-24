@@ -7,8 +7,8 @@ public interface PanicDao {
     /**
      * 增加记录
      */
-    int insert(Panic record);
-
+    boolean insert(Panic record);
+    
     /**
      * 删除记录
      */

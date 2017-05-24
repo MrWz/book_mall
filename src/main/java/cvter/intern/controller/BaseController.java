@@ -19,7 +19,7 @@ public class BaseController {
     @ExceptionHandler
     @ResponseBody
     public Msg exp(Exception ex) {
-
+        ex.printStackTrace();
         // 根据不同错误转向不同页面
         if (ex instanceof BusinessException) {
             return Msg.fail()
