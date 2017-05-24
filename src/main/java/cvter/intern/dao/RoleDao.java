@@ -6,19 +6,24 @@ import java.util.List;
 import org.apache.ibatis.annotations.Param;
 
 public interface RoleDao {
+
+    int insert(Role record);
+
+    int deleteByPrimaryKey(String uid);
+
+    int updateByPrimaryKey(Role record);
+
+    Role selectByPrimaryKey(String uid);
+
+    Role selectByDescription(String description);
+
     int countByExample(RoleInfoExample example);
 
     int deleteByExample(RoleInfoExample example);
 
-    int deleteByPrimaryKey(String uid);
-
-    int insert(Role record);
-
     int insertSelective(Role record);
 
     List<Role> selectByExample(RoleInfoExample example);
-
-    Role selectByPrimaryKey(String uid);
 
     int updateByExampleSelective(@Param("record") Role record, @Param("example") RoleInfoExample example);
 
@@ -26,5 +31,4 @@ public interface RoleDao {
 
     int updateByPrimaryKeySelective(Role record);
 
-    int updateByPrimaryKey(Role record);
 }

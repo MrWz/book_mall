@@ -10,6 +10,6 @@ public interface UserRoleDao {
 
     int updateByPrimaryKey(UserRole record);
 
-    UserRole selectByPrimaryKey(Integer id);
+    UserRole selectByUserUid(String userUid);
 
 }
