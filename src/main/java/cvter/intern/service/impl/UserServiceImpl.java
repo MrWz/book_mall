@@ -11,7 +11,6 @@ import cvter.intern.utils.RedisLock;
 import cvter.intern.utils.UIDUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-//import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
@@ -51,6 +50,7 @@ public class UserServiceImpl implements UserService {
     public Boolean buy(String userUid, String bookUid, int num) {
         Boolean flag=StringUtils.isAnyBlank(userUid, bookUid);
         if (flag) {
+            System.out.println("-------------参数为空");
             throw new ParameterException();
         }
         Date date=new Date();
@@ -60,24 +60,22 @@ public class UserServiceImpl implements UserService {
 
         try{
             if(lock.lock()){
-                
                 //需要同步代码
+                int newStock=book.getStock() - num;
+                if (newStock < 0) {
+                    return false;
+                }
+                book.setStock(newStock);
+                book.setUpdateTime(date);
+                bookDao.updateByPrimaryKey(book);
+                System.out.println("----------------------同步代码");
+
             }
         }catch (InterruptedException e) {
                 e.printStackTrace();
             }finally {
             lock.unlock();
         }
-
-
-        int newStock=book.getStock() - num;
-        if (newStock < 0) {
-            return false;
-        }
-        book.setStock(newStock);
-        book.setUpdateTime(date);
-        bookDao.updateByPrimaryKey(book);
-
 
         List<UserBook> userBookList=userBookDao.selectByUserUid(userUid);
         for (UserBook tmp : userBookList) {
@@ -171,7 +169,6 @@ public class UserServiceImpl implements UserService {
 
     //        @Override
     public boolean checkAdimLogin(String username, String password) {
-
 
         if (StringUtils.isAnyEmpty(username, password)) {
             throw new ParameterException("用户名或密码不为空");

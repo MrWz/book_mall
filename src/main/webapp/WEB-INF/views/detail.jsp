@@ -22,7 +22,7 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
             </button>
-            <a class="navbar-brand" href="#">图书商城</a>
+            <a class="navbar-brand" href="/">图书商城</a>
         </div>
 
         <!-- Collect the nav links, forms, and other content for toggling -->
@@ -61,6 +61,7 @@
 
 <div class="container">
     <div class="">
+        <input type="hidden" id="book_uid">
         <p>
             <span class="pull-right">
                 <!--onclick="$('#loginBtn').click();"-->
@@ -68,23 +69,19 @@
                     <button class="btn btn-danger">加入购物车</button>
                 </span>
         </p>
-        <h3>
-            Java编程思想
-        </h3>
+        <h3 id="book_name"></h3>
         <br>
         <dl>
             <dt>价格</dt>
-            <dd>￥108</dd>
+            <dd id="book_price"></dd>
             <br>
             <dt>作者</dt>
-            <dd>谁谁谁</dd>
+            <dd id="book_author"></dd>
             <br>
             <dt>
                 图书简介
             </dt>
-            <dd>
-                劳力士创始人为汉斯.威尔斯多夫，1908年他在瑞士将劳力士注册为商标。
-            </dd>
+            <dd id="book_desc"></dd>
         </dl>
     </div>
 </div>
@@ -198,11 +195,6 @@
 
             <div class="modal-body">
                 <form class="form-group">
-                    <div class="form-group">
-                        <label for="">用户Uid</label>
-                        <input class="form-control" name="userUid" type="text" required placeholder="6-15位字母或数字">
-                        <span id="" class="help-block text-warning"></span>
-                    </div>
 
                     <div class="form-group">
                         <label for="">书Uid</label>
@@ -235,7 +227,35 @@
 <script src="https://cdn.bootcss.com/jquery/1.12.4/jquery.min.js"></script>
 <script src="https://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 <script>
+    $(function () {
+        getBook(getQueryString("bookid"));
+    })
 
+    function getQueryString(name) {
+        var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)", "i");
+        var r = window.location.search.substr(1).match(reg);
+        if (r != null) return unescape(r[2]);
+        return null;
+    }
+
+    function getBook(bookuid) {
+        $.ajax({
+            type: "GET",
+            url: "/book/v1/detail/" + bookuid,
+            data: null,
+            error: function (request) {
+                alert("Connection error");
+            },
+            success: function (result) {
+                var book = result.data.book;
+                $("#book_uid").val(book.uid);
+                $("#book_name").text(book.name);
+                $("#book_author").text(book.author);
+                $("#book_price").text(book.price);
+                $("#book_desc").text(book.description);
+            }
+        });
+    }
 </script>
 
 <script>
@@ -246,11 +266,11 @@
                 url: "/user/v1/buy",
                 data: $('#buyModal form').serialize(),// 你的formid
                 error: function (request) {
-                    alert("Connection error");
+                    alert("请您先去登录");
                 },
                 success: function (data) {
 //                $("#commonLayout_appcreshi").parent().html(data);
-                    alert(data.code + "---" + data.message + "---" +data.data.description);
+                    alert(data.code + "---" + data.message);
 
                 }
             });

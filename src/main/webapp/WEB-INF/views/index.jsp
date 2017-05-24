@@ -20,7 +20,7 @@
 </head>
 <body>
 <nav class="navbar navbar-default">
-    <div class="container">
+    <div class="container-fluid">
         <!-- Brand and toggle get grouped for better mobile display -->
         <div class="navbar-header">
             <button type="button" class="navbar-toggle collapsed" data-toggle="collapse"
@@ -30,7 +30,7 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
             </button>
-            <a class="navbar-brand" href="#">图书商城</a>
+            <a class="navbar-brand" href="/">图书商城</a>
         </div>
 
         <!-- Collect the nav links, forms, and other content for toggling -->
@@ -42,15 +42,18 @@
                         <span class="badge">4</span>
                     </a>
                 </li>
-                <li>
+                <li class="unLogin">
                     <a href="#" data-toggle="modal" data-target="#loginModal" data-whatever="login">
                         <span class="glyphicon glyphicon-log-in"></span> 登录
                     </a>
                 </li>
-                <li>
+                <li class="unLogin">
                     <a href="#" data-toggle="modal" data-target="#registerModal" data-whatever="register">
                         <span class="glyphicon glyphicon-edit"></span> 注册
                     </a>
+                </li>
+                <li class="Login">
+                    <a href="#"></a>
                 </li>
             </ul>
             <form class="navbar-form navbar-right">
@@ -85,102 +88,10 @@
         </div>
 
         <div class="col-md-6 column">
-            <div class="row">
-                <div class="col-md-4">
-                    <div class="thumbnail">
-                        <!--<img alt="300x200" src="http://ibootstrap-file.b0.upaiyun.com/lorempixel.com/600/200/people/default.jpg"/>-->
-                        <div class="caption">
-                            <h3>
-                                Java编程思想
-                            </h3>
-                            <p>
-                                《Java编程思想》是2007年由机械工业出版社出版的图书，该书作者是埃克尔，译者是陈昊鹏。
-                            </p>
-                            <p>
-                                <span>作者：<a href="#">陈昊鹏</a></span>
-                            </p>
-                            <p>
-                                <a href="/bookDetails">查看详情</a>
-                                <span class="pull-right" style="margin-right: 10px; color: darkred">￥108</span>
-                            </p>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="thumbnail">
-                        <!--<img alt="300x200" src="http://ibootstrap-file.b0.upaiyun.com/lorempixel.com/600/200/people/default.jpg"/>-->
-                        <div class="caption">
-                            <h3>
-                                Java编程思想
-                            </h3>
-                            <p>
-                                《Java编程思想》是2007年由机械工业出版社出版的图书，该书作者是埃克尔，译者是陈昊鹏。
-                            </p>
-                            <p>
-                                <span>作者：<a href="#">陈昊鹏</a></span>
-                            </p>
-                            <p>
-                                <a href="#">查看详情</a>
-                                <span class="pull-right" style="margin-right: 10px; color: darkred">￥108</span>
-                            </p>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="thumbnail">
-                        <!--<img alt="300x200" src="http://ibootstrap-file.b0.upaiyun.com/lorempixel.com/600/200/people/default.jpg"/>-->
-                        <div class="caption">
-                            <h3>
-                                Java编程思想
-                            </h3>
-                            <p>
-                                《Java编程思想》是2007年由机械工业出版社出版的图书，该书作者是埃克尔，译者是陈昊鹏。
-                            </p>
-                            <p>
-                                <span>作者：<a href="#">陈昊鹏</a></span>
-                            </p>
-                            <p>
-                                <a href="#">查看详情</a>
-                                <span class="pull-right" style="margin-right: 10px; color: darkred">￥108</span>
-                            </p>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="thumbnail">
-                        <!--<img alt="300x200" src="http://ibootstrap-file.b0.upaiyun.com/lorempixel.com/600/200/people/default.jpg"/>-->
-                        <div class="caption">
-                            <h3>
-                                Java编程思想
-                            </h3>
-                            <p>
-                                《Java编程思想》是2007年由机械工业出版社出版的图书，该书作者是埃克尔，译者是陈昊鹏。
-                            </p>
-                            <p>
-                                <span>作者：<a href="#">陈昊鹏</a></span>
-                            </p>
-                            <p>
-                                <a href="#">查看详情</a>
-                                <span class="pull-right" style="margin-right: 10px; color: darkred">￥108</span>
-                            </p>
-                        </div>
-                    </div>
-                </div>
-            </div>
 
-            <div class="text-center">
-                <ul class="pagination">
-                    <li><a href="#">首页</a></li>
-                    <li><a href="#">&laquo;</a></li>
-                    <li><a href="#">1</a></li>
-                    <li><a href="#">2</a></li>
-                    <li><a href="#">3</a></li>
-                    <li><a href="#">4</a></li>
-                    <li><a href="#">5</a></li>
-                    <li><a href="#">&raquo;</a></li>
-                    <li><a href="#">尾页</a></li>
-                </ul>
-            </div>
+            <div class="row" id="bookList"></div>
+
+            <div class="text-right" id="page_nav_area"></div>
 
         </div>
 
@@ -210,7 +121,7 @@
                         <a href="">关于我们</a>
                     </li>
                     <li style="margin-top: 10px;">
-                        <a href="/admin/index">后台管理</a>
+                        <a href="/admin/login">后台管理</a>
                     </li>
                 </ul>
             </div>
@@ -314,20 +225,20 @@
                         <input class="form-control" name="rePassword" type="password" required placeholder="至少6位字母或数字">
                         <span id="" class="help-block text-warning"></span>
                     </div>
-                    <div class="form-group">
-                        <label for="">验证码</label>
-                        <div class="input-group">
-                            <input class="form-control" name="yzm" type="text" required placeholder="">
-                            <span class="input-group-btn">
-                                <button><img
-                                        src="https://ss2.bdstatic.com/70cFvnSh_Q1YnxGkpoWK1HF6hhy/it/u=3958660674,2563683780&fm=117&gp=0.jpg"
-                                        alt="验证码"
-                                        height="26">
-                                </button>
-                            </span>
-                        </div>
-                        <span id="" class="help-block text-warning"></span>
-                    </div>
+                    <%--<div class="form-group">--%>
+                    <%--<label for="">验证码</label>--%>
+                    <%--<div class="input-group">--%>
+                    <%--<input class="form-control" name="yzm" type="text" required placeholder="">--%>
+                    <%--<span class="input-group-btn">--%>
+                    <%--<button><img--%>
+                    <%--src="https://ss2.bdstatic.com/70cFvnSh_Q1YnxGkpoWK1HF6hhy/it/u=3958660674,2563683780&fm=117&gp=0.jpg"--%>
+                    <%--alt="验证码"--%>
+                    <%--height="26">--%>
+                    <%--</button>--%>
+                    <%--</span>--%>
+                    <%--</div>--%>
+                    <%--<span id="" class="help-block text-warning"></span>--%>
+                    <%--</div>--%>
                     <div class="text-right">
                         <button class="btn btn-primary" id="userRegisterBtn">提交</button>
                         <button class="btn btn-danger" data-dismiss="modal">取消</button>
@@ -343,27 +254,132 @@
 <script src="https://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 <script>
     $(function () {
+
+        var totalRecord;
+        var currentPage;
+
+        $(function () {
+            //去首页
+            to_page(1);
+        });
+
+        function to_page(pn) {
+            $.ajax({
+                type: "POST",
+                url: "/book/v1/list",
+                data: "pn=" + pn,
+                error: function (request) {
+                    alert("Connection error");
+                },
+                success: function (result) {
+                    //1、解析并显示书籍
+                    build_book_table(result);
+
+                    //2、显示分页条信息
+                    build_page_nav(result);
+
+                }
+            });
+        }
+
+        function build_book_table(result) {
+            $("#bookList").empty();
+            var books = result.data.page.list;
+            $.each(books, function (index, item) {
+                var bookName = $("<h3></h3>").append(item.name);
+                var bookDesc = $("<p></p>").append(item.description);
+                var bookAuthor = $("<p></p>").append($("<span></span>").append(item.author));
+                var detail = $("<a></a>").attr("href", "/book/detail?bookid=" + item.uid).append("查看详情");
+                var bookPrice = $("<span></span>").addClass("pull-right").css({
+                    "margin-right": "10px",
+                    "color": "darkred"
+                }).append("￥" + item.price);
+
+                var rootDiv = $("<div></div>").addClass("col-md-4");
+                var captionDiv = $("<div></div>").addClass("caption");
+                var thumbnailDiv = $("<div></div>").addClass("thumbnail").append();
+                thumbnailDiv.append(bookName)
+                    .append(bookName)
+                    .append(bookDesc)
+                    .append(bookAuthor)
+                    .append($("<p></p>").append(detail).append(bookPrice));
+                captionDiv.append(thumbnailDiv);
+                rootDiv.append(captionDiv).appendTo("#bookList");
+            })
+        }
+
+        function build_page_nav(result) {
+            $("#page_nav_area").empty();
+            var ul = $("<ul></ul>").addClass("pagination");
+            var firstPageLi = $("<li></li>").append($("<a></a>").append("首页").attr("href", "#"));
+            var prePageLi = $("<li></li>").append($("<a></a>").append("&laquo;"));
+            if (result.data.page.hasPreviousPage == false) {
+                firstPageLi.addClass("disabled");
+                prePageLi.addClass("disabled");
+            } else {
+                firstPageLi.click(function () {
+                    to_page(1);
+                });
+                prePageLi.click(function () {
+                    to_page(result.data.page.pageNum - 1);
+                });
+            }
+
+            var nextPageLi = $("<li></li>").append($("<a></a>").append("&raquo;"));
+            var lastPageLi = $("<li></li>").append($("<a></a>").append("末页").attr("href", "#"));
+            if (result.data.page.hasNextPage == false) {
+                nextPageLi.addClass("disabled");
+                lastPageLi.addClass("disabled");
+            } else {
+                nextPageLi.click(function () {
+                    to_page(result.data.page.pageNum + 1);
+                });
+                lastPageLi.click(function () {
+                    to_page(result.data.page.pages);
+                });
+            }
+
+            ul.append(firstPageLi).append(prePageLi);
+            $.each(result.data.page.navigatepageNums, function (index, item) {
+                var numLi = $("<li></li>").append($("<a></a>").append(item));
+                if (result.data.page.pageNum == item) {
+                    currentPage = item;
+                    numLi.addClass("active");
+                }
+                numLi.click(function () {
+                    to_page(item);
+                });
+                ul.append(numLi);
+            });
+            ul.append(nextPageLi).append(lastPageLi).appendTo($("#page_nav_area"));
+        }
+
         $('#userLoginBtn').click(function () {
             $.ajax({
                 type: "POST",
-                url: "http://localhost:8080/user/v1/login",
+                url: "/user/v1/login",
                 data: $('#loginModal form').serialize(),// 你的formid
                 error: function (request) {
                     alert("Connection error");
                 },
                 success: function (data) {
-//                $("#commonLayout_appcreshi").parent().html(data);
-                    alert(data.code + "---" + data.message);
-
+                    var code = data.code;
+                    switch (code) {
+                        case (200):
+                            $('#loginModal').modal('hide');
+                            $('.unLogin').hide();
+                            $('.Login a').text(data.data.userinfo.name);
+                            alert(data.message);
+                            break;
+                        case (500):
+                            alert(data.message);
+                            break;
+                    }
                 }
             });
             return false;
         });
-    });
-</script>
 
-<script>
-    $(function () {
         $('#userRegisterBtn').click(function () {
             $.ajax({
                 type: "POST",
@@ -373,8 +389,18 @@
                     alert("Connection error");
                 },
                 success: function (data) {
-//                $("#commonLayout_appcreshi").parent().html(data);
-                    alert(data.code + "---" + data.message);
+                    var code = data.code;
+                    switch (code) {
+                        case (200):
+                            $('#loginModal').modal('hide');
+                            $('.unLogin').hide();
+                            $('.Login a').text(data.data.userinfo.name);
+                            alert(data.message);
+                            break;
+                        case (500):
+                            alert(data.message);
+                            break;
+                    }
                 }
             });
             return false;
