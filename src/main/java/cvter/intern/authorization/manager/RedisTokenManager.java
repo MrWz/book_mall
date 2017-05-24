@@ -23,6 +23,7 @@ public class RedisTokenManager implements TokenManager {
         // 存储到 redis 并设置过期时间
         jedis.set(userId, model.getToken());
         jedis.expire(userId, Constants.TOKEN_EXPIRES_HOUR);
+        jedis.close();
         return model;
     }
 
@@ -41,22 +42,25 @@ public class RedisTokenManager implements TokenManager {
     }
 
     public boolean checkToken(TokenModel model) {
-        Jedis jedis = jedisPool.getResource();
         if (model == null) {
             return false;
         }
 
+        Jedis jedis = jedisPool.getResource();
         String token = jedis.get(model.getUserId());
         if (token == null || !token.equals(model.getToken())) {
+            jedis.close();
             return false;
         }
         // 如果验证成功，说明此用户进行了一次有效操作，延长 token 的过期时间
         jedis.expire(model.getUserId(), Constants.TOKEN_EXPIRES_HOUR);
+        jedis.close();
         return true;
     }
 
     public void deleteToken(String userId) {
         Jedis jedis = jedisPool.getResource();
         jedis.del(userId);
+        jedis.close();
     }
 }

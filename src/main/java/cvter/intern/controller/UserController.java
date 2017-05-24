@@ -1,7 +1,10 @@
 package cvter.intern.controller;
 
 import cvter.intern.authorization.annotation.Authorization;
+import cvter.intern.authorization.manager.TokenManager;
+import cvter.intern.authorization.model.TokenModel;
 import cvter.intern.model.Msg;
+import cvter.intern.model.User;
 import cvter.intern.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -22,13 +25,20 @@ public class UserController extends BaseController {
     @Autowired
     UserService userService;
 
+    @Autowired
+    TokenManager tokenManager;
+
     @ResponseBody
     @RequestMapping(value = "/login", method = RequestMethod.POST)
     public Msg login(HttpSession session, String username, String password) {
         boolean flag = userService.checkLogin(username, password);
         if (flag) {
-            session.setAttribute("isLogin", "true");
-            return Msg.success().setMessage("请去首页进行选购").add("userinfo", userService.selectByName(username));
+            User user = userService.selectByName(username);
+            // 生成一个 token，保存用户登录状态
+            TokenModel model = tokenManager.createToken(user.getUid());
+            session.setAttribute("UID", model.toString());
+            session.setAttribute("user", user);
+            return Msg.success().setMessage("请去首页进行选购").add("userinfo", user);
 
         }
         return Msg.fail().setMessage("用户名或者密码错误");
@@ -39,7 +49,11 @@ public class UserController extends BaseController {
     public Msg register(HttpSession session, String username, String password) {
         boolean flag = userService.checkRegister(username, password);
         if (flag) {
-            session.setAttribute("isLogin", "true");
+            User user = userService.selectByName(username);
+            // 生成一个 token，保存用户登录状态
+            TokenModel model = tokenManager.createToken(user.getUid());
+            session.setAttribute("UID", model.toString());
+            session.setAttribute("user", user);
             return Msg.success().add("description", "注册成功");
 
         }
@@ -50,7 +64,9 @@ public class UserController extends BaseController {
     @ResponseBody
     @RequestMapping(value = "/logoff", method = RequestMethod.POST)
     public Msg loginOff(HttpSession session) {
-        session.removeAttribute("isLogin");
+
+        User user = (User) session.getAttribute("user");
+        tokenManager.deleteToken(user.getUid());
 
         return Msg.success().setMessage("注销成功");
 
