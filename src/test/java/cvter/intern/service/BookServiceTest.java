@@ -57,6 +57,7 @@ public class BookServiceTest {
 
     @Test
     public void selectAll() throws Exception {
+        System.out.println(bookService.selectAll().size());
     }
 
 }

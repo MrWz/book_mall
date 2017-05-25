@@ -57,10 +57,10 @@ public class UserController extends BaseController {
             TokenModel model = tokenManager.createToken(user.getUid());
             session.setAttribute("UID", model.toString());
             session.setAttribute("user", user);
-            return Msg.success().setMessage("注册成功").add("userinfo", user);
+            return Msg.success().add("description", "注册成功");
 
         }
-        return Msg.fail().setMessage("用户名以被占用");
+        return Msg.fail().add("description", "用户名已存在");
     }
 
     @Authorization
@@ -70,6 +70,9 @@ public class UserController extends BaseController {
 
         User user = (User) session.getAttribute("user");
         tokenManager.deleteToken(user.getUid());
+        session.invalidate();
+
         return Msg.success().setMessage("注销成功");
+
     }
 }
