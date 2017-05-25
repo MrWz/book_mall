@@ -1,4 +1,5 @@
 package cvter.intern.service;
+import cvter.intern.model.Book;
 import cvter.intern.model.User;
 
 import java.util.List;
@@ -7,18 +8,21 @@ import java.util.List;
  * Created by cvter on 2017/5/17.
  */
 public interface UserService {
+    List<Book> getShopCar(String userUid);
 
-    public Boolean buy(String userUid,String bookUid,int num);
+    Boolean addShopCar(String userUid,String bookUid,int nums);
 
-    public Boolean checkLogin(String username,String password);
+    Boolean buy(String userUid,String bookUid,int nums);
 
-    public Boolean checkRegister(String username,String password);
+    Boolean checkLogin(String username,String password);
 
-    public User selectByName(String name);
+    Boolean checkRegister(String username,String password);
 
-    public int save(User record);
+    User selectByName(String name);
 
-    public boolean checkAdimLogin(String username,String password);
+    int save(User record);
+
+    boolean checkAdimLogin(String username,String password);
 
     User selectByUid(String uid);
 

@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import redis.clients.jedis.JedisPool;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -49,30 +50,78 @@ public class UserServiceImpl implements UserService {
     @Autowired
     RedisTokenManager redisTokenManager;
 
-    /*
-    * 购买图书(订单处理)
-    * */
+    @Autowired
+    private ShopCarDao shopCarDao;
+
+    /**
+     * 获取用户的购物车信息
+     * @param userUid
+     * @return
+     */
     @Override
-    public Boolean buy(String userUid, String bookUid, int num) {
+    public List<Book> getShopCar(String userUid) {
+        boolean flag=StringUtils.isAnyBlank(userUid);
+        if(flag){
+            throw new ParameterException(EX_10001.getMessage());
+        }
+        List<Book> bookList=new ArrayList(10);
+        List<ShopCar> listShopCar=shopCarDao.selectByUseUid(userUid);
+        if(listShopCar.isEmpty()){//用户购物车为空
+            return bookList;
+        }
+
+        for(int i=0;i<listShopCar.size();++i){
+            bookList.add(bookDao.selectByBookUid(listShopCar.get(i).getBookUid()));
+        }
+        return bookList;
+    }
+
+    /**
+     *添加购物车
+     * @param userUid
+     * @param bookUid
+     * @param nums
+     * @return
+     */
+    @Override
+    public Boolean addShopCar(String userUid, String bookUid, int nums) {
+        boolean flag=StringUtils.isAnyBlank(userUid,bookUid);
+        if(flag){
+            throw new ParameterException(EX_10001.getMessage());
+        }
+        Date date=new Date();
+        ShopCar shopCar=new ShopCar(userUid,bookUid,nums,false,date,date);
+        shopCarDao.insert(shopCar);
+        return true;
+    }
+
+    /**
+     * 购买图书(订单处理)
+     * @param userUid
+     * @param bookUid
+     * @param nums
+     * @return
+     */
+    @Override
+    public Boolean buy(String userUid, String bookUid, int nums) {
         Boolean flag=StringUtils.isAnyBlank(userUid, bookUid);
         if (flag) {
             throw new ParameterException(EX_10001.getMessage());
         }
         Date date=new Date();
-        Book book=bookDao.selectByPrimaryKey(bookUid);
+        Book book=bookDao.selectByBookUid(bookUid);
 
-        boolean lockStatus=redisTokenManager.getLock("redisKey","had");
-        if(lockStatus){
-            int newStock=book.getStock() - num;
+        boolean lockStatus=redisTokenManager.getLock("redisKey", "had");
+        if (lockStatus) {
+            int newStock=book.getStock() - nums;
             if (newStock < 0) {
                 return false;
             }
             book.setStock(newStock);
             book.setUpdateTime(date);
             bookDao.updateByPrimaryKey(book);
-        }
-        else{
-           throw new BusinessException(ExceptionCode.EX_20002.getCode(), ExceptionCode.EX_20002.getMessage());
+        } else {
+            throw new BusinessException(ExceptionCode.EX_20002.getCode(), ExceptionCode.EX_20002.getMessage());
         }
         redisTokenManager.unLock("redisKey");
 
@@ -80,16 +129,19 @@ public class UserServiceImpl implements UserService {
         for (UserBook tmp : userBookList) {
 //            System.out.println("++++++++"+tmp.getBuyNums());
         }
-        UserBook userBook=new UserBook(userUid, bookUid, book.getPrice(), num, false, false, date, date);
+        UserBook userBook=new UserBook(userUid, bookUid, book.getPrice(), nums, false, false, date, date);
 
         userBookDao.insert(userBook);
 
         return true;
     }
 
-    /*
-         * 验证登录是否成功
-         * */
+    /**
+     * 验证登录是否成功
+     * @param username
+     * @param password
+     * @return
+     */
     @Override
     public Boolean checkLogin(String username, String password) {
         Boolean flag=StringUtils.isAnyBlank(username, password);
@@ -98,9 +150,9 @@ public class UserServiceImpl implements UserService {
         }
         User user=selectByName(username);
         if (user != null) {
-             /*
-            * 验证权限
-            * */
+            /**
+             * 验证权限
+             */
             String uid=user.getUid();
 
             UserRole userRole=userRoleDao.selectByUserUid(uid);
@@ -109,9 +161,9 @@ public class UserServiceImpl implements UserService {
             if (role.getDescription().equals(ROLE_1.getRole())) {//权限不对，抛出异常
                 throw new BusinessException(ExceptionCode.EX_30001.getCode(), ExceptionCode.EX_30001.getMessage());
             }
-            /*
-            * 验证密码正确性
-            * */
+            /**
+             * 验证密码正确性
+             */
             String mdPwd=user.getPassword();
             String mdPassword=Md5SaltUtil.getMD5(password, uid);
             if (mdPwd.equals(mdPassword)) {
@@ -122,9 +174,12 @@ public class UserServiceImpl implements UserService {
         return false;//用户不存在
     }
 
-    /*
+    /**
      * 验证注册是否成功
-     * */
+     * @param username
+     * @param password
+     * @return
+     */
     @Override
     public Boolean checkRegister(String username, String password) {
         Boolean flag=StringUtils.isAnyBlank(username, password);
@@ -160,13 +215,19 @@ public class UserServiceImpl implements UserService {
 
     /**
      * 增加记录
+     * @param record
+     * @return
      */
-
     public int save(User record) {
         return userDao.insert(record);
     }
 
-    //        @Override
+    /**
+     * 管理员登录
+     * @param username
+     * @param password
+     * @return
+     */
     public boolean checkAdimLogin(String username, String password) {
 
         if (StringUtils.isAnyEmpty(username, password)) {

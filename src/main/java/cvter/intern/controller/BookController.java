@@ -97,12 +97,17 @@ public class BookController extends BaseController {
      * @param nums
      * @return
      */
-//    @Authorization
+    @Authorization
     @ResponseBody
     @RequestMapping(value = "/shopcar", method = RequestMethod.GET)
-    public Msg shopCarGet(@RequestParam String bookuid, @RequestParam String nums) {
+    public Msg shopCarGet(HttpSession session,@RequestParam String bookuid, @RequestParam String nums) {
+        User user=(User)session.getAttribute("user");
+        List<Book> bookList=userService.getShopCar(user.getUid());
 
-        return Msg.fail().setMessage("接口正在处理中");
+        if(bookList.size()==0){
+            return Msg.fail().setMessage("购物车空空如也");
+        }
+        return Msg.success().add("bookList", bookList);
     }
 
     /**
@@ -142,12 +147,17 @@ public class BookController extends BaseController {
      * @param nums
      * @return
      */
-//    @Authorization
+    @Authorization
     @ResponseBody
     @RequestMapping(value = "/shopcar", method = RequestMethod.POST)
-    public Msg shopCarPost(@RequestParam String bookuid, @RequestParam String nums) {
+    public Msg shopCarPost(HttpSession session,@RequestParam String bookuid, @RequestParam int nums) {
 
-        return Msg.fail().setMessage("接口正在处理中");
+        User user=(User)session.getAttribute("user");
+        boolean flag=userService.addShopCar(user.getUid(),bookuid,nums);
+        if(flag){
+            return Msg.success().setMessage("添加成功，尽快购买");
+        }
+        return Msg.fail().setMessage("添加失败");
     }
 
 

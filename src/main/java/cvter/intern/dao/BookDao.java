@@ -25,7 +25,7 @@ public interface BookDao {
     /**
      * 查询记录
      */
-    Book selectByPrimaryKey(String uid);
+    Book selectByBookUid(String uid);
 
     /**
      * 分页查询记录
