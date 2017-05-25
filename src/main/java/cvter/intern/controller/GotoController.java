@@ -33,4 +33,9 @@ public class GotoController extends BaseController {
     public String detail() {
         return "detail";
     }
+
+    @RequestMapping(value = "/book/search")
+    public String search() {
+        return "result";
+    }
 }

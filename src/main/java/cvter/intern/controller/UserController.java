@@ -67,6 +67,7 @@ public class UserController extends BaseController {
 
         User user = (User) session.getAttribute("user");
         tokenManager.deleteToken(user.getUid());
+        session.invalidate();
 
         return Msg.success().setMessage("注销成功");
 

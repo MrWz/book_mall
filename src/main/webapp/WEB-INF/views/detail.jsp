@@ -1,3 +1,4 @@
+<%@ page import="cvter.intern.model.User" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" isELIgnored="false" %>
 <!DOCTYPE html>
 <html lang="zh-CN">
@@ -34,22 +35,42 @@
                         <span class="badge">4</span>
                     </a>
                 </li>
-                <li>
-                    <a href="#" data-toggle="modal" data-target="#loginModal" data-whatever="login" id="loginBtn">
+                <%
+                    User user = (User) session.getAttribute("user");
+                    if (user != null) {
+                %>
+                <li class="unLogin">
+                    <a href="#">
+                        欢迎您 ${user.name}
+                    </a>
+                </li>
+                <%
+                } else {
+                %>
+                <li class="unLogin">
+                    <a href="#" data-toggle="modal" data-target="#loginModal" data-whatever="login">
                         <span class="glyphicon glyphicon-log-in"></span> 登录
                     </a>
                 </li>
-                <li>
+                <li class="unLogin">
                     <a href="#" data-toggle="modal" data-target="#registerModal" data-whatever="register">
                         <span class="glyphicon glyphicon-edit"></span> 注册
                     </a>
                 </li>
+                <%
+                    }
+                %>
+                <li class="Logout">
+                    <a href="#">
+                        <span class="glyphicon glyphicon-log-out"></span> 退出
+                    </a>
+                </li>
             </ul>
-            <form class="navbar-form navbar-right">
+            <form class="navbar-form navbar-right" id="searchForm">
                 <div class="form-group input-group">
-                    <input type="text" class="form-control" placeholder="Search">
+                    <input type="text" name="params" class="form-control" placeholder="Search">
                     <span class="input-group-btn">
-                        <button type="submit" class="btn btn-default">
+                        <button class="btn btn-default" id="searchBtn">
                             <span class="glyphicon glyphicon-search"></span>
                         </button>
                     </span>
@@ -122,7 +143,7 @@
                         <span id="" class="help-block text-warning"></span>
                     </div>-->
                     <div class="text-right">
-                        <button class="btn btn-primary">提交</button>
+                        <button class="btn btn-primary" id="userLoginBtn">提交</button>
                         <button class="btn btn-danger" data-dismiss="modal">取消</button>
                     </div>
                     <a href="#" data-toggle="modal" data-dismiss="modal" data-target="#registerModal">还没有账号？点我注册</a>
@@ -158,22 +179,22 @@
                         <input class="form-control" name="rePassword" type="password" required placeholder="至少6位字母或数字">
                         <span id="" class="help-block text-warning"></span>
                     </div>
-                    <div class="form-group">
-                        <label for="">验证码</label>
-                        <div class="input-group">
-                            <input class="form-control" name="yzm" type="text" required placeholder="">
-                            <span class="input-group-btn">
-                                <button><img
-                                        src="https://ss2.bdstatic.com/70cFvnSh_Q1YnxGkpoWK1HF6hhy/it/u=3958660674,2563683780&fm=117&gp=0.jpg"
-                                        alt="验证码"
-                                        height="26">
-                                </button>
-                            </span>
-                        </div>
-                        <span id="" class="help-block text-warning"></span>
-                    </div>
+                    <%--<div class="form-group">--%>
+                    <%--<label for="">验证码</label>--%>
+                    <%--<div class="input-group">--%>
+                    <%--<input class="form-control" name="yzm" type="text" required placeholder="">--%>
+                    <%--<span class="input-group-btn">--%>
+                    <%--<button><img--%>
+                    <%--src="https://ss2.bdstatic.com/70cFvnSh_Q1YnxGkpoWK1HF6hhy/it/u=3958660674,2563683780&fm=117&gp=0.jpg"--%>
+                    <%--alt="验证码"--%>
+                    <%--height="26">--%>
+                    <%--</button>--%>
+                    <%--</span>--%>
+                    <%--</div>--%>
+                    <%--<span id="" class="help-block text-warning"></span>--%>
+                    <%--</div>--%>
                     <div class="text-right">
-                        <button class="btn btn-primary">提交</button>
+                        <button class="btn btn-primary" id="userRegisterBtn">提交</button>
                         <button class="btn btn-danger" data-dismiss="modal">取消</button>
                     </div>
                     <a href="#" data-toggle="modal" data-dismiss="modal" data-target="#loginModal">已有账号？点我登录</a>
@@ -212,33 +233,115 @@
 <script>
     $(function () {
         getBook(getQueryString("bookid"));
-    })
 
-    function getQueryString(name) {
-        var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)", "i");
-        var r = window.location.search.substr(1).match(reg);
-        if (r != null) return unescape(r[2]);
-        return null;
-    }
 
-    function getBook(bookuid) {
-        $.ajax({
-            type: "GET",
-            url: "/book/v1/detail/" + bookuid,
-            data: null,
-            error: function (request) {
-                alert("Connection error");
-            },
-            success: function (result) {
-                var book = result.data.book;
-                $("#book_uid").val(book.uid);
-                $("#book_name").text(book.name);
-                $("#book_author").text(book.author);
-                $("#book_price").text(book.price);
-                $("#book_desc").text(book.description);
-            }
+        function getQueryString(name) {
+            var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)", "i");
+            var r = window.location.search.substr(1).match(reg);
+            if (r != null) return unescape(r[2]);
+            return null;
+        }
+
+        function getBook(bookuid) {
+            $.ajax({
+                type: "GET",
+                url: "/book/v1/detail/" + bookuid,
+                data: null,
+                error: function (request) {
+                    alert("Connection error");
+                },
+                success: function (result) {
+                    var book = result.data.book;
+                    $("#book_uid").val(book.uid);
+                    $("#book_name").text(book.name);
+                    $("#book_author").text(book.author);
+                    $("#book_price").text(book.price);
+                    $("#book_desc").text(book.description);
+                }
+            });
+        }
+
+        $('#userLoginBtn').click(function () {
+            $.ajax({
+                type: "POST",
+                url: "/user/v1/login",
+                data: $('#loginModal form').serialize(),// 你的formid
+                error: function (request) {
+                    alert("Connection error");
+                },
+                success: function (data) {
+                    var code = data.code;
+                    switch (code) {
+                        case (200):
+                            alert("欢迎回来");
+                            $('#loginModal').modal('hide');
+                            window.location.reload(true);
+                            break;
+                        case (500):
+                            alert(data.message);
+                            break;
+                    }
+
+                }
+            });
+            return false;
         });
-    }
+
+        $('#userRegisterBtn').click(function () {
+            $.ajax({
+                type: "POST",
+                url: "/user/v1/register",
+                data: $('#registerModal form').serialize(),// 你的formid
+                error: function (request) {
+                    alert("Connection error");
+                },
+                success: function (data) {
+                    var code = data.code;
+                    switch (code) {
+                        case (200):
+                            alert("注册成功");
+                            $('#loginModal').modal('hide');
+                            window.location.reload(true);
+                            break;
+                        case (500):
+                            alert(data.message);
+                            break;
+                    }
+                }
+            });
+            return false;
+        });
+
+        $('.Logout').click(function () {
+            $.ajax({
+                type: "POST",
+                url: "/user/v1/logoff",
+                data: null,// 你的formid
+                error: function (request) {
+                    alert("请先登录");
+                },
+                success: function (data) {
+                    var code = data.code;
+                    switch (code) {
+                        case (200):
+                            alert("OK");
+                            window.location.reload(true);
+                            break;
+                        case (500):
+                            alert(data.message);
+                            break;
+                    }
+                }
+            });
+            return false;
+        });
+
+        $("#searchBtn").click(function () {
+            location.href = "/book/search?" + encodeURI($("#searchForm").serialize());
+
+            return false;
+        });
+    });
 </script>
 
 </body>

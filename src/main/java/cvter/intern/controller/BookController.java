@@ -11,9 +11,9 @@ import cvter.intern.model.Msg;
 import cvter.intern.service.impl.BookServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
+import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -138,29 +138,42 @@ public class BookController extends BaseController {
     /**
      * 图书搜索
      *
-     * @param bookName
-     * @param bookAuthor
-     * @param bookDescription
+     * @param pn
+     * @param pageSize
+     * @param params
      * @return
+     * @throws Exception
      */
     @ResponseBody
     @RequestMapping(path = {"/search"})
     public Msg bookSearch(
-            @RequestParam(value = "pa", defaultValue = "1") Integer pn,
-            @RequestParam(required = false) String bookName,
-            @RequestParam(required = false) String bookAuthor,
-            @RequestParam(required = false) String bookDescription) throws Exception {
+            @RequestParam(value = "pn", defaultValue = "1") Integer pn,
+            @RequestParam(value = "pageSize", defaultValue = "5") Integer pageSize,
+            @RequestParam(required = false) String params) throws Exception {
+        params = URLDecoder.decode(params, "UTF-8");
 
-        if (StringUtils.isEmpty(bookName) && StringUtils.isEmpty(bookAuthor) && StringUtils.isEmpty(bookDescription)) {
+        if (params == null || params.trim().length() == 0) {
             return Msg.fail().setMessage("传参错误");
         }
 
         IndexBookService indexBookService = new IndexBookServiceImpl();
 
-        List<Book> bookInfos = indexBookService.searchBookPaginated("summary", BookIndex.DESCRIPTION, pn, 5);
+        List<Book> authors = indexBookService.searchBookTopN(params, BookIndex.AUTHOR, 100);
+        List<Book> names = indexBookService.searchBookTopN(params, BookIndex.NAME, 100);
+        List<Book> description = indexBookService.searchBookTopN(params, BookIndex.DESCRIPTION, 100);
+
+        List bookInfos = new ArrayList();
+        if (authors != null) {
+            bookInfos.addAll(authors);
+        }
+        if (names != null) {
+            bookInfos.addAll(names);
+        }
+        if (description != null) {
+            bookInfos.addAll(description);
+        }
 
         return Msg.success().add("bookList", bookInfos);
-
     }
 
     /**

@@ -50,6 +50,7 @@ public class AdminController extends BaseController {
     @RequestMapping(value = "/logoff", method = RequestMethod.POST)
     public Msg logoff(HttpSession session) {
         User user = (User) session.getAttribute("user");
+        session.invalidate();
 
         tokenManager.deleteToken(user.getUid());
         return Msg.success().setMessage("成功退出");
