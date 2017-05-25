@@ -2,30 +2,39 @@ package cvter.intern.model;
 
 import java.util.Date;
 
-public class UserRole {
+public class UserBook {
     private Integer id;
 
     private String userUid;
 
-    private String roleUid;
-    
+    private String bookUid;
+
+    private Integer buyPrice;
+
+    private Integer buyNums;
+
+    private Boolean buyWay;
+
     private Boolean deleted;
 
     private Date createTime;
 
-    private Date updateTime;
-
-    public UserRole() {
+    public UserBook() {
         super();
     }
 
-    public UserRole(String userUid, String roleUid, Boolean deleted, Date createTime, Date updateTime) {
+    public UserBook(String userUid, String bookUid, Integer buyPrice, Integer buyNums, Boolean buyWay, Boolean deleted, Date createTime, Date updateTime) {
         this.userUid = userUid;
-        this.roleUid = roleUid;
+        this.bookUid = bookUid;
+        this.buyPrice = buyPrice;
+        this.buyNums = buyNums;
+        this.buyWay = buyWay;
         this.deleted = deleted;
         this.createTime = createTime;
         this.updateTime = updateTime;
     }
+
+    private Date updateTime;
 
     public Integer getId() {
         return id;
@@ -43,12 +52,36 @@ public class UserRole {
         this.userUid = userUid == null ? null : userUid.trim();
     }
 
-    public String getRoleUid() {
-        return roleUid;
+    public String getBookUid() {
+        return bookUid;
     }
 
-    public void setRoleUid(String roleUid) {
-        this.roleUid = roleUid == null ? null : roleUid.trim();
+    public void setBookUid(String bookUid) {
+        this.bookUid = bookUid == null ? null : bookUid.trim();
+    }
+
+    public Integer getBuyPrice() {
+        return buyPrice;
+    }
+
+    public void setBuyPrice(Integer buyPrice) {
+        this.buyPrice = buyPrice;
+    }
+
+    public Integer getBuyNums() {
+        return buyNums;
+    }
+
+    public void setBuyNums(Integer buyNums) {
+        this.buyNums = buyNums;
+    }
+
+    public Boolean getBuyWay() {
+        return buyWay;
+    }
+
+    public void setBuyWay(Boolean buyWay) {
+        this.buyWay = buyWay;
     }
 
     public Boolean getDeleted() {
