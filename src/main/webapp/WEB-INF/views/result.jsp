@@ -91,82 +91,16 @@
 <div class="container-fluid">
     <div class="row clearfix">
 
-        <div class="col-md-3 column">
-            <div class="list-group">
-                <a class="list-group-item active">抢购活动</a>
-                <div class="list-group-item">
-                    <h3>Java编程思想</h3>
-                    <p>14:30准时开始</p>
-                </div>
-                <div class="list-group-item">
-                    <h3>Java编程思想</h3>
-                    <p>14:30准时开始</p>
-                </div>
-            </div>
+        <div class="col-md-2 column">
         </div>
 
-        <div class="col-md-6 column">
+        <div class="col-md-8 column">
             <div class="row" id="bookList"></div>
-
-            <div class="text-right" id="page_nav_area"></div>
-
         </div>
 
-        <div class="col-md-3 column">
-            <div class="list-group">
-                <a class="list-group-item active">图书推荐</a>
-                <div class="list-group-item">
-                    <span class="badge">14</span>
-                    <a href="#">Java编程思想</a>
-                </div>
-                <div class="list-group-item">
-                    <a href="#">Java程序员面试宝典</a>
-                </div>
-            </div>
+        <div class="col-md-2 column">
         </div>
 
-    </div>
-</div>
-
-<div class="footer ">
-    <div class="container">
-        <div class="row footer-top text-center">
-            <div class="col-xs-4 col-md-2 col-md-offset-2">
-                <h4>关于</h4>
-                <ul class="list-unstyled">
-                    <li>
-                        <a href="">关于我们</a>
-                    </li>
-                    <li style="margin-top: 10px;">
-                        <a href="/admin/login">后台管理</a>
-                    </li>
-                </ul>
-            </div>
-            <div class="col-xs-4 col-md-2 col-md-offset-1">
-                <h4>联系方式</h4>
-                <ul class="list-unstyled">
-                    <li>
-                        <a target="_blank" href="#">新浪微博</a>
-                    </li>
-                    <li style="margin-top: 10px;">
-                        <a href="">电子邮件</a>
-                    </li>
-                </ul>
-            </div>
-
-            <div class="col-xs-4 col-md-2  col-md-offset-1">
-                <h4>联系方式</h4>
-                <ul class="list-unstyled">
-                    <li>
-                        <a target="_blank" href="#">新浪微博</a>
-                    </li>
-                    <li style="margin-top: 10px;">
-                        <a href="">电子邮件</a>
-                    </li>
-                </ul>
-            </div>
-
-        </div>
     </div>
 </div>
 
@@ -272,9 +206,6 @@
 <script>
     $(function () {
 
-        var totalRecord;
-        var currentPage;
-
         $(function () {
             //去首页
             to_page(1);
@@ -283,92 +214,53 @@
         function to_page(pn) {
             $.ajax({
                 type: "POST",
-                url: "/book/v1/list",
-                data: "pn=" + pn + "&pageSize=" + 9,
+                url: "/book/v1/search",
+                data: "pn=" + pn + "&pageSize=" + 5 + "&params=" + encodeURI(getQueryString("params")),
                 error: function (request) {
                     alert("Connection error");
                 },
                 success: function (result) {
-                    //1、解析并显示书籍
-                    build_book_table(result);
-
-                    //2、显示分页条信息
-                    build_page_nav(result);
-
+                    if (result.code == 200) {
+                        //1、解析并显示书籍
+                        build_book_table(result);
+                    } else {
+                        alert(result.message);
+                    }
                 }
             });
         }
 
+        function getQueryString(name) {
+            var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)", "i");
+            var r = window.location.search.substr(1).match(reg);
+            if (r != null) return unescape(r[2]);
+            return null;
+        }
+
         function build_book_table(result) {
             $("#bookList").empty();
-            var books = result.data.page.list;
+            if (result.data.bookList.length <= 0) {
+                $("#bookList").append("<h2>未查询到结果</h2>");
+                return;
+            }
+            var books = result.data.bookList;
             $.each(books, function (index, item) {
                 var bookName = $("<h3></h3>").append(item.name);
                 var bookDesc = $("<p></p>").append(item.description);
                 var bookAuthor = $("<p></p>").append($("<span></span>").append(item.author));
                 var detail = $("<a></a>").attr("href", "/book/detail?bookid=" + item.uid).append("查看详情");
-                var bookPrice = $("<span></span>").addClass("pull-right").css({
-                    "margin-right": "10px",
-                    "color": "darkred"
-                }).append("￥" + item.price);
 
-                var rootDiv = $("<div></div>").addClass("col-md-4");
+                var rootDiv = $("<div></div>").addClass("col-md-3");
                 var captionDiv = $("<div></div>").addClass("caption");
                 var thumbnailDiv = $("<div></div>").addClass("thumbnail").append();
                 thumbnailDiv.append(bookName)
                     .append(bookName)
                     .append(bookDesc)
                     .append(bookAuthor)
-                    .append($("<p></p>").append(detail).append(bookPrice));
+                    .append($("<p></p>").append(detail));
                 captionDiv.append(thumbnailDiv);
                 rootDiv.append(captionDiv).appendTo("#bookList");
             })
-        }
-
-        function build_page_nav(result) {
-            $("#page_nav_area").empty();
-            var ul = $("<ul></ul>").addClass("pagination");
-            var firstPageLi = $("<li></li>").append($("<a></a>").append("首页").attr("href", "#"));
-            var prePageLi = $("<li></li>").append($("<a></a>").append("&laquo;"));
-            if (result.data.page.hasPreviousPage == false) {
-                firstPageLi.addClass("disabled");
-                prePageLi.addClass("disabled");
-            } else {
-                firstPageLi.click(function () {
-                    to_page(1);
-                });
-                prePageLi.click(function () {
-                    to_page(result.data.page.pageNum - 1);
-                });
-            }
-
-            var nextPageLi = $("<li></li>").append($("<a></a>").append("&raquo;"));
-            var lastPageLi = $("<li></li>").append($("<a></a>").append("末页").attr("href", "#"));
-            if (result.data.page.hasNextPage == false) {
-                nextPageLi.addClass("disabled");
-                lastPageLi.addClass("disabled");
-            } else {
-                nextPageLi.click(function () {
-                    to_page(result.data.page.pageNum + 1);
-                });
-                lastPageLi.click(function () {
-                    to_page(result.data.page.pages);
-                });
-            }
-
-            ul.append(firstPageLi).append(prePageLi);
-            $.each(result.data.page.navigatepageNums, function (index, item) {
-                var numLi = $("<li></li>").append($("<a></a>").append(item));
-                if (result.data.page.pageNum == item) {
-                    currentPage = item;
-                    numLi.addClass("active");
-                }
-                numLi.click(function () {
-                    to_page(item);
-                });
-                ul.append(numLi);
-            });
-            ul.append(nextPageLi).append(lastPageLi).appendTo($("#page_nav_area"));
         }
 
         $('#userLoginBtn').click(function () {

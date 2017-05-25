@@ -49,13 +49,12 @@ public class BookControllerTest {
                 (
                         get("/book/v1/search")
                                 .contentType(MediaType.APPLICATION_FORM_URLENCODED)
-                                .param("bookName", "123456789")
-                                .param("bookAuthor", "huzunrong")
+                                .param("params", "作者")
                 )
                 .andExpect(status().isOk())
                 .andDo(print())
                 .andReturn().getResponse().getContentAsString();
-        System.out.println("-----返回的json ---------\n " + responseString);
+        System.out.println("-----返回---------\n " + responseString);
     }
 
     @Test

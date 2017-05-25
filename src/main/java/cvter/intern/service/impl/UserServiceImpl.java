@@ -174,10 +174,7 @@ public class UserServiceImpl implements UserService {
         }
         User userInfo=userDao.selectByName(username);
 
-        if (password.equals(userInfo.getPassword())) {
-            return true;
-        }
-        return false;
+        return Md5SaltUtil.getMD5(password, userInfo.getUid()).equals(userInfo.getPassword());
     }
 
     /**
