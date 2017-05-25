@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 /**
- * Created by cvter on 2017/5/21.
+ * 基类，封装异常处理
  */
 public class BaseController {
 

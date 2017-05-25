@@ -8,6 +8,7 @@ import cvter.intern.lucene.model.Index;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.File;
 import java.io.InputStream;
 import java.util.List;
 import java.util.Properties;
@@ -35,6 +36,11 @@ public class IndexManager {
         prop.load(is);
 
         INDEX_DIR = prop.getProperty("indexPath", "D:/lucene/luceneIndex");
+
+        File file = new File(INDEX_DIR);
+        if (!file.exists()) {
+            file.mkdirs();
+        }
         nDocs = Integer.parseInt(prop.getProperty("nDocs", "1000"));
 
         indexDao = clazz.newInstance();

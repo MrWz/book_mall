@@ -88,8 +88,10 @@
                 error: function (request) {
                     alert("Connection error");
                 },
-                success: function (result) {
+                success: function (result, status, xhr) {
                     if (result.code == 200) {
+                        sessionStorage.setItem("xrf_", xhr.getResponseHeader("AUTH"));
+                        sessionStorage.setItem("admin", true);
                         location.href = "/admin";
                     } else {
                         alert(result.message);

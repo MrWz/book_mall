@@ -49,17 +49,6 @@
     </div>
     <span id="page_info_area"></span>
     <div class="text-right" id="page_nav_area">
-        <%--<ul class="pagination">
-            <li><a href="#">首页</a></li>
-            <li><a href="#">&laquo;</a></li>
-            <li class="active"><a>1</a></li>
-            <li><a href="#">2</a></li>
-            <li><a href="#">3</a></li>
-            <li><a href="#">4</a></li>
-            <li><a href="#">5</a></li>
-            <li><a href="#">&raquo;</a></li>
-            <li><a href="#">尾页</a></li>
-        </ul>--%>
     </div>
 </div>
 
@@ -155,13 +144,20 @@
     var currentPage;
 
     $(function () {
+        if (sessionStorage.getItem("admin") == null) {
+            location.href = "/admin/login";
+            return;
+        }
         //去首页
         to_page(1);
 
         $("#log_off_btn").click(function () {
             $.ajax({
-                type: "POST",
-                url: "/admin/v1/logoff",
+                type: "DELETE",
+                headers: {
+                    AUTH: sessionStorage.getItem("xrf_")
+                },
+                url: "/admin/v1/login",
                 data: null,
                 error: function (request) {
                     alert("Connection error");
@@ -170,6 +166,8 @@
 
                     if (result.code == 200) {
                         alert(result.message);
+                        sessionStorage.removeItem("admin");
+                        sessionStorage.removeItem("xrf_");
                         location.href = "/admin/login";
                     } else {
                         alert(result.message);
@@ -295,6 +293,9 @@
     $("#book_save_btn").click(function () {
         $.ajax({
             type: "POST",
+            headers: {
+                AUTH: sessionStorage.getItem("xrf_")
+            },
             url: "/admin/v1/book/add",
             data: $("#bookModal form").serialize(),
             error: function (request) {
@@ -319,6 +320,9 @@
     function getBook(bookuid) {
         $.ajax({
             type: "GET",
+            headers: {
+                AUTH: sessionStorage.getItem("xrf_")
+            },
             url: "/book/v1/detail/" + bookuid,
             data: null,
             error: function (request) {
@@ -338,6 +342,9 @@
     $("#book_update_btn").click(function () {
         $.ajax({
             type: "PUT",
+            headers: {
+                AUTH: sessionStorage.getItem("xrf_")
+            },
             url: "/admin/v1/book/adjust",
             data: $("#bookUpdateModal form").serialize(),
             error: function (request) {
@@ -363,6 +370,9 @@
     function del_book(uids) {
         $.ajax({
             type: "DELETE",
+            headers: {
+                AUTH: sessionStorage.getItem("xrf_")
+            },
             url: "/admin/v1/book/del/" + uids,
             data: null,
             error: function (request) {
@@ -387,6 +397,9 @@
     function panic_book(uids) {
         $.ajax({
             type: "PUT",
+            headers: {
+                AUTH: sessionStorage.getItem("xrf_")
+            },
             url: "/admin/v1/book/panic/" + uids,
             data: null,
             error: function (request) {

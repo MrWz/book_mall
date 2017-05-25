@@ -13,7 +13,12 @@
     <context:component-scan base-package="cvter.intern.service"/>
 
     <!-- 默认的注解映射的支持 -->
-    <mvc:annotation-driven/>
+    <!--<mvc:annotation-driven/>-->
+    <mvc:annotation-driven>
+        <mvc:argument-resolvers>
+            <bean class="cvter.intern.authorization.resolvers.CurrentUserMethodArgumentResolver" lazy-init="false"/>
+        </mvc:argument-resolvers>
+    </mvc:annotation-driven>
 
     <!-- 对静态资源文件的访问 -->
     <mvc:default-servlet-handler/>
@@ -32,6 +37,10 @@
         <mvc:interceptor>
             <mvc:mapping path="/**"/>
             <bean class="cvter.intern.authorization.interceptor.AuthorizationInterceptor"/>
+        </mvc:interceptor>
+        <mvc:interceptor>
+            <mvc:mapping path="/**"/>
+            <bean class="cvter.intern.interceptor.TimeInteceptor"/>
         </mvc:interceptor>
     </mvc:interceptors>
 

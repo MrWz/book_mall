@@ -1,4 +1,3 @@
-<%@ page import="cvter.intern.model.User" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" isELIgnored="false" %>
 <!DOCTYPE html>
 <html lang="zh-CN">
@@ -30,23 +29,14 @@
         <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
             <ul class="nav navbar-nav navbar-right">
                 <li>
-                    <a href="#">
+                    <a href="#" id="bookCarbtn">
                         <span class="glyphicon glyphicon-shopping-cart "></span> 购物车
                         <span class="badge">4</span>
                     </a>
                 </li>
-                <%
-                    User user = (User) session.getAttribute("user");
-                    if (user != null) {
-                %>
-                <li class="unLogin">
-                    <a href="#">
-                        欢迎您 ${user.name}
-                    </a>
+                <li class="" id="username">
+                    <a href="#"></a>
                 </li>
-                <%
-                } else {
-                %>
                 <li class="unLogin">
                     <a href="#" data-toggle="modal" data-target="#loginModal" data-whatever="login">
                         <span class="glyphicon glyphicon-log-in"></span> 登录
@@ -57,9 +47,6 @@
                         <span class="glyphicon glyphicon-edit"></span> 注册
                     </a>
                 </li>
-                <%
-                    }
-                %>
                 <li class="Logout">
                     <a href="#">
                         <span class="glyphicon glyphicon-log-out"></span> 退出
@@ -247,8 +234,12 @@
 
 <script src="https://cdn.bootcss.com/jquery/1.12.4/jquery.min.js"></script>
 <script src="https://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+<script src="/static/user.js"></script>
+<script src="/static/book.js"></script>
 <script>
     $(function () {
+
+        setStatus();
         getBook(getQueryString("bookid"));
 
 
@@ -277,87 +268,6 @@
                 }
             });
         }
-
-        $('#userLoginBtn').click(function () {
-            $.ajax({
-                type: "POST",
-                url: "/user/v1/login",
-                data: $('#loginModal form').serialize(),// 你的formid
-                error: function (request) {
-                    alert("Connection error");
-                },
-                success: function (data) {
-                    var code = data.code;
-                    switch (code) {
-                        case (200):
-                            alert("欢迎回来");
-                            $('#loginModal').modal('hide');
-                            window.location.reload(true);
-                            break;
-                        case (500):
-                            alert(data.message);
-                            break;
-                    }
-
-                }
-            });
-            return false;
-        });
-
-        $('#userRegisterBtn').click(function () {
-            $.ajax({
-                type: "POST",
-                url: "/user/v1/register",
-                data: $('#registerModal form').serialize(),// 你的formid
-                error: function (request) {
-                    alert("Connection error");
-                },
-                success: function (data) {
-                    var code = data.code;
-                    switch (code) {
-                        case (200):
-                            alert("注册成功");
-                            $('#loginModal').modal('hide');
-                            window.location.reload(true);
-                            break;
-                        case (500):
-                            alert(data.message);
-                            break;
-                    }
-                }
-            });
-            return false;
-        });
-
-        $('.Logout').click(function () {
-            $.ajax({
-                type: "POST",
-                url: "/user/v1/logoff",
-                data: null,// 你的formid
-                error: function (request) {
-                    alert("请先登录");
-                },
-                success: function (data) {
-                    var code = data.code;
-                    switch (code) {
-                        case (200):
-                            alert("OK");
-                            window.location.reload(true);
-                            break;
-                        case (500):
-                            alert(data.message);
-                            break;
-                    }
-                }
-            });
-            return false;
-        });
-
-        $("#searchBtn").click(function () {
-            location.href = "/book/search?" + encodeURI($("#searchForm").serialize());
-
-            return false;
-        });
     });
 </script>
 

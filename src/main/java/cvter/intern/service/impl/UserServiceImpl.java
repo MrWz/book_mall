@@ -105,6 +105,7 @@ public class UserServiceImpl implements UserService {
 
             UserRole userRole=userRoleDao.selectByUserUid(uid);
 
+
             Role role=roleDao.selectByPrimaryKey(userRole.getRoleUid());
             if (role.getDescription().equals(ROLE_1.getRole())) {//权限不对，抛出异常
                 throw new BusinessException(ExceptionCode.EX_30001.getCode(), ExceptionCode.EX_30001.getMessage());
