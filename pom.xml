@@ -195,7 +195,11 @@
             <artifactId>lucene-test-framework</artifactId>
             <version>${lucene.version}</version>
         </dependency>
-
+        <dependency>
+            <groupId>org.elasticsearch.client</groupId>
+            <artifactId>transport</artifactId>
+            <version>5.4.0</version>
+        </dependency>
         <!-- 集成Redis -->
         <!-- spring Redis -->
         <dependency>

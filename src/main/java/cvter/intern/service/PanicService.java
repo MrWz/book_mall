@@ -14,11 +14,21 @@ public interface PanicService {
 
     int update(Panic record);
 
+    /**
+     * 查询单个抢购记录
+     * @param uid
+     * @return
+     */
     Panic selectByUID(String uid);
 
     int deleteByUid(String uid);
 
+    /**
+     * 查询所有抢购记录
+     * @return
+     */
     List<Panic> selectAll();
 
     public boolean bookPanic(int nums, int curPrice, String startTime, String endTime,String uid);
+
 }

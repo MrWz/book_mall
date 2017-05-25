@@ -10,9 +10,14 @@ public interface PanicDao {
     boolean insert(Panic record);
     
     /**
-     * 删除记录（减库存）
+     * 删除记录
      */
     int deleteByPrimaryKey(String uid);
+
+    /**
+     * 减库存
+     */
+    int reduceNumber(String uid,String startTime);
 
     /**
      * 更新记录
