@@ -9,6 +9,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.util.Date;
+import java.util.Random;
 
 /**
  * Created by cvter on 2017/5/22.
@@ -31,14 +32,15 @@ public class BookServiceTest {
 
     @Test
     public void save() throws Exception {
+        Random random = new Random();
         for (int i = 0; i < 1000; i++) {
             Book book = new Book();
             book.setUid(UIDUtil.getRandomUID());
-            book.setName("书名" + (i + 1));
-            book.setAuthor("作者" + (i + 1));
-            book.setDescription("描述" + (i + 1));
-            book.setPrice(10 + i);
-            book.setStock(i + 1);
+            book.setName("书名" + random.nextInt(1000));
+            book.setAuthor("作者" + random.nextInt(1000));
+            book.setDescription("描述" + random.nextInt(1000));
+            book.setPrice(10 + random.nextInt(100));
+            book.setStock(random.nextInt(30) + 1);
             book.setDeleted(false);
             book.setCreateTime(new Date());
             book.setUpdateTime(new Date());

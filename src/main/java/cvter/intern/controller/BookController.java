@@ -3,7 +3,6 @@ package cvter.intern.controller;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import cvter.intern.authorization.annotation.Authorization;
-import cvter.intern.authorization.manager.TokenManager;
 import cvter.intern.lucene.model.BookIndex;
 import cvter.intern.lucene.service.IndexBookService;
 import cvter.intern.lucene.service.impl.IndexBookServiceImpl;
@@ -14,11 +13,10 @@ import cvter.intern.service.UserService;
 import cvter.intern.service.impl.BookServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
-import java.net.URLDecoder;
 import javax.servlet.http.HttpSession;
+import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -35,16 +33,13 @@ public class BookController extends BaseController {
     @Autowired
     private UserService userService;
 
-    @Autowired
-    TokenManager tokenManager;
-
-
     /**
      * 获取图书列表
      *
      * @param pn
      * @return
      */
+//    @RequestLimit(value = 3) //防刷，value为间隔时间 {@see RequestLimit}
     @ResponseBody
     @RequestMapping("/list")
     public Msg list(@RequestParam(defaultValue = "1") Integer pn,
@@ -81,11 +76,11 @@ public class BookController extends BaseController {
 //    @Authorization
     @ResponseBody
     @RequestMapping(value = "/buy", method = RequestMethod.POST)
-    public Msg buy(HttpSession session,@RequestParam String bookuid, @RequestParam int nums) {
+    public Msg buy(HttpSession session, @RequestParam String bookuid, @RequestParam int nums) {
         User user = (User) session.getAttribute("user");
-        boolean flag=userService.buy(user.getUid(),bookuid,nums);
+        boolean flag = userService.buy(user.getUid(), bookuid, nums);
 
-        if(flag){
+        if (flag) {
             return Msg.fail().setMessage("购买成功");
         }
         return Msg.fail().setMessage("库存不足");
