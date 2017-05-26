@@ -62,7 +62,7 @@ public class AdminController extends BaseController {
         return Msg.success().setMessage("成功退出");
     }
 
-    @Authorization
+    //@Authorization
     @ResponseBody
     @RequestMapping(value = "/book/add", method = RequestMethod.POST)
     public Msg bookAdd(Book book) {
@@ -78,7 +78,7 @@ public class AdminController extends BaseController {
     public Msg bookDel(@PathVariable String uids) {
         if (bookService.bookDel(uids)) {
             return Msg.success().setMessage("图书删除成功");
-        }
+    }
         return Msg.success().setMessage("图书删除失败");
     }
 

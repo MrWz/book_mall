@@ -12,7 +12,10 @@ public interface UserBookDao {
 
     int deleteByPrimaryKey(Integer id);
 
-    int insert(cvter.intern.model.UserBook record);
+    //插入购买明细
+    int insert(UserBook record);
+
+    //int select(UserBook record);
 
     int insertSelective(cvter.intern.model.UserBook record);
 
