@@ -42,9 +42,7 @@
                         <span class="badge">4</span>
                     </a>
                 </li>
-                <li class="" id="username">
-                    <a href="#"></a>
-                </li>
+
                 <li class="unLogin">
                     <a href="#" data-toggle="modal" data-target="#loginModal" data-whatever="login">
                         <span class="glyphicon glyphicon-log-in"></span> 登录
@@ -55,17 +53,18 @@
                         <span class="glyphicon glyphicon-edit"></span> 注册
                     </a>
                 </li>
+
                 <li class="Logout">
                     <a href="#">
                         <span class="glyphicon glyphicon-log-out"></span> 退出
                     </a>
                 </li>
             </ul>
-            <form class="navbar-form navbar-right" id="searchForm">
+            <form class="navbar-form navbar-right">
                 <div class="form-group input-group">
-                    <input type="text" name="params" class="form-control" placeholder="Search">
+                    <input type="text" class="form-control" placeholder="Search">
                     <span class="input-group-btn">
-                        <button class="btn btn-default" id="searchBtn">
+                        <button type="submit" class="btn btn-default">
                             <span class="glyphicon glyphicon-search"></span>
                         </button>
                     </span>
@@ -93,6 +92,7 @@
         </div>
 
         <div class="col-md-6 column">
+
             <div class="row" id="bookList"></div>
 
             <div class="text-right" id="page_nav_area"></div>
@@ -271,6 +271,7 @@
 
         function to_page(pn) {
             $.ajax({
+
                     type: "POST",
                     url: "/book/v1/list",
                     data: "pn=" + pn + "&pageSize=" + 9,
@@ -370,6 +371,7 @@
             });
             ul.append(nextPageLi).append(lastPageLi).appendTo($("#page_nav_area"));
         }
+
 
     })
     ;
