@@ -74,7 +74,7 @@
             <span class="pull-right">
                 <!--onclick="$('#loginBtn').click();"-->
                     <button class="btn btn-primary" data-toggle="modal" data-target="#buyModal">立即购买</button>
-                    <button class="btn btn-danger">加入购物车</button>
+                    <button class="btn btn-danger" data-toggle="modal" data-target="#shopCarModal">加入购物车</button>
                 </span>
         </p>
         <h3 id="book_name"></h3>
@@ -232,6 +232,45 @@
     </div><!-- /.modal-dialog -->
 </div><!-- /.modal -->
 
+
+<div id="shopCarModal" class="modal fade" data-backdrop="static" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-body">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                        aria-hidden="true">&times;</span>
+                </button>
+                <h3 class="modal-title">加入购物车</h3>
+            </div>
+
+            <div class="modal-body">
+                <form class="form-group">
+
+                    <div class="form-group">
+                        <label for="">书Uid</label>
+                        <input class="form-control" name="bookuid" type="text" required placeholder="6-15位字母或数字">
+                        <span id="" class="help-block text-warning"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="">添加数量</label>
+                        <input class="form-control" name="nums" type="text" required placeholder="6-15位字母或数字">
+                        <span id="" class="help-block text-warning"></span>
+                    </div>
+                    <div class="modal-body">
+                        <form class="form-group">
+                            <div class="text-right">
+                                <button class="btn btn-info" id="addBtn">添加</button>
+                                <button class="btn btn-danger" data-dismiss="modal">取消</button>
+                            </div>
+                        </form>
+                    </div>
+                </form>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
 <script src="https://cdn.bootcss.com/jquery/1.12.4/jquery.min.js"></script>
 <script src="https://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 <script src="/static/user.js"></script>
@@ -276,8 +315,35 @@
         $('#buyBtn').click(function () {
             $.ajax({
                 type: "POST",
+                headers: {
+                    AUTH: sessionStorage.getItem("xrf_")
+                },
                 url: "/book/v1/buy",
                 data: $('#buyModal form').serialize(),// 你的formid
+                error: function (request) {
+                    alert("请您先去登录");
+                },
+                success: function (data) {
+//                $("#commonLayout_appcreshi").parent().html(data);
+                    alert(data.code + "---" + data.message);
+
+                }
+            });
+            return false;
+        });
+    });
+</script>
+
+<script>
+    $(function () {
+        $('#addBtn').click(function () {
+            $.ajax({
+                type: "POST",
+                headers: {
+                    AUTH: sessionStorage.getItem("xrf_")
+                },
+                url: "/book/v1/shopcar",
+                data: $('#shopCarModal form').serialize(),// 你的formid
                 error: function (request) {
                     alert("请您先去登录");
                 },

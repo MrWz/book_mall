@@ -99,7 +99,7 @@ public class BookServiceImpl implements BookService {
      * 查询
      */
     public Book selectByUid(String uid) {
-        return bookDao.selectByPrimaryKey(uid);
+        return bookDao.selectByBookUid(uid);
     }
 
     /**
