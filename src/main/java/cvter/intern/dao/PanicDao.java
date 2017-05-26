@@ -20,7 +20,7 @@ public interface PanicDao {
     /**
      * 减库存
      */
-    
+
     int reduceNumber(@Param(value="uid")String uid, @Param(value="killTime") Date killTime);
     /**
      * 更新记录
