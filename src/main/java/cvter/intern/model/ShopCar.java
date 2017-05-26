@@ -5,6 +5,10 @@ import java.util.Date;
 public class ShopCar {
     private Integer id;
 
+    public ShopCar() {
+        super();
+    }
+
     public ShopCar(String userUid, String bookUid, Integer nums, Boolean deleted, Date createTime, Date updateTime) {
         this.userUid=userUid;
         this.bookUid=bookUid;

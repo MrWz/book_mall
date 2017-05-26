@@ -12,6 +12,7 @@ import cvter.intern.model.Msg;
 import cvter.intern.model.User;
 import cvter.intern.service.UserService;
 import cvter.intern.service.impl.BookServiceImpl;
+import cvter.intern.vo.BookInShopCar;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.StringUtils;
@@ -20,6 +21,7 @@ import org.springframework.web.bind.annotation.*;
 import java.net.URLDecoder;
 import javax.servlet.http.HttpSession;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -78,7 +80,7 @@ public class BookController extends BaseController {
      * @param nums
      * @return
      */
-//    @Authorization
+    @Authorization
     @ResponseBody
     @RequestMapping(value = "/buy", method = RequestMethod.POST)
     public Msg buy(HttpSession session,@RequestParam String bookuid, @RequestParam int nums) {
@@ -93,18 +95,14 @@ public class BookController extends BaseController {
 
     /**
      * 获取购物车详情
-     *
-     * @param bookuid
-     * @param nums
      * @return
      */
     @Authorization
     @ResponseBody
     @RequestMapping(value = "/shopcar", method = RequestMethod.GET)
-    public Msg shopCarGet(HttpSession session,@RequestParam String bookuid, @RequestParam String nums) {
+    public Msg shopCarGet(HttpSession session) {
         User user=(User)session.getAttribute("user");
-        List<Book> bookList=userService.getShopCar(user.getUid());
-
+        List<BookInShopCar> bookList=userService.getShopCar(user.getUid());
         if(bookList.size()==0){
             return Msg.fail().setMessage("购物车空空如也");
         }
@@ -112,33 +110,51 @@ public class BookController extends BaseController {
     }
 
     /**
-     * 删除购物车
-     *
-     * @param bookuid
-     * @param nums
+     * 清空购物车
      * @return
      */
-//    @Authorization
+    @Authorization
     @ResponseBody
     @RequestMapping(value = "/shopcar", method = RequestMethod.DELETE)
-    public Msg shopCarDelete(@RequestParam String bookuid, @RequestParam String nums) {
+    public Msg shopCarDelete(HttpSession session,@RequestParam String bookuid) {
+        User user=(User)session.getAttribute("user");
 
-        return Msg.fail().setMessage("接口正在处理中");
+        /**
+         * boouid为空就执行清空购物车
+         * 反之，删除指定图书
+         */
+        if(!StringUtils.isEmpty(bookuid)){
+            boolean flag=userService.deleteOneBook(user.getUid(),bookuid);
+            if(flag){
+                return Msg.success().setMessage("删除成功");
+            }
+            return Msg.fail().setMessage("删除失败");
+        }
+        boolean flag=userService.clearShopCar(user.getUid());
+        if(flag){
+            return Msg.success().setMessage("清空完毕");
+        }
+        return Msg.fail().setMessage("清空失败");
     }
 
     /**
      * 更新购物车
      *
      * @param bookuid
-     * @param nums
+     * @param count
      * @return
      */
 //    @Authorization
     @ResponseBody
     @RequestMapping(value = "/shopcar", method = RequestMethod.PUT)
-    public Msg shopCarPut(@RequestParam String bookuid, @RequestParam String nums) {
+    public Msg shopCarPut(HttpSession session,@RequestParam String bookuid, @RequestParam int count) {
+        User user=(User)session.getAttribute("user");
 
-        return Msg.fail().setMessage("接口正在处理中");
+        boolean flag=userService.updateShopCar(user.getUid(),bookuid,count);
+        if(flag){
+            return Msg.success().setMessage("修改成功");
+        }
+        return Msg.fail().setMessage("修改失败");
     }
 
     /**

@@ -33,7 +33,7 @@ public class BaseController {
         } else {
             return Msg.fail()
                     .setCode(ExceptionCode.EX_10002.getCode())
-                    .setMessage(ex.getMessage());
+                    .setMessage(ExceptionCode.EX_10002.getMessage());
         }
     }
 

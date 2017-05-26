@@ -77,8 +77,16 @@
     select
     <include refid="Base_Column_List" />
     from user_book
-    where user_uid = #{useUid}
+    where user_uid = #{userUid}
   </select>
+
+  <select id="selectByUuidAndBuid" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from user_book
+    where user_uid = #{userUid} and book_uid = #{bookUid} and buy_way = #{buyWay}
+  </select>
+
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
     select 
     <include refid="Base_Column_List" />

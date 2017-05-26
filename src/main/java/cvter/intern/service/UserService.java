@@ -1,14 +1,22 @@
 package cvter.intern.service;
 import cvter.intern.model.Book;
 import cvter.intern.model.User;
+import cvter.intern.vo.BookInShopCar;
 
+import java.util.HashMap;
 import java.util.List;
 
 /**
  * Created by cvter on 2017/5/17.
  */
 public interface UserService {
-    List<Book> getShopCar(String userUid);
+    Boolean updateShopCar(String userUid,String bookUid,int count);
+
+    Boolean deleteOneBook(String userUid,String bookUid);
+
+    Boolean clearShopCar(String userUid);
+
+    List<BookInShopCar> getShopCar(String userUid);
 
     Boolean addShopCar(String userUid,String bookUid,int nums);
 

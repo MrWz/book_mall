@@ -9,15 +9,15 @@ import cvter.intern.exception.ParameterException;
 import cvter.intern.model.*;
 import cvter.intern.service.UserService;
 import cvter.intern.utils.Md5SaltUtil;
+import cvter.intern.utils.RedisLockUtil;
 import cvter.intern.utils.UIDUtil;
+import cvter.intern.vo.BookInShopCar;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import redis.clients.jedis.JedisPool;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 import static cvter.intern.exception.ExceptionCode.EX_10001;
 import static cvter.intern.utils.RoleUtil.ROLE_1;
@@ -51,33 +51,116 @@ public class UserServiceImpl implements UserService {
     RedisTokenManager redisTokenManager;
 
     @Autowired
+    RedisLockUtil redisLockUtil;
+
+    @Autowired
     private ShopCarDao shopCarDao;
 
     /**
-     * 获取用户的购物车信息
+     * 更新购物车
+     * @param userUid
+     * @param bookUid
+     * @param count
+     * @return
+     */
+    @Override
+    public Boolean updateShopCar(String userUid, String bookUid, int count) {
+        boolean flag=StringUtils.isBlank(userUid);
+        if (flag) {
+            throw new ParameterException(EX_10001.getMessage());
+        }
+
+        ShopCar car=shopCarDao.selectByUuidAndBuid(userUid,bookUid,false);
+        if (car != null) {
+            int oldNum=car.getNums();
+            int newNum=oldNum+count;
+            car.setNums(newNum);
+            car.setUpdateTime(new Date());
+            shopCarDao.updateByPrimaryKey(car);
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * 删除购物车中指定的一本
+     * @param userUid
+     * @param bookUid
+     * @return
+     */
+    public Boolean deleteOneBook(String userUid,String bookUid) {
+        boolean flag=StringUtils.isBlank(userUid);
+        if (flag) {
+            throw new ParameterException(EX_10001.getMessage());
+        }
+        ShopCar car=shopCarDao.selectByUuidAndBuid(userUid,bookUid,false);
+        if (car != null) {
+            car.setDeleted(true);
+            car.setUpdateTime(new Date());
+            shopCarDao.updateByPrimaryKey(car);
+            return true;
+        }
+        return false;
+    }
+    /**
+     * 清空购物车
+     *
      * @param userUid
      * @return
      */
     @Override
-    public List<Book> getShopCar(String userUid) {
-        boolean flag=StringUtils.isAnyBlank(userUid);
-        if(flag){
+    public Boolean clearShopCar(String userUid) {
+        boolean flag=StringUtils.isBlank(userUid);
+        if (flag) {
             throw new ParameterException(EX_10001.getMessage());
         }
-        List<Book> bookList=new ArrayList(10);
-        List<ShopCar> listShopCar=shopCarDao.selectByUseUid(userUid);
-        if(listShopCar.isEmpty()){//用户购物车为空
+        List<ShopCar> listShopCar=shopCarDao.selectByUseUid(userUid,false);
+
+        Date date=new Date();
+        for (int i=0; i < listShopCar.size(); ++i) {
+            listShopCar.get(i).setDeleted(true);
+            listShopCar.get(i).setUpdateTime(date);
+            shopCarDao.updateByPrimaryKey(listShopCar.get(i));
+        }
+        return true;
+    }
+
+    /**
+     * 获取用户的购物车信息
+     *
+     * @param userUid
+     * @return
+     */
+    @Override
+    public List<BookInShopCar> getShopCar(String userUid) {
+        boolean flag=StringUtils.isAnyBlank(userUid);
+        if (flag) {
+            throw new ParameterException(EX_10001.getMessage());
+        }
+        List<BookInShopCar> bookList=new ArrayList(10);
+
+        List<ShopCar> listShopCar=shopCarDao.selectByUseUid(userUid,false);
+        if (listShopCar.isEmpty()) {//用户购物车为空
             return bookList;
         }
 
-        for(int i=0;i<listShopCar.size();++i){
-            bookList.add(bookDao.selectByBookUid(listShopCar.get(i).getBookUid()));
+        for (int i=0; i < listShopCar.size(); ++i) {
+            Book book=bookDao.selectByBookUid(listShopCar.get(i).getBookUid());
+            String uid=book.getUid();
+            String name=book.getName();
+            String author=book.getAuthor();
+            int price=book.getPrice();
+            int nums=listShopCar.get(i).getNums();
+
+            BookInShopCar bookInShopCar=new BookInShopCar(uid, name, author, price, nums);
+            bookList.add(bookInShopCar);
         }
         return bookList;
     }
 
     /**
-     *添加购物车
+     * 添加购物车
+     *
      * @param userUid
      * @param bookUid
      * @param nums
@@ -85,18 +168,31 @@ public class UserServiceImpl implements UserService {
      */
     @Override
     public Boolean addShopCar(String userUid, String bookUid, int nums) {
-        boolean flag=StringUtils.isAnyBlank(userUid,bookUid);
-        if(flag){
+        boolean flag=StringUtils.isAnyBlank(userUid, bookUid);
+        if (flag) {
             throw new ParameterException(EX_10001.getMessage());
         }
         Date date=new Date();
-        ShopCar shopCar=new ShopCar(userUid,bookUid,nums,false,date,date);
+
+        ShopCar car=shopCarDao.selectByUuidAndBuid(userUid, bookUid,false);
+        /**
+         * 如果用户购物车中已经有该书且未被逻辑删除，则只更新数量和时间即可
+         * 反之插入一条新的记录
+         */
+        if (car != null) {
+            car.setNums(nums);
+            car.setUpdateTime(date);
+            shopCarDao.updateByPrimaryKey(car);
+            return true;
+        }
+        ShopCar shopCar=new ShopCar(userUid, bookUid, nums, false, date, date);
         shopCarDao.insert(shopCar);
         return true;
     }
 
     /**
      * 购买图书(订单处理)
+     *
      * @param userUid
      * @param bookUid
      * @param nums
@@ -110,34 +206,42 @@ public class UserServiceImpl implements UserService {
         }
         Date date=new Date();
         Book book=bookDao.selectByBookUid(bookUid);
-
-        boolean lockStatus=redisTokenManager.getLock("redisKey", "had");
+        boolean lockStatus=redisLockUtil.getLock("redisKey-"+book.getUid(),3*1000 );
         if (lockStatus) {
             int newStock=book.getStock() - nums;
             if (newStock < 0) {
+                redisLockUtil.unLock("redisKey-"+book.getUid());
                 return false;
             }
             book.setStock(newStock);
             book.setUpdateTime(date);
             bookDao.updateByPrimaryKey(book);
+            redisLockUtil.unLock("redisKey-"+book.getUid());
         } else {
+            //redisLockUtil.unLock("redisKey-"+book.getUid());
             throw new BusinessException(ExceptionCode.EX_20002.getCode(), ExceptionCode.EX_20002.getMessage());
         }
-        redisTokenManager.unLock("redisKey");
 
-        List<UserBook> userBookList=userBookDao.selectByUserUid(userUid);
-        for (UserBook tmp : userBookList) {
-//            System.out.println("++++++++"+tmp.getBuyNums());
+        UserBook userBook=userBookDao.selectByUuidAndBuid(userUid,bookUid,false);
+        /**
+         * 如果用户购买表中已经有该书且未是通过正常通道购买而来，则只更新数量和时间即可
+         * 反之，要构建一个新的记录插入数据库
+         */
+        if(userBook != null){
+            int newNums=userBook.getBuyNums()+nums;
+            userBook.setBuyNums(newNums);
+            userBook.setUpdateTime(date);
+            userBookDao.updateByPrimaryKey(userBook);
+            return true;
         }
-        UserBook userBook=new UserBook(userUid, bookUid, book.getPrice(), nums, false, false, date, date);
-
-        userBookDao.insert(userBook);
-
+        UserBook newUserBook=new UserBook(userUid, bookUid, book.getPrice(), nums, false, false, date, date);
+        userBookDao.insert(newUserBook);
         return true;
     }
 
     /**
      * 验证登录是否成功
+     *
      * @param username
      * @param password
      * @return
@@ -176,6 +280,7 @@ public class UserServiceImpl implements UserService {
 
     /**
      * 验证注册是否成功
+     *
      * @param username
      * @param password
      * @return
@@ -184,7 +289,7 @@ public class UserServiceImpl implements UserService {
     public Boolean checkRegister(String username, String password) {
         Boolean flag=StringUtils.isAnyBlank(username, password);
         if (flag) {
-            throw new ParameterException();
+            throw new ParameterException(EX_10001.getMessage());
         }
         Role role;
         UserRole userRole;
@@ -198,6 +303,7 @@ public class UserServiceImpl implements UserService {
 
             role=roleDao.selectByDescription(ROLE_2.getRole());
             String roleUid=role.getUid();
+
             userRole=new UserRole(uid, roleUid, false, date, date);
             userRoleDao.insert(userRole);
 
@@ -215,6 +321,7 @@ public class UserServiceImpl implements UserService {
 
     /**
      * 增加记录
+     *
      * @param record
      * @return
      */
@@ -224,6 +331,7 @@ public class UserServiceImpl implements UserService {
 
     /**
      * 管理员登录
+     *
      * @param username
      * @param password
      * @return

@@ -6,7 +6,12 @@ import java.util.List;
 import org.apache.ibatis.annotations.Param;
 
 public interface ShopCarDao {
-    List<ShopCar> selectByUseUid(String userUid);
+    ShopCar selectByUuidAndBuid(@Param(value = "userUid") String userUid,
+                                @Param(value = "bookUid") String bookUid,
+                                @Param(value = "deleted") boolean deleted);
+
+    List<ShopCar> selectByUseUid(@Param(value = "userUid") String userUid,
+                                 @Param(value = "deleted") boolean deleted);
 
     int countByExample(ShopCarExample example);
 

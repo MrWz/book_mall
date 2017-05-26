@@ -43,4 +43,9 @@ public class GotoController extends BaseController {
     public String search() {
         return "result";
     }
+
+    @RequestMapping(value="/book/shopcar")
+    public String shopcar(){
+        return "shopcar";
+    }
 }

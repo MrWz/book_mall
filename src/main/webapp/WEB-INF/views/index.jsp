@@ -1,4 +1,3 @@
-<%@ page import="cvter.intern.model.User" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" isELIgnored="false" %>
 <!DOCTYPE html>
 <html lang="zh-CN">
@@ -43,18 +42,6 @@
                         <span class="badge">4</span>
                     </a>
                 </li>
-                <%
-                    User user = (User) session.getAttribute("user");
-                    if (user != null) {
-                %>
-                <li class="unLogin">
-                    <a href="#">
-                        欢迎您 ${user.name}
-                    </a>
-                </li>
-                <%
-                } else {
-                %>
                 <li class="unLogin">
                     <a href="#" data-toggle="modal" data-target="#loginModal" data-whatever="login">
                         <span class="glyphicon glyphicon-log-in"></span> 登录
@@ -65,20 +52,15 @@
                         <span class="glyphicon glyphicon-edit"></span> 注册
                     </a>
                 </li>
-                <%
-                    }
-                %>
-                <li class="Logout">
-                    <a href="#">
-                        <span class="glyphicon glyphicon-log-out"></span> 退出
-                    </a>
+                <li class="Login">
+                    <a href="#"></a>
                 </li>
             </ul>
-            <form class="navbar-form navbar-right" id="searchForm">
+            <form class="navbar-form navbar-right">
                 <div class="form-group input-group">
-                    <input type="text" name="params" class="form-control" placeholder="Search">
+                    <input type="text" class="form-control" placeholder="Search">
                     <span class="input-group-btn">
-                        <button class="btn btn-default" id="searchBtn">
+                        <button type="submit" class="btn btn-default">
                             <span class="glyphicon glyphicon-search"></span>
                         </button>
                     </span>
@@ -106,6 +88,7 @@
         </div>
 
         <div class="col-md-6 column">
+
             <div class="row" id="bookList"></div>
 
             <div class="text-right" id="page_nav_area"></div>
@@ -284,7 +267,7 @@
             $.ajax({
                 type: "POST",
                 url: "/book/v1/list",
-                data: "pn=" + pn + "&pageSize=" + 9,
+                data: "pn=" + pn,
                 error: function (request) {
                     alert("Connection error");
                 },
@@ -383,15 +366,15 @@
                     var code = data.code;
                     switch (code) {
                         case (200):
-                            alert("欢迎回来");
                             $('#loginModal').modal('hide');
-                            window.location.reload(true);
+                            $('.unLogin').hide();
+                            $('.Login a').text(data.data.userinfo.name);
+                            alert(data.message);
                             break;
                         case (500):
                             alert(data.message);
                             break;
                     }
-
                 }
             });
             return false;
@@ -409,9 +392,10 @@
                     var code = data.code;
                     switch (code) {
                         case (200):
-                            alert("注册成功");
                             $('#loginModal').modal('hide');
-                            window.location.reload(true);
+                            $('.unLogin').hide();
+                            $('.Login a').text(data.data.userinfo.name);
+                            alert(data.message);
                             break;
                         case (500):
                             alert(data.message);
@@ -421,37 +405,6 @@
             });
             return false;
         });
-
-        $('.Logout').click(function () {
-            $.ajax({
-                type: "POST",
-                url: "/user/v1/logoff",
-                data: null,// 你的formid
-                error: function (request) {
-                    alert("请先登录");
-                },
-                success: function (data) {
-                    var code = data.code;
-                    switch (code) {
-                        case (200):
-                            alert("OK");
-                            window.location.reload(true);
-                            break;
-                        case (500):
-                            alert(data.message);
-                            break;
-                    }
-                }
-            });
-            return false;
-        });
-
-        $("#searchBtn").click(function () {
-            location.href = "/book/search?" + encodeURI($("#searchForm").serialize());
-
-            return false;
-        });
-
     });
 </script>
 

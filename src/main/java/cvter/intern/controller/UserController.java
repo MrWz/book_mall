@@ -57,10 +57,9 @@ public class UserController extends BaseController {
             TokenModel model = tokenManager.createToken(user.getUid());
             session.setAttribute("UID", model.toString());
             session.setAttribute("user", user);
-            return Msg.success().add("description", "注册成功");
-
+            return Msg.success().setMessage("注册成功").add("userinfo", user);
         }
-        return Msg.fail().add("description", "用户名已存在");
+        return Msg.fail().setMessage("用户名已存在");
     }
 
     @Authorization
