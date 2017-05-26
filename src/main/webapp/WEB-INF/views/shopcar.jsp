@@ -26,6 +26,7 @@
         <p>
             <span><script>document.write(new Date());</script></span>
             <span class="pull-right">
+                <button class="btn btn-warning">清空购物车</button>
                     <a href="/" class="btn btn-default">返回首页</a>
                 </span>
         </p>
@@ -81,17 +82,6 @@
         </table>
     </div>
     <div class="text-right" id="page_nav_area">
-        <ul class="pagination">
-            <li><a href="#">首页</a></li>
-            <li><a href="#">&laquo;</a></li>
-            <li class="active"><a>1</a></li>
-            <li><a href="#">2</a></li>
-            <li><a href="#">3</a></li>
-            <li><a href="#">4</a></li>
-            <li><a href="#">5</a></li>
-            <li><a href="#">&raquo;</a></li>
-            <li><a href="#">尾页</a></li>
-        </ul>
     </div>
 </div>
 
@@ -126,6 +116,12 @@
     var currentPage;
 
     $(function () {
+
+        if (sessionStorage.getItem("username") == null) {
+            alert("您未登录");
+            location.href = "/";
+            return;
+        }
         //去首页
         to_page(1);
 
@@ -141,12 +137,15 @@
             },
             success: function (result) {
 
-                //1、解析并显示书籍
-                build_book_table(result);
+                if (result.code == 200) {
+                    //1、解析并显示书籍
+                    build_book_table(result);
 
-                //2、显示分页条信息
-                build_page_nav(result);
-
+                    //2、显示分页条信息
+                    build_page_nav(result);
+                } else {
+                    alert(result.message);
+                }
             }
         });
     }

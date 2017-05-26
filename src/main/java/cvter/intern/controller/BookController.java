@@ -3,7 +3,7 @@ package cvter.intern.controller;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import cvter.intern.authorization.annotation.Authorization;
-import cvter.intern.authorization.manager.TokenManager;
+import cvter.intern.authorization.annotation.CurrentUser;
 import cvter.intern.lucene.model.BookIndex;
 import cvter.intern.lucene.service.IndexBookService;
 import cvter.intern.lucene.service.impl.IndexBookServiceImpl;
@@ -13,15 +13,13 @@ import cvter.intern.model.User;
 import cvter.intern.service.UserService;
 import cvter.intern.service.impl.BookServiceImpl;
 import cvter.intern.vo.BookInShopCar;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URLDecoder;
-import javax.servlet.http.HttpSession;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -37,16 +35,13 @@ public class BookController extends BaseController {
     @Autowired
     private UserService userService;
 
-    @Autowired
-    TokenManager tokenManager;
-
-
     /**
      * 获取图书列表
      *
      * @param pn
      * @return
      */
+//    @RequestLimit(value = 3) //防刷，value为间隔时间 {@see RequestLimit}
     @ResponseBody
     @RequestMapping("/list")
     public Msg list(@RequestParam(defaultValue = "1") Integer pn,
@@ -83,11 +78,10 @@ public class BookController extends BaseController {
     @Authorization
     @ResponseBody
     @RequestMapping(value = "/buy", method = RequestMethod.POST)
-    public Msg buy(HttpSession session,@RequestParam String bookuid, @RequestParam int nums) {
-        User user = (User) session.getAttribute("user");
-        boolean flag=userService.buy(user.getUid(),bookuid,nums);
+    public Msg buy(@CurrentUser User user, @RequestParam String bookuid, @RequestParam int nums) {
+        boolean flag = userService.buy(user.getUid(), bookuid, nums);
 
-        if(flag){
+        if (flag) {
             return Msg.fail().setMessage("购买成功");
         }
         return Msg.fail().setMessage("库存不足");
@@ -100,8 +94,7 @@ public class BookController extends BaseController {
     @Authorization
     @ResponseBody
     @RequestMapping(value = "/shopcar", method = RequestMethod.GET)
-    public Msg shopCarGet(HttpSession session) {
-        User user=(User)session.getAttribute("user");
+    public Msg shopCarGet(@CurrentUser User user) {
         List<BookInShopCar> bookList=userService.getShopCar(user.getUid());
         if(bookList.size()==0){
             return Msg.fail().setMessage("购物车空空如也");
@@ -116,9 +109,7 @@ public class BookController extends BaseController {
     @Authorization
     @ResponseBody
     @RequestMapping(value = "/shopcar", method = RequestMethod.DELETE)
-    public Msg shopCarDelete(HttpSession session,@RequestParam String bookuid) {
-        User user=(User)session.getAttribute("user");
-
+    public Msg shopCarDelete(@CurrentUser User user,@RequestParam String bookuid) {
         /**
          * boouid为空就执行清空购物车
          * 反之，删除指定图书
@@ -144,12 +135,10 @@ public class BookController extends BaseController {
      * @param count
      * @return
      */
-//    @Authorization
+    @Authorization
     @ResponseBody
     @RequestMapping(value = "/shopcar", method = RequestMethod.PUT)
-    public Msg shopCarPut(HttpSession session,@RequestParam String bookuid, @RequestParam int count) {
-        User user=(User)session.getAttribute("user");
-
+    public Msg shopCarPut(@CurrentUser User user,@RequestParam String bookuid, @RequestParam int count) {
         boolean flag=userService.updateShopCar(user.getUid(),bookuid,count);
         if(flag){
             return Msg.success().setMessage("修改成功");
@@ -167,9 +156,8 @@ public class BookController extends BaseController {
     @Authorization
     @ResponseBody
     @RequestMapping(value = "/shopcar", method = RequestMethod.POST)
-    public Msg shopCarPost(HttpSession session,@RequestParam String bookuid, @RequestParam int nums) {
+    public Msg shopCarPost(@CurrentUser User user,@RequestParam String bookuid, @RequestParam int nums) {
 
-        User user=(User)session.getAttribute("user");
         boolean flag=userService.addShopCar(user.getUid(),bookuid,nums);
         if(flag){
             return Msg.success().setMessage("添加成功，尽快购买");

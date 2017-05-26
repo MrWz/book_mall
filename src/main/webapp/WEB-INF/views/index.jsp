@@ -37,11 +37,12 @@
         <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
             <ul class="nav navbar-nav navbar-right">
                 <li>
-                    <a href="#">
+                    <a href="#" id="bookCarbtn">
                         <span class="glyphicon glyphicon-shopping-cart "></span> 购物车
                         <span class="badge">4</span>
                     </a>
                 </li>
+
                 <li class="unLogin">
                     <a href="#" data-toggle="modal" data-target="#loginModal" data-whatever="login">
                         <span class="glyphicon glyphicon-log-in"></span> 登录
@@ -52,8 +53,11 @@
                         <span class="glyphicon glyphicon-edit"></span> 注册
                     </a>
                 </li>
-                <li class="Login">
-                    <a href="#"></a>
+
+                <li class="Logout">
+                    <a href="#">
+                        <span class="glyphicon glyphicon-log-out"></span> 退出
+                    </a>
                 </li>
             </ul>
             <form class="navbar-form navbar-right">
@@ -252,11 +256,13 @@
 
 <script src="https://cdn.bootcss.com/jquery/1.12.4/jquery.min.js"></script>
 <script src="https://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+<script src="/static/user.js"></script>
+<script src="/static/book.js"></script>
 <script>
-    $(function () {
+    var currentPage;
 
-        var totalRecord;
-        var currentPage;
+    $(function () {
+        setStatus();
 
         $(function () {
             //去首页
@@ -265,21 +271,33 @@
 
         function to_page(pn) {
             $.ajax({
-                type: "POST",
-                url: "/book/v1/list",
-                data: "pn=" + pn,
-                error: function (request) {
-                    alert("Connection error");
-                },
-                success: function (result) {
-                    //1、解析并显示书籍
-                    build_book_table(result);
 
-                    //2、显示分页条信息
-                    build_page_nav(result);
+                    type: "POST",
+                    url: "/book/v1/list",
+                    data: "pn=" + pn + "&pageSize=" + 9,
+                    error: function (XMLHttpRequest, textStatus, errorThrown) {
+                        if (XMLHttpRequest.responseJSON.code == 333) {
+                            alert("三秒防刷");
+//                            location.reload(true);
+                        } else
+                            alert("Connection error");
+                    },
+                    success: function (result) {
+                        if (result.code == 200) {
+                            //1、解析并显示书籍
+                            build_book_table(result);
 
+                            //2、显示分页条信息
+                            build_page_nav(result);
+                        } else if (result.code == 333) {
+                            alert("三秒防刷");
+                        }
+                        else {
+                            alert(result.message);
+                        }
+                    }
                 }
-            });
+            );
         }
 
         function build_book_table(result) {
@@ -354,58 +372,9 @@
             ul.append(nextPageLi).append(lastPageLi).appendTo($("#page_nav_area"));
         }
 
-        $('#userLoginBtn').click(function () {
-            $.ajax({
-                type: "POST",
-                url: "/user/v1/login",
-                data: $('#loginModal form').serialize(),// 你的formid
-                error: function (request) {
-                    alert("Connection error");
-                },
-                success: function (data) {
-                    var code = data.code;
-                    switch (code) {
-                        case (200):
-                            $('#loginModal').modal('hide');
-                            $('.unLogin').hide();
-                            $('.Login a').text(data.data.userinfo.name);
-                            alert(data.message);
-                            break;
-                        case (500):
-                            alert(data.message);
-                            break;
-                    }
-                }
-            });
-            return false;
-        });
 
-        $('#userRegisterBtn').click(function () {
-            $.ajax({
-                type: "POST",
-                url: "/user/v1/register",
-                data: $('#registerModal form').serialize(),// 你的formid
-                error: function (request) {
-                    alert("Connection error");
-                },
-                success: function (data) {
-                    var code = data.code;
-                    switch (code) {
-                        case (200):
-                            $('#loginModal').modal('hide');
-                            $('.unLogin').hide();
-                            $('.Login a').text(data.data.userinfo.name);
-                            alert(data.message);
-                            break;
-                        case (500):
-                            alert(data.message);
-                            break;
-                    }
-                }
-            });
-            return false;
-        });
-    });
+    })
+    ;
 </script>
 
 </body>
