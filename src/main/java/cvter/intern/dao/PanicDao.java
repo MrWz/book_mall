@@ -1,6 +1,9 @@
 package cvter.intern.dao;
 
 import cvter.intern.model.Panic;
+import org.apache.ibatis.annotations.Param;
+
+import java.util.Date;
 
 public interface PanicDao {
 
@@ -17,8 +20,8 @@ public interface PanicDao {
     /**
      * 减库存
      */
-    int reduceNumber(String uid,String startTime);
-
+    
+    int reduceNumber(@Param(value="uid")String uid, @Param(value="killTime") Date killTime);
     /**
      * 更新记录
      */

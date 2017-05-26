@@ -281,5 +281,15 @@
       create_time = #{createTime,jdbcType=TIMESTAMP},
       update_time = #{updateTime,jdbcType=TIMESTAMP}
     where id = #{id,jdbcType=INTEGER}
+   </update>
+  <update id="reduceNumber" parameterType="cvter.intern.model.Panic">
+    <!-- 具体的sql -->
+    update panic_info
+    set nums = nums - 1
+    where
+    uid = #{uid,jdbcType=VARCHAR}
+    and start_time <![CDATA[ <= ]]> #{killTime}
+    and end_time >= #{killTime}
+    and nums > 0
   </update>
 </mapper>

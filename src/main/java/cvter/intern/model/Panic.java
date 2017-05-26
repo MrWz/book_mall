@@ -28,7 +28,7 @@ public class Panic extends AbstractParent{
         return nums;
     }
 
-    public void setNums(Byte nums) {
+    public void setNums(int nums) {
         this.nums = nums;
     }
 
