@@ -27,7 +27,7 @@
         <p>
             <span><script>document.write(new Date());</script></span>
             <span class="pull-right">
-                    <button class="btn btn-primary" id="book_add_btn">新增图书</button>
+                    <button class="btn btn-success" id="book_add_btn">新增图书</button>
                     <button class="btn btn-default" id="log_off_btn">退出管理</button>
                 </span>
         </p>
@@ -144,7 +144,7 @@
     var currentPage;
 
     $(function () {
-        if (sessionStorage.getItem("admin") == null) {
+        if (localStorage.getItem("admin") == null) {
             location.href = "/admin/login";
             return;
         }
@@ -155,7 +155,7 @@
             $.ajax({
                 type: "DELETE",
                 headers: {
-                    AUTH: sessionStorage.getItem("xrf_")
+                    AUTH: localStorage.getItem("axrf_")
                 },
                 url: "/admin/v1/login",
                 data: null,
@@ -166,8 +166,8 @@
 
                     if (result.code == 200) {
                         alert(result.message);
-                        sessionStorage.removeItem("admin");
-                        sessionStorage.removeItem("xrf_");
+                        localStorage.removeItem("admin");
+                        localStorage.removeItem("axrf_");
                         location.href = "/admin/login";
                     } else {
                         alert(result.message);
@@ -294,7 +294,7 @@
         $.ajax({
             type: "POST",
             headers: {
-                AUTH: sessionStorage.getItem("xrf_")
+                AUTH: localStorage.getItem("axrf_")
             },
             url: "/admin/v1/book/add",
             data: $("#bookModal form").serialize(),
@@ -321,7 +321,7 @@
         $.ajax({
             type: "GET",
             headers: {
-                AUTH: sessionStorage.getItem("xrf_")
+                AUTH: localStorage.getItem("axrf_")
             },
             url: "/book/v1/detail/" + bookuid,
             data: null,
@@ -343,7 +343,7 @@
         $.ajax({
             type: "PUT",
             headers: {
-                AUTH: sessionStorage.getItem("xrf_")
+                AUTH: localStorage.getItem("axrf_")
             },
             url: "/admin/v1/book/adjust",
             data: $("#bookUpdateModal form").serialize(),
@@ -371,7 +371,7 @@
         $.ajax({
             type: "DELETE",
             headers: {
-                AUTH: sessionStorage.getItem("xrf_")
+                AUTH: localStorage.getItem("axrf_")
             },
             url: "/admin/v1/book/del/" + uids,
             data: null,
@@ -398,7 +398,7 @@
         $.ajax({
             type: "PUT",
             headers: {
-                AUTH: sessionStorage.getItem("xrf_")
+                AUTH: localStorage.getItem("axrf_")
             },
             url: "/admin/v1/book/panic/" + uids,
             data: null,

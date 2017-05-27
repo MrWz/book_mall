@@ -195,6 +195,14 @@
             <artifactId>lucene-test-framework</artifactId>
             <version>${lucene.version}</version>
         </dependency>
+        <!-- 此处并没有起作用 -->
+        <dependency>
+            <groupId>org.wltea</groupId>
+            <artifactId>IKAnalyzer</artifactId>
+            <version>2012_FF_hf1</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/src/main/libs/IKAnalyzer2012_FF_hf1.jar</systemPath>
+        </dependency>
 
         <!-- 集成Redis -->
         <!-- spring Redis -->

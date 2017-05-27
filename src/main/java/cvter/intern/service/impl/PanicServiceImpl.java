@@ -5,6 +5,7 @@ import cvter.intern.model.Panic;
 import cvter.intern.service.PanicService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -12,7 +13,6 @@ import java.util.List;
  * Created by cvter on 2017/5/17.
  */
 @Service
-
 public class PanicServiceImpl implements PanicService {
 
     @Autowired
@@ -21,6 +21,7 @@ public class PanicServiceImpl implements PanicService {
     /**
      * 增加记录
      */
+    @Transactional(rollbackFor = Exception.class)
     public int save(Panic record) {
         return panicDao.insert(record);
     }
@@ -28,6 +29,7 @@ public class PanicServiceImpl implements PanicService {
     /**
      * 删除记录
      */
+    @Transactional(rollbackFor = Exception.class)
     public int deleteByUid(String uid) {
         return panicDao.deleteByPrimaryKey(uid);
     }
@@ -35,6 +37,7 @@ public class PanicServiceImpl implements PanicService {
     /**
      * 更新记录
      */
+    @Transactional(rollbackFor = Exception.class)
     public int update(Panic record) {
         return panicDao.updateByPrimaryKey(record);
     }

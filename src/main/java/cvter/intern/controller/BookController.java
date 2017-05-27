@@ -4,6 +4,7 @@ import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import cvter.intern.authorization.annotation.Authorization;
 import cvter.intern.authorization.annotation.CurrentUser;
+import cvter.intern.interceptor.annotation.RequestLimit;
 import cvter.intern.lucene.model.BookIndex;
 import cvter.intern.lucene.service.IndexBookService;
 import cvter.intern.lucene.service.impl.IndexBookServiceImpl;
@@ -35,13 +36,15 @@ public class BookController extends BaseController {
     @Autowired
     private UserService userService;
 
+    @Autowired
+    private IndexBookService indexBookService;
+
     /**
      * 获取图书列表
      *
      * @param pn
      * @return
      */
-//    @RequestLimit(value = 3) //防刷，value为间隔时间 {@see RequestLimit}
     @ResponseBody
     @RequestMapping("/list")
     public Msg list(@RequestParam(defaultValue = "1") Integer pn,
@@ -82,21 +85,22 @@ public class BookController extends BaseController {
         boolean flag = userService.buy(user.getUid(), bookuid, nums);
 
         if (flag) {
-            return Msg.fail().setMessage("购买成功");
+            return Msg.success().setMessage("购买成功");
         }
         return Msg.fail().setMessage("库存不足");
     }
 
     /**
      * 获取购物车详情
+     *
      * @return
      */
     @Authorization
     @ResponseBody
     @RequestMapping(value = "/shopcar", method = RequestMethod.GET)
     public Msg shopCarGet(@CurrentUser User user) {
-        List<BookInShopCar> bookList=userService.getShopCar(user.getUid());
-        if(bookList.size()==0){
+        List<BookInShopCar> bookList = userService.getShopCar(user.getUid());
+        if (bookList.size() == 0) {
             return Msg.fail().setMessage("购物车空空如也");
         }
         return Msg.success().add("bookList", bookList);
@@ -104,25 +108,27 @@ public class BookController extends BaseController {
 
     /**
      * 清空购物车
+     *
      * @return
      */
     @Authorization
     @ResponseBody
-    @RequestMapping(value = "/shopcar", method = RequestMethod.DELETE)
-    public Msg shopCarDelete(@CurrentUser User user,@RequestParam String bookuid) {
+    @RequestMapping(value = "/shopcar/{bookUid}", method = RequestMethod.DELETE)
+    public Msg shopCarDelete(@CurrentUser User user, @PathVariable String bookUid) {
+        System.out.println(bookUid);
         /**
          * boouid为空就执行清空购物车
          * 反之，删除指定图书
          */
-        if(!StringUtils.isEmpty(bookuid)){
-            boolean flag=userService.deleteOneBook(user.getUid(),bookuid);
-            if(flag){
+        if (!StringUtils.isEmpty(bookUid) && !"0".equals(bookUid)) {
+            boolean flag = userService.deleteOneBook(user.getUid(), bookUid);
+            if (flag) {
                 return Msg.success().setMessage("删除成功");
             }
             return Msg.fail().setMessage("删除失败");
         }
-        boolean flag=userService.clearShopCar(user.getUid());
-        if(flag){
+        boolean flag = userService.clearShopCar(user.getUid());
+        if (flag) {
             return Msg.success().setMessage("清空完毕");
         }
         return Msg.fail().setMessage("清空失败");
@@ -132,18 +138,23 @@ public class BookController extends BaseController {
      * 更新购物车
      *
      * @param bookuid
-     * @param count
+     * @param flag
      * @return
      */
     @Authorization
     @ResponseBody
     @RequestMapping(value = "/shopcar", method = RequestMethod.PUT)
-    public Msg shopCarPut(@CurrentUser User user,@RequestParam String bookuid, @RequestParam int count) {
-        boolean flag=userService.updateShopCar(user.getUid(),bookuid,count);
-        if(flag){
-            return Msg.success().setMessage("修改成功");
+    public Msg shopCarPut(@CurrentUser User user, @RequestParam String bookuid, @RequestParam int flag) {
+        if (flag == 1) {
+            //数量加1
+        } else {
+            //数量减1
         }
-        return Msg.fail().setMessage("修改失败");
+//        boolean flag = userService.updateShopCar(user.getUid(), bookuid, count);
+//        if (flag) {
+        return Msg.success().setMessage("修改成功");
+//        }
+//        return Msg.fail().setMessage("修改失败");
     }
 
     /**
@@ -156,10 +167,10 @@ public class BookController extends BaseController {
     @Authorization
     @ResponseBody
     @RequestMapping(value = "/shopcar", method = RequestMethod.POST)
-    public Msg shopCarPost(@CurrentUser User user,@RequestParam String bookuid, @RequestParam int nums) {
+    public Msg shopCarPost(@CurrentUser User user, @RequestParam String bookuid, @RequestParam int nums) {
 
-        boolean flag=userService.addShopCar(user.getUid(),bookuid,nums);
-        if(flag){
+        boolean flag = userService.addShopCar(user.getUid(), bookuid, nums);
+        if (flag) {
             return Msg.success().setMessage("添加成功，尽快购买");
         }
         return Msg.fail().setMessage("添加失败");
@@ -187,8 +198,6 @@ public class BookController extends BaseController {
             return Msg.fail().setMessage("传参错误");
         }
 
-        IndexBookService indexBookService = new IndexBookServiceImpl();
-
         List<Book> authors = indexBookService.searchBookTopN(params, BookIndex.AUTHOR, 100);
         List<Book> names = indexBookService.searchBookTopN(params, BookIndex.NAME, 100);
         List<Book> description = indexBookService.searchBookTopN(params, BookIndex.DESCRIPTION, 100);
@@ -211,24 +220,25 @@ public class BookController extends BaseController {
     /**
      * 图书抢购
      *
-     * @param userUid
-     * @param bookUid
-     * @param tokenUid
+     * @param user
+     * @param bookuid
+     * @param nums
      * @return
      */
+    @RequestLimit(value = 3, msg = "三秒防刷")
     @Authorization
     @ResponseBody
     @RequestMapping(path = {"/panic"}, method = RequestMethod.POST)
-    public Msg bookPanic(@RequestParam String userUid,
-                         @RequestParam String bookUid,
-                         @RequestParam String tokenUid) {
+    public Msg bookPanic(@CurrentUser User user,
+                         @RequestParam String bookuid,
+                         @RequestParam Integer nums) {
 
+        System.out.println(bookuid + "---" + nums);
         List<Book> books = new ArrayList<>();
         books.add(new Book());
         books.add(new Book());
         books.add(new Book());
 
         return Msg.success().add("books", books);
-
     }
 }

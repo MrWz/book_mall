@@ -1,7 +1,6 @@
 package cvter.intern.lucene.datasource;
 
 import cvter.intern.lucene.model.BookIndex;
-import cvter.intern.lucene.model.Index;
 import cvter.intern.model.Book;
 import cvter.intern.service.BookService;
 import org.springframework.context.ApplicationContext;
@@ -15,22 +14,22 @@ import java.util.List;
  */
 public class DbDataSource implements DataSource {
 
-    private List<Index> indices;
+    private List<BookIndex> indices;
 
     public DbDataSource() {
     }
 
-    public DbDataSource(List<Index> indices) {
+    public DbDataSource(List<BookIndex> indices) {
         this.indices = indices;
     }
 
     @Override
-    public List<Index> getIndexData() {
+    public List<BookIndex> getIndexData() {
         return indices;
     }
 
     @Override
-    public void setIndexData(List<Index> indices) {
+    public void setIndexData(List<BookIndex> indices) {
         this.indices = indices;
     }
 

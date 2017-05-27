@@ -1,11 +1,10 @@
 package cvter.intern.lucene.service.impl;
 
 import cvter.intern.lucene.IndexManager;
-import cvter.intern.lucene.dao.impl.IndexDaoImpl;
 import cvter.intern.lucene.model.BookIndex;
-import cvter.intern.lucene.model.Index;
 import cvter.intern.lucene.service.IndexBookService;
 import cvter.intern.model.Book;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,7 +14,8 @@ import java.util.List;
  */
 public class IndexBookServiceImpl implements IndexBookService {
 
-    private IndexManager indexManager = IndexManager.builder(IndexDaoImpl.class);
+    @Autowired
+    private IndexManager indexManager;
 
     @Override
     public List<Book> searchBookTopN(String text, String queryField, int nDocs) throws Exception {
@@ -29,21 +29,19 @@ public class IndexBookServiceImpl implements IndexBookService {
         return getBook(indexManager.searchIndexPaginated(text, queryField, currentPage, pageSize));
     }
 
-    private List<Book> getBook(List<Index> bookIndeics) {
+    private List<Book> getBook(List<BookIndex> bookIndeics) {
         List<Book> books = null;
 
         if (bookIndeics.size() > 0) {
             books = new ArrayList<>();
-            for (Index index :
+            for (BookIndex index :
                     bookIndeics) {
-                if (index instanceof BookIndex) {
-                    Book book = new Book();
-                    book.setUid(((BookIndex) index).getUid());
-                    book.setName(((BookIndex) index).getName());
-                    book.setAuthor(((BookIndex) index).getAuthor());
-                    book.setDescription(((BookIndex) index).getDescription());
-                    books.add(book);
-                }
+                Book book = new Book();
+                book.setUid(index.getUid());
+                book.setName(index.getName());
+                book.setAuthor(index.getAuthor());
+                book.setDescription(index.getDescription());
+                books.add(book);
             }
         }
         return books;

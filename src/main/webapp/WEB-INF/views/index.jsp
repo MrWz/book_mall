@@ -42,7 +42,9 @@
                         <span class="badge">4</span>
                     </a>
                 </li>
-
+                <li class="" id="username">
+                    <a href="#"></a>
+                </li>
                 <li class="unLogin">
                     <a href="#" data-toggle="modal" data-target="#loginModal" data-whatever="login">
                         <span class="glyphicon glyphicon-log-in"></span> 登录
@@ -60,11 +62,11 @@
                     </a>
                 </li>
             </ul>
-            <form class="navbar-form navbar-right">
+            <form class="navbar-form navbar-right" id="searchForm">
                 <div class="form-group input-group">
-                    <input type="text" class="form-control" placeholder="Search">
+                    <input type="text" name="params" class="form-control" placeholder="Search">
                     <span class="input-group-btn">
-                        <button type="submit" class="btn btn-default">
+                        <button class="btn btn-default" id="searchBtn">
                             <span class="glyphicon glyphicon-search"></span>
                         </button>
                     </span>
@@ -81,11 +83,7 @@
             <div class="list-group">
                 <a class="list-group-item active">抢购活动</a>
                 <div class="list-group-item">
-                    <h3>Java编程思想</h3>
-                    <p>14:30准时开始</p>
-                </div>
-                <div class="list-group-item">
-                    <h3>Java编程思想</h3>
+                    <h3><a href="/book/panic?bookid=04303d63f90344609977f92844ebdd09">Java编程思想</a></h3>
                     <p>14:30准时开始</p>
                 </div>
             </div>
@@ -104,10 +102,7 @@
                 <a class="list-group-item active">图书推荐</a>
                 <div class="list-group-item">
                     <span class="badge">14</span>
-                    <a href="#">Java编程思想</a>
-                </div>
-                <div class="list-group-item">
-                    <a href="#">Java程序员面试宝典</a>
+                    <a href="/book/detail?bookid=04303d63f90344609977f92844ebdd09">Java编程思想</a>
                 </div>
             </div>
         </div>

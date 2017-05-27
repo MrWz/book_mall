@@ -17,7 +17,6 @@ import java.util.List;
  * Created by cvter on 2017/5/17.
  */
 @Service
-@Transactional(rollbackFor = Exception.class)
 public class BookServiceImpl implements BookService {
 
     @Resource
@@ -32,6 +31,7 @@ public class BookServiceImpl implements BookService {
     /**
      * 增加记录
      */
+    @Transactional(rollbackFor = Exception.class)
     public boolean save(Book book) {
         if (StringUtils.isAnyBlank(book.getName(), book.getAuthor(), book.getPrice() + "", book.getStock() + "", book.getDescription())) {
             throw new ParameterException("参数为空");
@@ -43,6 +43,7 @@ public class BookServiceImpl implements BookService {
     /**
      * 删除图书
      */
+    @Transactional(rollbackFor = Exception.class)
     public boolean bookDel(String uid) {
         if (StringUtils.isBlank(uid)) {
             throw new ParameterException("参数为空");
@@ -53,6 +54,7 @@ public class BookServiceImpl implements BookService {
     /**
      * 修改价钱
      */
+    @Transactional(rollbackFor = Exception.class)
     public boolean bookAdjustPrice(String uid, int price) {
         if (StringUtils.isAnyBlank(uid, price + "")) {
             throw new ParameterException("参数为空");
@@ -66,6 +68,7 @@ public class BookServiceImpl implements BookService {
     /**
      * 修改库存
      */
+    @Transactional(rollbackFor = Exception.class)
     public void bookAdjustStock(String uid, int stock) {
         if (StringUtils.isAnyBlank(uid, stock + "")) {
             throw new ParameterException("参数为空");
@@ -79,6 +82,7 @@ public class BookServiceImpl implements BookService {
     /**
      * 删除记录
      */
+    @Transactional(rollbackFor = Exception.class)
     public boolean deleteByUid(String uid) {
         return bookDao.deleteByPrimaryKey(uid);
     }
@@ -91,6 +95,7 @@ public class BookServiceImpl implements BookService {
     /**
      * 更新记录
      */
+    @Transactional(rollbackFor = Exception.class)
     public boolean update(Book book) {
         return bookDao.updateByPrimaryKey(book);
     }

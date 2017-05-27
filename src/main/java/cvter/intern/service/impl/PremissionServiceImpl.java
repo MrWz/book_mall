@@ -13,7 +13,6 @@ import java.util.List;
  * Created by cvter on 2017/5/17.
  */
 @Service
-@Transactional(rollbackFor = Exception.class)
 public class PremissionServiceImpl implements PremissionService {
 
     @Resource
@@ -26,6 +25,7 @@ public class PremissionServiceImpl implements PremissionService {
     /**
      * 增加记录
      */
+    @Transactional(rollbackFor = Exception.class)
     public int save(Premission premission) {
         return premissionDao.insert(premission);
     }
@@ -33,6 +33,7 @@ public class PremissionServiceImpl implements PremissionService {
     /**
      * 删除记录
      */
+    @Transactional(rollbackFor = Exception.class)
     public int deleteByUid(String uid) {
         return premissionDao.deleteByPrimaryKey(uid);
     }
@@ -40,6 +41,7 @@ public class PremissionServiceImpl implements PremissionService {
     /**
      * 更新记录
      */
+    @Transactional(rollbackFor = Exception.class)
     public int update(Premission premission) {
         return premissionDao.updateByPrimaryKey(premission);
     }

@@ -63,13 +63,37 @@
 
         if (getQueryString("bookid") == null) {
             location.href = "/";
+            return;
         }
 
-        var startTime = new Date(2017, 5, 26, 16, 12);
+        getBook(getQueryString("bookid"));
+
+        var startTime = new Date();
         interval = window.setInterval(function () {
-            ShowCountDown(2017, 5, 26, 16, 12, 'countTime');
+            ShowCountDown(startTime.getFullYear(), startTime.getMonth() + 1, startTime.getDate(), startTime.getHours(), startTime.getMinutes() + 1, 'countTime');
         }, interval);
         $("#startTime").html("开始时间：<kbd>" + startTime + "</kbd>");
+
+        $("#panicBtn").click(function () {
+            $.ajax({
+                type: "POST",
+                headers: {
+                    AUTH: localStorage.getItem("xrf_")
+                },
+                url: "/book/v1/panic",
+                data: "bookuid=" + getQueryString("bookid") + "&nums=1",// 你的formid
+                error: function (request) {
+                    alert("请您先去登录");
+                },
+                success: function (data) {
+                    if (data.code == 200) {
+                        $("#panicBtn").attr("disabled", "disabled").text("抢购成功");
+                        alert("抢购成功");
+                    } else
+                        alert(data.message);
+                }
+            });
+        });
     });
 
     function ShowCountDown(year, month, day, min, sec, divname) {
@@ -94,6 +118,26 @@
         var r = window.location.search.substr(1).match(reg);
         if (r != null) return unescape(r[2]);
         return null;
+    }
+
+    function getBook(bookuid) {
+        $.ajax({
+            type: "GET",
+            url: "/book/v1/detail/" + bookuid,
+            data: null,
+            error: function (request) {
+                alert("Connection error");
+            },
+            success: function (result) {
+                var book = result.data.book;
+                $("#book_uid").val(book.uid);
+                $("#book_name").text(book.name);
+                $("#book_author").text(book.author);
+                $("#book_price").text(book.price);
+                $("#book_desc").text(book.description);
+                bookPrice = book.price;
+            }
+        });
     }
 </script>
 
