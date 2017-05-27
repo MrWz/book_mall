@@ -1,24 +1,36 @@
 package cvter.intern.service;
+import cvter.intern.model.Book;
 import cvter.intern.model.User;
+import cvter.intern.vo.BookInShopCar;
 
+import java.util.HashMap;
 import java.util.List;
 
 /**
  * Created by cvter on 2017/5/17.
  */
 public interface UserService {
+    Boolean updateShopCar(String userUid,String bookUid,int count);
 
-    public Boolean buy(String userUid,String bookUid,int num);
+    Boolean deleteOneBook(String userUid,String bookUid);
 
-    public Boolean checkLogin(String username,String password);
+    Boolean clearShopCar(String userUid);
 
-    public Boolean checkRegister(String username,String password);
+    List<BookInShopCar> getShopCar(String userUid);
 
-    public User selectByName(String name);
+    Boolean addShopCar(String userUid,String bookUid,int nums);
 
-    public int save(User record);
+    Boolean buy(String userUid,String bookUid,int nums);
 
-    public boolean checkAdimLogin(String username,String password);
+    Boolean checkLogin(String username,String password);
+
+    Boolean checkRegister(String username,String password);
+
+    User selectByName(String name);
+
+    int save(User record);
+
+    boolean checkAdimLogin(String username,String password);
 
     User selectByUid(String uid);
 

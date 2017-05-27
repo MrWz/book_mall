@@ -8,6 +8,10 @@ import java.util.List;
 import org.apache.ibatis.annotations.Param;
 
 public interface UserBookDao {
+    UserBook selectByUuidAndBuid(@Param(value = "userUid")String userUid,
+                                 @Param(value = "bookUid") String bookUid,
+                                 @Param(value = "buyWay") boolean buyWay);
+
     int countByExample(UserBookExample example);
 
     int deleteByExample(UserBookExample example);

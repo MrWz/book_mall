@@ -121,6 +121,7 @@ public class PanicServiceImpl implements PanicService {
         pbook = panicDao.selectByPrimaryKey(bookId);
         UserBook userBookHave=userBookDao.selectByPrimaryKey(userId);
         if(userBookHave!=null){
+            //重复抢购
             throw new BusinessException(ExceptionCode.EX_20003.getCode(), ExceptionCode.EX_20003.getMessage());
         }
         Date date = new Date();
@@ -128,6 +129,10 @@ public class PanicServiceImpl implements PanicService {
         if (updateTime <= 0) {
             //抢购失败
             throw new BusinessException(ExceptionCode.EX_20007.getCode(), ExceptionCode.EX_20007.getMessage());
+        }
+        if(userBookHave!=null){
+            //重复抢购
+            throw new BusinessException(ExceptionCode.EX_20003.getCode(), ExceptionCode.EX_20003.getMessage());
         }
         UserBook userBook = new UserBook(userId, bookId, pbook.getCurPrice(), 1, true, false, date, date);
         userBookDao.insert(userBook);

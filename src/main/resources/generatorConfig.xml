@@ -38,9 +38,9 @@
             <property name="enableSubPackages" value="false" />
         </javaClientGenerator>
 
-
+        <table schema="BOOK_BOOKTAG_DEMO" tableName="book_booktag" />
         <!--<table schema="HOBBY_DEMO" tableName="hobby_info" />-->
-        <table schema="USER_BOOK_DEMO" tableName="user_book" />
+        <!--<table schema="USER_BOOK_DEMO" tableName="user_book" />-->
         <!--<table schema="PANIC_DEMO" tableName="panic_info" />-->
         <!--<table schema="DISCOUNT_DEMO" tableName="discount_info" />-->
         <!--<table schema="HOBBY_DEMO" tableName="hobby_info" />-->

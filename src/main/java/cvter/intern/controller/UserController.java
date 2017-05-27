@@ -47,9 +47,7 @@ public class UserController extends BaseController {
             TokenModel model = tokenManager.createToken(user.getUid());
             response.setHeader(Constants.AUTHORIZATION, model.toString());
             response.setHeader("username", user.getName());
-
             return Msg.success().setMessage("请去首页进行选购").add("userinfo", user);
-
         }
         return Msg.fail().setMessage("用户名或者密码错误");
     }
@@ -72,11 +70,9 @@ public class UserController extends BaseController {
             TokenModel model = tokenManager.createToken(user.getUid());
             response.setHeader(Constants.AUTHORIZATION, model.toString());
             response.setHeader("username", user.getName());
-
-            return Msg.success().setMessage("注册成功");
-
+            return Msg.success().setMessage("注册成功").add("userinfo", user);
         }
-        return Msg.fail().add("description", "用户名已存在");
+        return Msg.fail().setMessage("用户名已存在");
     }
 
     /**

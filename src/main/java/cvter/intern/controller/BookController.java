@@ -4,6 +4,7 @@ import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import cvter.intern.authorization.annotation.Authorization;
 import cvter.intern.interceptor.annotation.RequestLimit;
+import cvter.intern.authorization.annotation.CurrentUser;
 import cvter.intern.lucene.model.BookIndex;
 import cvter.intern.lucene.service.IndexBookService;
 import cvter.intern.lucene.service.impl.IndexBookServiceImpl;
@@ -14,11 +15,12 @@ import cvter.intern.model.User;
 import cvter.intern.service.PanicService;
 import cvter.intern.service.UserService;
 import cvter.intern.service.impl.BookServiceImpl;
+import cvter.intern.vo.BookInShopCar;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpSession;
 import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.List;
@@ -79,11 +81,10 @@ public class BookController extends BaseController {
      * @param nums
      * @return
      */
-//    @Authorization
+    @Authorization
     @ResponseBody
     @RequestMapping(value = "/buy", method = RequestMethod.POST)
-    public Msg buy(HttpSession session, @RequestParam String bookuid, @RequestParam int nums) {
-        User user = (User) session.getAttribute("user");
+    public Msg buy(@CurrentUser User user, @RequestParam String bookuid, @RequestParam int nums) {
         boolean flag = userService.buy(user.getUid(), bookuid, nums);
 
         if (flag) {
@@ -94,47 +95,61 @@ public class BookController extends BaseController {
 
     /**
      * 获取购物车详情
-     *
-     * @param bookuid
-     * @param nums
      * @return
      */
-//    @Authorization
+    @Authorization
     @ResponseBody
     @RequestMapping(value = "/shopcar", method = RequestMethod.GET)
-    public Msg shopCarGet(@RequestParam String bookuid, @RequestParam String nums) {
-
-        return Msg.fail().setMessage("接口正在处理中");
+    public Msg shopCarGet(@CurrentUser User user) {
+        List<BookInShopCar> bookList=userService.getShopCar(user.getUid());
+        if(bookList.size()==0){
+            return Msg.fail().setMessage("购物车空空如也");
+        }
+        return Msg.success().add("bookList", bookList);
     }
 
     /**
-     * 删除购物车
-     *
-     * @param bookuid
-     * @param nums
+     * 清空购物车
      * @return
      */
-//    @Authorization
+    @Authorization
     @ResponseBody
     @RequestMapping(value = "/shopcar", method = RequestMethod.DELETE)
-    public Msg shopCarDelete(@RequestParam String bookuid, @RequestParam String nums) {
-
-        return Msg.fail().setMessage("接口正在处理中");
+    public Msg shopCarDelete(@CurrentUser User user,@RequestParam String bookuid) {
+        /**
+         * boouid为空就执行清空购物车
+         * 反之，删除指定图书
+         */
+        if(!StringUtils.isEmpty(bookuid)){
+            boolean flag=userService.deleteOneBook(user.getUid(),bookuid);
+            if(flag){
+                return Msg.success().setMessage("删除成功");
+            }
+            return Msg.fail().setMessage("删除失败");
+        }
+        boolean flag=userService.clearShopCar(user.getUid());
+        if(flag){
+            return Msg.success().setMessage("清空完毕");
+        }
+        return Msg.fail().setMessage("清空失败");
     }
 
     /**
      * 更新购物车
      *
      * @param bookuid
-     * @param nums
+     * @param count
      * @return
      */
-//    @Authorization
+    @Authorization
     @ResponseBody
     @RequestMapping(value = "/shopcar", method = RequestMethod.PUT)
-    public Msg shopCarPut(@RequestParam String bookuid, @RequestParam String nums) {
-
-        return Msg.fail().setMessage("接口正在处理中");
+    public Msg shopCarPut(@CurrentUser User user,@RequestParam String bookuid, @RequestParam int count) {
+        boolean flag=userService.updateShopCar(user.getUid(),bookuid,count);
+        if(flag){
+            return Msg.success().setMessage("修改成功");
+        }
+        return Msg.fail().setMessage("修改失败");
     }
 
     /**
@@ -144,12 +159,16 @@ public class BookController extends BaseController {
      * @param nums
      * @return
      */
-//    @Authorization
+    @Authorization
     @ResponseBody
     @RequestMapping(value = "/shopcar", method = RequestMethod.POST)
-    public Msg shopCarPost(@RequestParam String bookuid, @RequestParam String nums) {
+    public Msg shopCarPost(@CurrentUser User user,@RequestParam String bookuid, @RequestParam int nums) {
 
-        return Msg.fail().setMessage("接口正在处理中");
+        boolean flag=userService.addShopCar(user.getUid(),bookuid,nums);
+        if(flag){
+            return Msg.success().setMessage("添加成功，尽快购买");
+        }
+        return Msg.fail().setMessage("添加失败");
     }
 
 
@@ -234,13 +253,13 @@ public class BookController extends BaseController {
      * @param tokenUid
      * @return
      */
-    @Authorization
+   // @Authorization
     @ResponseBody
-    @RequestMapping(path = {"/panic"}, method = RequestMethod.POST)
+    @RequestMapping(value="/panic", method = RequestMethod.POST)
     public Msg bookPanic(@RequestParam String bookUid,
-                         @RequestParam String userUid,
-                         @RequestParam String tokenUid) {
-
+                         @RequestParam String userUid
+                        ) {
+        //@RequestParam String tokenUid
         if (panicService.executePanic(bookUid, userUid)) {
             return Msg.success().setMessage("抢购成功");
         }

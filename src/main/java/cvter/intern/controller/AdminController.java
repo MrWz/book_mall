@@ -79,8 +79,8 @@ public class AdminController extends BaseController {
     //@Authorization
     @ResponseBody
     @RequestMapping(value = "/book/add", method = RequestMethod.POST)
-    public Msg bookAdd(Book book) {
-        if (bookService.save(book)) {
+    public Msg bookAdd(Book book,String bookType) {
+        if (bookService.save(book,bookType)) {
             return Msg.success().setMessage("图书上架成功");
         }
         return Msg.success().setMessage("图书上架失败");

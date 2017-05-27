@@ -1,5 +1,4 @@
 package cvter.intern.service.impl;
-
 import cvter.intern.dao.BookDao;
 import cvter.intern.exception.ParameterException;
 import cvter.intern.model.Book;
@@ -36,8 +35,8 @@ public class BookServiceImpl implements BookService {
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public boolean save(Book book) {
-        if (StringUtils.isAnyBlank(book.getName(), book.getAuthor(), book.getPrice() + "", book.getStock() + "", book.getDescription())) {
+    public boolean save(Book book,String bookType) {
+        if (StringUtils.isAnyBlank(book.getName(), book.getAuthor(), book.getPrice() + "", book.getStock() + "", book.getDescription(),bookType)) {
             throw new ParameterException("参数为空");
         }
         book.setUid(UIDUtil.getRandomUID());
@@ -116,7 +115,7 @@ public class BookServiceImpl implements BookService {
      */
     @Override
     public Book selectByUid(String uid) {
-        return bookDao.selectByPrimaryKey(uid);
+        return bookDao.selectByBookUid(uid);
     }
 
     /**
