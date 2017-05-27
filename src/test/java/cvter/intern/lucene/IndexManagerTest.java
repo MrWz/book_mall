@@ -48,7 +48,7 @@ public class IndexManagerTest {
         bookData.add(new BookIndex("5", "summary name summary", "author", "i love summary"));
     }
 
-    @Ignore
+//    @Ignore
     @Test
     public void createIndex() throws Exception {
         dataSource = new DbDataSource();
@@ -67,7 +67,7 @@ public class IndexManagerTest {
     @Test
     public void searchIndexTopN() {
         try {
-            List<Index> list = indexManager.searchIndexTopN("文件", BookIndex.DESCRIPTION, 100);
+            List<Index> list = indexManager.searchIndexTopN("描述", BookIndex.DESCRIPTION, 100);
             for (Index b :
                     list) {
                 logger.info(b.toString());

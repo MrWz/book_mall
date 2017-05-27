@@ -1,32 +1,24 @@
 package cvter.intern.service.impl;
-
-import cvter.intern.dao.BookDao;
+//import cvter.intern.dao.cache.PanicRedis;
 import cvter.intern.dao.PanicDao;
 import cvter.intern.dao.UserBookDao;
-import cvter.intern.dto.Exposer;
-import cvter.intern.dto.PanicExecution;
-import cvter.intern.enums.PanicStatEnum;
-import cvter.intern.exception.PanicClose;
-import cvter.intern.exception.PanicException;
+import cvter.intern.exception.BusinessException;
+import cvter.intern.exception.ExceptionCode;
 import cvter.intern.exception.ParameterException;
-import cvter.intern.exception.RepetePanic;
 import cvter.intern.model.Book;
 import cvter.intern.model.Panic;
 import cvter.intern.model.UserBook;
 import cvter.intern.service.BookService;
+import cvter.intern.service.PanicRedis;
 import cvter.intern.service.PanicService;
 import cvter.intern.utils.TimeUtil;
 import cvter.intern.utils.UIDUtil;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.lucene.util.LuceneTestCase;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
-import java.sql.Time;
-import java.text.ParsePosition;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
@@ -44,7 +36,8 @@ public class PanicServiceImpl implements PanicService {
     private PanicService panicService;
     @Autowired
     private UserBookDao userBookDao;
-
+    @Autowired
+    private PanicRedis panicRedis;
     /**
      * 增加记录
      */
@@ -77,31 +70,8 @@ public class PanicServiceImpl implements PanicService {
      * 查询全部记录，采用分表查询
      */
     public List<Panic> selectAll() {
-        return null;
+        return panicDao.selectAll();
     }
-
-
-//    @Override
-//    @Transactional(rollbackFor = Exception.class)
-//    public boolean bookPanic(Panic pbook,String uid) {
-//        if(StringUtils.isAnyEmpty(pbook.getNums()+"",pbook.getCurPrice()+"",pbook.getStartTime()+"",pbook.getEndTime()+"")){
-//            throw new ParameterException("参数为空");
-//        }
-//        Book book=bookService.selectByUid(uid);
-//        if(pbook.getNums()>book.getStock()){
-//            return false;
-//        }
-//        book.setStock(book.getStock()-pbook.getNums());
-//        bookService.update(book);
-//        //pbook.setUid(UIDUtil.getRandomUID());
-//        System.out.println(pbook.getUid()+pbook.getNums()+"---"+pbook.getCurPrice()+pbook.getEndTime()+pbook.getStartTime());
-//       // return true;
-//        //return panicDao.insert(pbook);
-//
-//
-//        //System.out.println( strToDateLong(pbook.getStartTime()));
-//        return panicService.save(pbook);
-//        }
 
     /**
      * 发布抢购
@@ -110,6 +80,9 @@ public class PanicServiceImpl implements PanicService {
     @Transactional(rollbackFor = Exception.class)
     public boolean bookPanic(int nums, int curPrice, String startTime, String endTime, String uid) {
 
+        if(StringUtils.isAnyEmpty(nums+"",curPrice+"",startTime,endTime,uid)){
+            throw new ParameterException("参数为空");
+        }
         Date date = new Date();
         Book book = bookService.selectByUid(uid);
         if (nums > book.getStock()) {
@@ -126,52 +99,38 @@ public class PanicServiceImpl implements PanicService {
     }
 
     /**
-     * 暴露秒杀接口
-     */
-    @Override
-    public Exposer exportPanicUrl(String bookId) {
-        Panic pbook = panicService.selectByUID(bookId);
-        if (pbook == null) {
-            return new Exposer(false, bookId);
+    *秒杀执行
+    */
+@Transactional(rollbackFor = Exception.class)
+    public boolean executePanic(String bookId, String userId){
+        if(StringUtils.isAnyEmpty(bookId,userId)){
+            throw new ParameterException("参数为空");
         }
-        Date startTime = pbook.getStartTime();
-        Date endTime = pbook.getEndTime();
-        // 系统当前时间
-        Date nowTime = new Date();
-        if (nowTime.getTime() < startTime.getTime() || nowTime.getTime() > endTime.getTime()) {
-            return new Exposer(false, bookId, nowTime, startTime, endTime);
+    //缓存优化
+    //1.访问redis
+    Panic pbook= panicRedis.getPanic(bookId);
+    if(pbook==null){
+        //访问数据库
+        pbook = panicDao.selectByPrimaryKey(bookId);
+        if(pbook==null){
+            throw new BusinessException(ExceptionCode.EX_20005.getCode(), ExceptionCode.EX_20005.getMessage());
+        }else{
+            panicRedis.putPanic(pbook);
         }
-        return new Exposer(true, bookId);
     }
-/**
- *秒杀执行
- */
-    @Override
-    public PanicExecution executePanic(String bookId, String userId) {
-        Date date = new Date();
-        Panic pbook = panicDao.selectByPrimaryKey(bookId);
-        try {
-            int updateTime = panicDao.reduceNumber(bookId, date);
-            if (updateTime <= 0) {
-                throw new PanicClose("Panic is close");
-            } else {
-
-                UserBook userBook = new UserBook(userId, bookId, pbook.getCurPrice(), 1, true, false, date, date);
-                int insertCount = userBookDao.insert(userBook);
-                if (insertCount <= 0) {
-                    //重复秒杀
-                    throw new RepetePanic("panic repeted");
-                } else {
-                    return new PanicExecution(bookId, PanicStatEnum.SUCCESS, userBook);
-                }
-            }
-        } catch(PanicClose e1){
-            throw e1;
-        }catch (RepetePanic e2){
-            throw e2;
-        }catch (Exception e) {
-            //throw  new PanicException("panic is error"+e.getMessage());
-            throw new PanicException("panic inner error:" + e.getMessage());
+        pbook = panicDao.selectByPrimaryKey(bookId);
+        UserBook userBookHave=userBookDao.selectByPrimaryKey(userId);
+        if(userBookHave!=null){
+            throw new BusinessException(ExceptionCode.EX_20003.getCode(), ExceptionCode.EX_20003.getMessage());
         }
+        Date date = new Date();
+        int updateTime = panicDao.reduceNumber(bookId, date);
+        if (updateTime <= 0) {
+            //抢购失败
+            throw new BusinessException(ExceptionCode.EX_20007.getCode(), ExceptionCode.EX_20007.getMessage());
+        }
+        UserBook userBook = new UserBook(userId, bookId, pbook.getCurPrice(), 1, true, false, date, date);
+        userBookDao.insert(userBook);
+        return true;
     }
 }

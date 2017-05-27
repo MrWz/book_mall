@@ -93,6 +93,20 @@
     from panic_info
     where uid = #{uid,jdbcType=VARCHAR}
   </select>
+
+  <select id="selectAll" resultMap="BaseResultMap" >
+    select
+    <include refid="Base_Column_List" />
+    from panic_info
+  </select>
+
+  <select id="selectByPaginate" resultMap="BaseResultMap" parameterType="java.lang.Integer">
+    select
+    *
+    from panic_info
+    limit #{m},#{n}
+  </select>
+
   <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
     delete from panic_info
     where uid = #{uid,jdbcType=VARCHAR}
@@ -180,6 +194,7 @@
       <include refid="Example_Where_Clause" />
     </if>
   </select>
+
   <update id="updateByExampleSelective" parameterType="map" >
     update panic_info
     <set >
@@ -214,16 +229,6 @@
     <if test="_parameter != null" >
       <include refid="Update_By_Example_Where_Clause" />
     </if>
-  </update>
-  <update id="reduceNumber">
-    <!-- 具体的sql -->
-    UPDATE seckill
-    SET number = number - 1
-    WHERE
-    seckill_id = #{seckillId}
-    AND start_time <![CDATA[ <= ]]> #{startTime}
-    AND end_time >= #{startTime}
-    AND number > 0
   </update>
   <update id="updateByExample" parameterType="map" >
     update panic_info
@@ -283,11 +288,10 @@
     where id = #{id,jdbcType=INTEGER}
    </update>
   <update id="reduceNumber" parameterType="cvter.intern.model.Panic">
-    <!-- 具体的sql -->
     update panic_info
     set nums = nums - 1
     where
-    uid = #{uid,jdbcType=VARCHAR}
+    uid = #{uid}
     and start_time <![CDATA[ <= ]]> #{killTime}
     and end_time >= #{killTime}
     and nums > 0

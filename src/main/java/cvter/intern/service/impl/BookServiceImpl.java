@@ -8,6 +8,7 @@ import cvter.intern.service.BookService;
 import cvter.intern.service.PanicService;
 import cvter.intern.utils.UIDUtil;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,7 +22,7 @@ import java.util.List;
 @Service
 public class BookServiceImpl implements BookService {
 
-    @Resource
+    @Autowired
     private BookDao bookDao;
     @Resource
     private BookService bookService;
@@ -101,7 +102,6 @@ public class BookServiceImpl implements BookService {
     public List<Book> selectAll() {
         return bookDao.selectAll();
     }
-
     /**
      * 更新记录
      */

@@ -105,6 +105,7 @@ public class UserServiceImpl implements UserService {
 
             UserRole userRole=userRoleDao.selectByUserUid(uid);
 
+
             Role role=roleDao.selectByPrimaryKey(userRole.getRoleUid());
             if (role.getDescription().equals(ROLE_1.getRole())) {//权限不对，抛出异常
                 throw new BusinessException(ExceptionCode.EX_30001.getCode(), ExceptionCode.EX_30001.getMessage());
@@ -166,7 +167,10 @@ public class UserServiceImpl implements UserService {
         return userDao.insert(record);
     }
 
-    //        @Override
+    /**
+     * 验证用户登录
+     */
+    @Override
     public boolean checkAdimLogin(String username, String password) {
 
         if (StringUtils.isAnyEmpty(username, password)) {
@@ -174,10 +178,7 @@ public class UserServiceImpl implements UserService {
         }
         User userInfo=userDao.selectByName(username);
 
-        if (password.equals(userInfo.getPassword())) {
-            return true;
-        }
-        return false;
+        return Md5SaltUtil.getMD5(password, userInfo.getUid()).equals(userInfo.getPassword());
     }
 
     /**
@@ -208,9 +209,7 @@ public class UserServiceImpl implements UserService {
         return userDao.selectAll(m, n);
     }
 
-    /**
-     * 验证用户登录
-     */
+
     public User checkAdminLogin(String uid, String username, String password) {
         User user=userDao.selectByPrimaryKey(uid);
         if (user != null && user.getName().equals(username) && user.getPassword().equals(password)) {

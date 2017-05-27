@@ -6,13 +6,21 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <!-- 上述3个meta标签*必须*放在最前面，任何其他内容都*必须*跟随其后！ -->
-    <title>图书详情</title>
+    <title>图书商城</title>
     <link href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
 
+    <style>
+        .footer {
+            border-top: 1px solid #e5e5e5;
+            color: #777;
+            padding: 19px 0;
+            background-color: #f5f5f5;
+        }
+    </style>
 </head>
 <body>
 <nav class="navbar navbar-default">
-    <div class="container">
+    <div class="container-fluid">
         <!-- Brand and toggle get grouped for better mobile display -->
         <div class="navbar-header">
             <button type="button" class="navbar-toggle collapsed" data-toggle="collapse"
@@ -67,30 +75,19 @@
     </div><!-- /.container-fluid -->
 </nav>
 
-<div class="container">
-    <div class="">
-        <input type="hidden" id="book_uid">
-        <p>
-            <span class="pull-right">
-                <!--onclick="$('#loginBtn').click();"-->
-                    <button class="btn btn-primary" data-toggle="modal" data-target="#buyModal">立即购买</button>
-                    <button class="btn btn-danger">加入购物车</button>
-                </span>
-        </p>
-        <h3 id="book_name"></h3>
-        <br>
-        <dl>
-            <dt>价格</dt>
-            <dd id="book_price"></dd>
-            <br>
-            <dt>作者</dt>
-            <dd id="book_author"></dd>
-            <br>
-            <dt>
-                图书简介
-            </dt>
-            <dd id="book_desc"></dd>
-        </dl>
+<div class="container-fluid">
+    <div class="row clearfix">
+
+        <div class="col-md-2 column">
+        </div>
+
+        <div class="col-md-8 column">
+            <div class="row" id="bookList"></div>
+        </div>
+
+        <div class="col-md-2 column">
+        </div>
+
     </div>
 </div>
 
@@ -191,47 +188,6 @@
     </div><!-- /.modal-dialog -->
 </div><!-- /.modal -->
 
-<div id="buyModal" class="modal fade" data-backdrop="static" tabindex="-1" role="dialog">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-body">
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
-                        aria-hidden="true">&times;</span>
-                </button>
-                <h3 class="modal-title">购买支付</h3>
-            </div>
-
-            <div class="modal-body">
-                <form class="form-group">
-
-                    <div class="form-group">
-                        <label for="">书Uid</label>
-                        <input class="form-control" name="bookuid" type="text" required placeholder="6-15位字母或数字">
-                        <span id="" class="help-block text-warning"></span>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="">购买数量</label>
-                        <input class="form-control" name="nums" type="text" required placeholder="6-15位字母或数字">
-                        <span id="" class="help-block text-warning"></span>
-                    </div>
-                    <div class="modal-body">
-                        <h4 id="bookPrice">您需支付￥108</h4>
-                    </div>
-                    <div class="modal-body">
-                        <form class="form-group">
-                            <div class="text-right">
-                                <button class="btn btn-info" id="buyBtn">立即支付</button>
-                                <button class="btn btn-danger" data-dismiss="modal">取消</button>
-                            </div>
-                        </form>
-                    </div>
-                </form>
-            </div>
-        </div><!-- /.modal-content -->
-    </div><!-- /.modal-dialog -->
-</div><!-- /.modal -->
-
 <script src="https://cdn.bootcss.com/jquery/1.12.4/jquery.min.js"></script>
 <script src="https://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 <script src="/static/user.js"></script>
@@ -239,9 +195,30 @@
 <script>
     $(function () {
 
-        setStatus();
-        getBook(getQueryString("bookid"));
+        $(function () {
+            setStatus();
+            //去首页
+            to_page(1);
+        });
 
+        function to_page(pn) {
+            $.ajax({
+                type: "POST",
+                url: "/book/v1/search",
+                data: "pn=" + pn + "&pageSize=" + 5 + "&params=" + encodeURI(getQueryString("params")),
+                error: function (request) {
+                    alert("Connection error");
+                },
+                success: function (result) {
+                    if (result.code == 200) {
+                        //1、解析并显示书籍
+                        build_book_table(result);
+                    } else {
+                        alert(result.message);
+                    }
+                }
+            });
+        }
 
         function getQueryString(name) {
             var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)", "i");
@@ -250,46 +227,34 @@
             return null;
         }
 
-        function getBook(bookuid) {
-            $.ajax({
-                type: "GET",
-                url: "/book/v1/detail/" + bookuid,
-                data: null,
-                error: function (request) {
-                    alert("Connection error");
-                },
-                success: function (result) {
-                    var book = result.data.book;
-                    $("#book_uid").val(book.uid);
-                    $("#book_name").text(book.name);
-                    $("#book_author").text(book.author);
-                    $("#book_price").text(book.price);
-                    $("#book_desc").text(book.description);
-                }
-            });
+        function build_book_table(result) {
+            $("#bookList").empty();
+            if (result.data.bookList.length <= 0) {
+                $("#bookList").append("<h2>未查询到结果</h2>");
+                return;
+            }
+            var books = result.data.bookList;
+            $.each(books, function (index, item) {
+                var bookName = $("<h3></h3>").append(item.name);
+                var bookDesc = $("<p></p>").append(item.description);
+                var bookAuthor = $("<p></p>").append($("<span></span>").append(item.author));
+                var detail = $("<a></a>").attr("href", "/book/detail?bookid=" + item.uid).append("查看详情");
+
+                var rootDiv = $("<div></div>").addClass("col-md-3");
+                var captionDiv = $("<div></div>").addClass("caption");
+                var thumbnailDiv = $("<div></div>").addClass("thumbnail").append();
+                thumbnailDiv.append(bookName)
+                    .append(bookName)
+                    .append(bookDesc)
+                    .append(bookAuthor)
+                    .append($("<p></p>").append(detail));
+                captionDiv.append(thumbnailDiv);
+                rootDiv.append(captionDiv).appendTo("#bookList");
+            })
         }
+
     });
 </script>
 
-<script>
-    $(function () {
-        $('#buyBtn').click(function () {
-            $.ajax({
-                type: "POST",
-                url: "/book/v1/buy",
-                data: $('#buyModal form').serialize(),// 你的formid
-                error: function (request) {
-                    alert("请您先去登录");
-                },
-                success: function (data) {
-//                $("#commonLayout_appcreshi").parent().html(data);
-                    alert(data.code + "---" + data.message);
-
-                }
-            });
-            return false;
-        });
-    });
-</script>
 </body>
 </html>

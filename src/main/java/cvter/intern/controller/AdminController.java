@@ -1,8 +1,10 @@
 package cvter.intern.controller;
 
 import cvter.intern.authorization.annotation.Authorization;
+import cvter.intern.authorization.annotation.CurrentUser;
 import cvter.intern.authorization.manager.TokenManager;
 import cvter.intern.authorization.model.TokenModel;
+import cvter.intern.authorization.util.Constants;
 import cvter.intern.exception.BusinessException;
 import cvter.intern.model.Book;
 import cvter.intern.model.Msg;
@@ -15,14 +17,11 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
-import javax.servlet.http.HttpSession;
-import java.text.ParsePosition;
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import javax.servlet.http.HttpServletResponse;
 
 
 /**
- * Created by cvter on 2017/5/18.
+ * 管理员操作类
  */
 @Controller
 @RequestMapping("/admin/v1")
@@ -30,34 +29,49 @@ public class AdminController extends BaseController {
 
     @Resource
     private UserService userService;
+
     @Resource
     private BookService bookService;
     @Resource
     private PanicService panicService;
 
     @Autowired
-    TokenManager tokenManager;
+    private TokenManager tokenManager;
 
+    /**
+     * 管理员登录
+     *
+     * @param response 响应头
+     * @param username 用户名
+     * @param password 密码
+     * @return 响应实体 {@link Msg}
+     */
     @ResponseBody
     @RequestMapping(value = "/login", method = RequestMethod.POST)
-    public Msg login(HttpSession session, @RequestParam String username, @RequestParam String password) {
+    public Msg login(HttpServletResponse response,
+                     @RequestParam String username,
+                     @RequestParam String password) {
         if (userService.checkAdimLogin(username, password)) {
             User user = userService.selectByName(username);
             // 生成一个 token，保存用户登录状态
             TokenModel model = tokenManager.createToken(user.getUid());
-            session.setAttribute("UID", model.toString());
-            session.setAttribute("user", user);
+            response.setHeader(Constants.AUTHORIZATION, model.toString());
+
             return Msg.success().setMessage("您已登录成功");
         }
         throw new BusinessException(50000, "用户名或密码错误");
     }
 
+    /**
+     * 管理员退出登录
+     *
+     * @param user 注入的当前用户信息
+     * @return 响应实体 {@link Msg}
+     */
     @Authorization
     @ResponseBody
-    @RequestMapping(value = "/logoff", method = RequestMethod.POST)
-    public Msg logoff(HttpSession session) {
-        User user = (User) session.getAttribute("user");
-
+    @RequestMapping(value = "/login", method = RequestMethod.DELETE)
+    public Msg logoff(@CurrentUser User user) {
         tokenManager.deleteToken(user.getUid());
         return Msg.success().setMessage("成功退出");
     }
@@ -101,18 +115,4 @@ public class AdminController extends BaseController {
         }
         return Msg.success().setMessage("抢购发布失败");
     }
-
-//    @ResponseBody
-//    @RequestMapping(value = "/book/adjust/price", method = RequestMethod.POST)
-//    public Msg bookAdjustPrice(@RequestParam String uid, @RequestParam int price) {
-//        bookService.bookAdjustPrice(uid, price);
-//        return Msg.success().setMessage("图书调价成功");
-//    }
-//
-//    @ResponseBody
-//    @RequestMapping(value = "/book/adjust/stock", method = RequestMethod.POST)
-//    public Msg bookAdjustStock(@RequestParam String uid, @RequestParam int stock) {
-//        bookService.bookAdjustStock(uid, stock);
-//        return Msg.success().setMessage("图书调库存成功");
-//    }
 }
