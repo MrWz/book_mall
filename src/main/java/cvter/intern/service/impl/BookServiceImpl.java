@@ -1,11 +1,13 @@
 package cvter.intern.service.impl;
-
 import cvter.intern.dao.BookDao;
 import cvter.intern.exception.ParameterException;
 import cvter.intern.model.Book;
+import cvter.intern.model.Panic;
 import cvter.intern.service.BookService;
+import cvter.intern.service.PanicService;
 import cvter.intern.utils.UIDUtil;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,10 +19,9 @@ import java.util.List;
  * Created by cvter on 2017/5/17.
  */
 @Service
-@Transactional(rollbackFor = Exception.class)
 public class BookServiceImpl implements BookService {
 
-    @Resource
+    @Autowired
     private BookDao bookDao;
     @Resource
     private BookService bookService;
@@ -32,8 +33,10 @@ public class BookServiceImpl implements BookService {
     /**
      * 增加记录
      */
-    public boolean save(Book book) {
-        if (StringUtils.isAnyBlank(book.getName(), book.getAuthor(), book.getPrice() + "", book.getStock() + "", book.getDescription())) {
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public boolean save(Book book,String bookType) {
+        if (StringUtils.isAnyBlank(book.getName(), book.getAuthor(), book.getPrice() + "", book.getStock() + "", book.getDescription(),bookType)) {
             throw new ParameterException("参数为空");
         }
         book.setUid(UIDUtil.getRandomUID());
@@ -42,7 +45,10 @@ public class BookServiceImpl implements BookService {
 
     /**
      * 删除图书
-     */
+     * */
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+
     public boolean bookDel(String uid) {
         if (StringUtils.isBlank(uid)) {
             throw new ParameterException("参数为空");
@@ -52,7 +58,10 @@ public class BookServiceImpl implements BookService {
 
     /**
      * 修改价钱
-     */
+     * */
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+
     public boolean bookAdjustPrice(String uid, int price) {
         if (StringUtils.isAnyBlank(uid, price + "")) {
             throw new ParameterException("参数为空");
@@ -65,7 +74,10 @@ public class BookServiceImpl implements BookService {
 
     /**
      * 修改库存
-     */
+     * */
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+
     public void bookAdjustStock(String uid, int stock) {
         if (StringUtils.isAnyBlank(uid, stock + "")) {
             throw new ParameterException("参数为空");
@@ -79,6 +91,8 @@ public class BookServiceImpl implements BookService {
     /**
      * 删除记录
      */
+    @Override
+    @Transactional(rollbackFor = Exception.class)
     public boolean deleteByUid(String uid) {
         return bookDao.deleteByPrimaryKey(uid);
     }
@@ -87,10 +101,11 @@ public class BookServiceImpl implements BookService {
     public List<Book> selectAll() {
         return bookDao.selectAll();
     }
-
     /**
      * 更新记录
      */
+    @Override
+    @Transactional(rollbackFor = Exception.class)
     public boolean update(Book book) {
         return bookDao.updateByPrimaryKey(book);
     }
@@ -98,6 +113,7 @@ public class BookServiceImpl implements BookService {
     /**
      * 查询
      */
+    @Override
     public Book selectByUid(String uid) {
         return bookDao.selectByBookUid(uid);
     }
@@ -105,6 +121,7 @@ public class BookServiceImpl implements BookService {
     /**
      * 查询全部记录，采用分表查询
      */
+    @Override
     public List<Book> selectByPaginate(int m, int n) {
         return bookDao.selectByPaginate(m, n);
     }

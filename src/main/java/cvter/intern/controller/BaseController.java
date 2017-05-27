@@ -20,9 +20,9 @@ public class BaseController {
     @ResponseBody
     public Msg exp(Exception ex) {
         ex.printStackTrace();
-
         // 根据不同错误转向不同页面
         if (ex instanceof BusinessException) {
+            System.out.println("------------------------------------");
             return Msg.fail()
                     .setCode(((BusinessException) ex).getCode())
                     .setMessage(ex.getMessage());

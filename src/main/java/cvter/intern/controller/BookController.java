@@ -3,13 +3,16 @@ package cvter.intern.controller;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import cvter.intern.authorization.annotation.Authorization;
+import cvter.intern.interceptor.annotation.RequestLimit;
 import cvter.intern.authorization.annotation.CurrentUser;
 import cvter.intern.lucene.model.BookIndex;
 import cvter.intern.lucene.service.IndexBookService;
 import cvter.intern.lucene.service.impl.IndexBookServiceImpl;
 import cvter.intern.model.Book;
 import cvter.intern.model.Msg;
+import cvter.intern.model.Panic;
 import cvter.intern.model.User;
+import cvter.intern.service.PanicService;
 import cvter.intern.service.UserService;
 import cvter.intern.service.impl.BookServiceImpl;
 import cvter.intern.vo.BookInShopCar;
@@ -34,6 +37,9 @@ public class BookController extends BaseController {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private PanicService panicService;
 
     /**
      * 获取图书列表
@@ -209,6 +215,37 @@ public class BookController extends BaseController {
     }
 
     /**
+     * 获取抢购图书列表
+     *
+     * @param pn
+     * @return
+     */
+    @ResponseBody
+    @RequestMapping(value = "/panic/list", method = RequestMethod.POST)
+    public Msg panicList(@RequestParam(defaultValue = "1") Integer pn,
+                    @RequestParam(defaultValue = "7") Integer pageSize,
+                    @RequestParam(defaultValue = "5") Integer navigatePages) {
+        PageHelper.startPage(pn, pageSize);
+        List<Panic> allPBook = panicService.selectAll();
+        PageInfo page = new PageInfo(allPBook, navigatePages);
+
+        return Msg.success().add("page", page);
+    }
+
+    /**
+     * 获取抢购图书详情
+     *
+     * @param uid
+     * @return
+     */
+    @ResponseBody
+    @RequestMapping(value = "/panic/detail/{uid}", method = RequestMethod.GET)
+    public Msg panicDetil(@PathVariable String uid) {
+        Panic panic = panicService.selectByUID(uid);
+        return Msg.success().add("panic", panic);
+    }
+
+    /**
      * 图书抢购
      *
      * @param userUid
@@ -216,19 +253,16 @@ public class BookController extends BaseController {
      * @param tokenUid
      * @return
      */
-    @Authorization
+   // @Authorization
     @ResponseBody
-    @RequestMapping(path = {"/panic"}, method = RequestMethod.POST)
-    public Msg bookPanic(@RequestParam String userUid,
-                         @RequestParam String bookUid,
-                         @RequestParam String tokenUid) {
-
-        List<Book> books = new ArrayList<>();
-        books.add(new Book());
-        books.add(new Book());
-        books.add(new Book());
-
-        return Msg.success().add("books", books);
-
+    @RequestMapping(value="/panic", method = RequestMethod.POST)
+    public Msg bookPanic(@RequestParam String bookUid,
+                         @RequestParam String userUid
+                        ) {
+        //@RequestParam String tokenUid
+        if (panicService.executePanic(bookUid, userUid)) {
+            return Msg.success().setMessage("抢购成功");
+        }
+        return Msg.success().setMessage("抢购失败");
     }
 }

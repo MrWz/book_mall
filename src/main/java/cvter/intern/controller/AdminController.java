@@ -10,6 +10,7 @@ import cvter.intern.model.Book;
 import cvter.intern.model.Msg;
 import cvter.intern.model.User;
 import cvter.intern.service.BookService;
+import cvter.intern.service.PanicService;
 import cvter.intern.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
+
 
 /**
  * 管理员操作类
@@ -30,6 +32,8 @@ public class AdminController extends BaseController {
 
     @Resource
     private BookService bookService;
+    @Resource
+    private PanicService panicService;
 
     @Autowired
     private TokenManager tokenManager;
@@ -72,11 +76,11 @@ public class AdminController extends BaseController {
         return Msg.success().setMessage("成功退出");
     }
 
-    @Authorization
+    //@Authorization
     @ResponseBody
     @RequestMapping(value = "/book/add", method = RequestMethod.POST)
-    public Msg bookAdd(Book book) {
-        if (bookService.save(book)) {
+    public Msg bookAdd(Book book,String bookType) {
+        if (bookService.save(book,bookType)) {
             return Msg.success().setMessage("图书上架成功");
         }
         return Msg.success().setMessage("图书上架失败");
@@ -86,14 +90,9 @@ public class AdminController extends BaseController {
     @ResponseBody
     @RequestMapping(value = "/book/del/{uids}", method = RequestMethod.DELETE)
     public Msg bookDel(@PathVariable String uids) {
-        boolean flag = true;
-        String[] uidArr = uids.split("-");
-        for (int i = 0; i < uidArr.length; i++) {
-            flag = bookService.bookDel(uids);
-        }
-        if (flag) {
+        if (bookService.bookDel(uids)) {
             return Msg.success().setMessage("图书删除成功");
-        }
+    }
         return Msg.success().setMessage("图书删除失败");
     }
 
@@ -107,4 +106,13 @@ public class AdminController extends BaseController {
         return Msg.success().setMessage("图书信息更新成功");
     }
 
+    @ResponseBody
+    @RequestMapping(value="/book/panic",method = RequestMethod.POST)
+    public  Msg bookPanic(int nums,int curPrice,String startTime,String endTime, String uid){
+
+        if(panicService.bookPanic(nums,curPrice,startTime,endTime,uid)){
+            return Msg.success().setMessage("抢购发布成功");
+        }
+        return Msg.success().setMessage("抢购发布失败");
+    }
 }
