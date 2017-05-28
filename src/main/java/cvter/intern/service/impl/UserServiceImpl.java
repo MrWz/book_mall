@@ -1,7 +1,6 @@
 package cvter.intern.service.impl;
 
 import cvter.intern.authorization.manager.RedisTokenManager;
-import cvter.intern.authorization.model.TokenModel;
 import cvter.intern.dao.*;
 import cvter.intern.exception.BusinessException;
 import cvter.intern.exception.ExceptionCode;
@@ -17,7 +16,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import redis.clients.jedis.JedisPool;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 import static cvter.intern.exception.ExceptionCode.EX_10001;
 import static cvter.intern.utils.RoleUtil.ROLE_1;
@@ -58,6 +59,7 @@ public class UserServiceImpl implements UserService {
 
     /**
      * 更新购物车
+     *
      * @param userUid
      * @param bookUid
      * @param count
@@ -70,10 +72,10 @@ public class UserServiceImpl implements UserService {
             throw new ParameterException(EX_10001.getMessage());
         }
 
-        ShopCar car=shopCarDao.selectByUuidAndBuid(userUid,bookUid,false);
+        ShopCar car=shopCarDao.selectByUuidAndBuid(userUid, bookUid, false);
         if (car != null) {
             int oldNum=car.getNums();
-            int newNum=oldNum+count;
+            int newNum=oldNum + count;
             car.setNums(newNum);
             car.setUpdateTime(new Date());
             shopCarDao.updateByPrimaryKey(car);
@@ -84,16 +86,17 @@ public class UserServiceImpl implements UserService {
 
     /**
      * 删除购物车中指定的一本
+     *
      * @param userUid
      * @param bookUid
      * @return
      */
-    public Boolean deleteOneBook(String userUid,String bookUid) {
+    public Boolean deleteOneBook(String userUid, String bookUid) {
         boolean flag=StringUtils.isBlank(userUid);
         if (flag) {
             throw new ParameterException(EX_10001.getMessage());
         }
-        ShopCar car=shopCarDao.selectByUuidAndBuid(userUid,bookUid,false);
+        ShopCar car=shopCarDao.selectByUuidAndBuid(userUid, bookUid, false);
         if (car != null) {
             car.setDeleted(true);
             car.setUpdateTime(new Date());
@@ -102,6 +105,7 @@ public class UserServiceImpl implements UserService {
         }
         return false;
     }
+
     /**
      * 清空购物车
      *
@@ -114,7 +118,7 @@ public class UserServiceImpl implements UserService {
         if (flag) {
             throw new ParameterException(EX_10001.getMessage());
         }
-        List<ShopCar> listShopCar=shopCarDao.selectByUseUid(userUid,false);
+        List<ShopCar> listShopCar=shopCarDao.selectByUseUid(userUid, false);
 
         Date date=new Date();
         for (int i=0; i < listShopCar.size(); ++i) {
@@ -139,7 +143,7 @@ public class UserServiceImpl implements UserService {
         }
         List<BookInShopCar> bookList=new ArrayList(10);
 
-        List<ShopCar> listShopCar=shopCarDao.selectByUseUid(userUid,false);
+        List<ShopCar> listShopCar=shopCarDao.selectByUseUid(userUid, false);
         if (listShopCar.isEmpty()) {//用户购物车为空
             return bookList;
         }
@@ -174,13 +178,14 @@ public class UserServiceImpl implements UserService {
         }
         Date date=new Date();
 
-        ShopCar car=shopCarDao.selectByUuidAndBuid(userUid, bookUid,false);
+        ShopCar car=shopCarDao.selectByUuidAndBuid(userUid, bookUid, false);
         /**
          * 如果用户购物车中已经有该书且未被逻辑删除，则只更新数量和时间即可
          * 反之插入一条新的记录
          */
         if (car != null) {
-            car.setNums(nums);
+            int newNums=car.getNums()+nums;
+            car.setNums(newNums);
             car.setUpdateTime(date);
             shopCarDao.updateByPrimaryKey(car);
             return true;
@@ -206,29 +211,30 @@ public class UserServiceImpl implements UserService {
         }
         Date date=new Date();
         Book book=bookDao.selectByBookUid(bookUid);
-        boolean lockStatus=redisLockUtil.getLock("redisKey-"+book.getUid(),3*1000 );
+        boolean lockStatus=redisLockUtil.getLock("redisKey-" + book.getUid(), 3 * 1000);
         if (lockStatus) {
             int newStock=book.getStock() - nums;
             if (newStock < 0) {
-                redisLockUtil.unLock("redisKey-"+book.getUid());
+                redisLockUtil.unLock("redisKey-" + book.getUid());
                 return false;
             }
             book.setStock(newStock);
             book.setUpdateTime(date);
             bookDao.updateByPrimaryKey(book);
-            redisLockUtil.unLock("redisKey-"+book.getUid());
+            redisLockUtil.unLock("redisKey-" + book.getUid());
         } else {
             //redisLockUtil.unLock("redisKey-"+book.getUid());
             throw new BusinessException(ExceptionCode.EX_20002.getCode(), ExceptionCode.EX_20002.getMessage());
         }
 
-        UserBook userBook=userBookDao.selectByUuidAndBuid(userUid,bookUid,false);
+        deleteOneBook(userUid,bookUid);//将该商品从用户的购物车中去掉
+        UserBook userBook=userBookDao.selectByUuidAndBuid(userUid, bookUid, false);
         /**
          * 如果用户购买表中已经有该书且未是通过正常通道购买而来，则只更新数量和时间即可
          * 反之，要构建一个新的记录插入数据库
          */
-        if(userBook != null){
-            int newNums=userBook.getBuyNums()+nums;
+        if (userBook != null) {
+            int newNums=userBook.getBuyNums() + nums;
             userBook.setBuyNums(newNums);
             userBook.setUpdateTime(date);
             userBookDao.updateByPrimaryKey(userBook);
