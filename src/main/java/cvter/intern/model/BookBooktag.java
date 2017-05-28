@@ -62,4 +62,12 @@ public class BookBooktag {
     public void setUpdateTime(Date updateTime) {
         this.updateTime = updateTime;
     }
+
+    public BookBooktag(String bookUid, String booktagUid, Boolean deleted, Date createTime, Date updateTime) {
+        this.bookUid = bookUid;
+        this.booktagUid = booktagUid;
+        this.deleted = deleted;
+        this.createTime = createTime;
+        this.updateTime = updateTime;
+    }
 }

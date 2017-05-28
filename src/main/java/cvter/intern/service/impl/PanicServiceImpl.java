@@ -95,13 +95,15 @@ public class PanicServiceImpl implements PanicService {
         System.out.println(startTime);
         Panic pbook = new Panic(nums, curPrice, TimeUtil.strToDateLong(startTime), TimeUtil.strToDateLong(endTime), date, date);
         pbook.setUid(UIDUtil.getRandomUID());
-        return panicService.save(pbook);
+        panicService.save(pbook);
+        panicRedis.putPanic(pbook);
+        return true;
     }
 
     /**
     *秒杀执行
     */
-@Transactional(rollbackFor = Exception.class)
+    @Transactional(rollbackFor = Exception.class)
     public boolean executePanic(String bookId, String userId){
         if(StringUtils.isAnyEmpty(bookId,userId)){
             throw new ParameterException("参数为空");
@@ -118,8 +120,7 @@ public class PanicServiceImpl implements PanicService {
             panicRedis.putPanic(pbook);
         }
     }
-        pbook = panicDao.selectByPrimaryKey(bookId);
-        UserBook userBookHave=userBookDao.selectByPrimaryKey(userId);
+        UserBook userBookHave=userBookDao.selectByUuidAndBuid(userId,bookId,true);
         if(userBookHave!=null){
             //重复抢购
             throw new BusinessException(ExceptionCode.EX_20003.getCode(), ExceptionCode.EX_20003.getMessage());
