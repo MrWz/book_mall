@@ -101,11 +101,11 @@
     </if>
   </delete>
   <insert id="insert" parameterType="cvter.intern.model.BookBooktag" >
-    insert into book_booktag (id, book_uid, booktag_uid, 
+    insert into book_booktag (book_uid, booktag_uid,
       deleted, create_time, update_time
       )
-    values (#{id,jdbcType=INTEGER}, #{bookUid,jdbcType=VARCHAR}, #{booktagUid,jdbcType=VARCHAR}, 
-      #{deleted,jdbcType=BIT}, #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP}
+    values (#{bookUid,jdbcType=VARCHAR}, #{booktagUid,jdbcType=VARCHAR},
+      #{deleted,jdbcType=BIT},now(),now()
       )
   </insert>
   <insert id="insertSelective" parameterType="cvter.intern.model.BookBooktag" >

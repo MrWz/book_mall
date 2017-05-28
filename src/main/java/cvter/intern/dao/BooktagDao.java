@@ -3,6 +3,8 @@ package cvter.intern.dao;
 import cvter.intern.model.Booktag;
 import cvter.intern.model.BooktagInfoExample;
 import java.util.List;
+
+import cvter.intern.model.Role;
 import org.apache.ibatis.annotations.Param;
 
 public interface BooktagDao {
@@ -19,6 +21,8 @@ public interface BooktagDao {
     List<Booktag> selectByExample(BooktagInfoExample example);
 
     Booktag selectByPrimaryKey(String id);
+
+    Booktag selectByDescription(String description);
 
     int updateByExampleSelective(@Param("record") Booktag record, @Param("example") BooktagInfoExample example);
 

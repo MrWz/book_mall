@@ -15,10 +15,8 @@ import cvter.intern.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
-
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
-
 
 /**
  * 管理员操作类
@@ -76,7 +74,14 @@ public class AdminController extends BaseController {
         return Msg.success().setMessage("成功退出");
     }
 
-    //@Authorization
+    /**
+     *管理员图书上架
+     *
+     * @param book  上架图书
+     * @param bookType  图书类型
+     * @return 响应实体 {@link Msg}
+     */
+    @Authorization
     @ResponseBody
     @RequestMapping(value = "/book/add", method = RequestMethod.POST)
     public Msg bookAdd(Book book,String bookType) {
@@ -86,6 +91,12 @@ public class AdminController extends BaseController {
         return Msg.success().setMessage("图书上架失败");
     }
 
+    /**
+     * 管理员图书下架
+     *
+     * @param uids  图书UID
+     * @return 响应实体 {@link Msg}
+     */
     @Authorization
     @ResponseBody
     @RequestMapping(value = "/book/del/{uids}", method = RequestMethod.DELETE)
@@ -96,6 +107,12 @@ public class AdminController extends BaseController {
         return Msg.success().setMessage("图书删除失败");
     }
 
+    /**
+     * 图书价格和库存调整
+     *
+     * @param book  要调整图书
+     * @return 响应实体 {@link Msg}
+     */
     @Authorization
     @ResponseBody
     @RequestMapping(value = "/book/adjust", method = RequestMethod.PUT)
@@ -106,6 +123,24 @@ public class AdminController extends BaseController {
         return Msg.success().setMessage("图书信息更新成功");
     }
 
+    @Authorization
+    @ResponseBody
+    @RequestMapping(value = "/book/sale", method = RequestMethod.POST)
+    public Msg bookSale(){
+
+        return Msg.success().setMessage("查看销售表成功");
+    }
+    /**
+     * 管理员发布图书抢购
+     *
+     * @param nums  数量
+     * @param curPrice  抢购价格
+     * @param startTime  抢购开始时间
+     * @param endTime   抢购结束时间
+     * @param uid  抢购书UID
+     * @return 响应实体 {@link Msg}
+     */
+    //@Authorization
     @ResponseBody
     @RequestMapping(value="/book/panic",method = RequestMethod.POST)
     public  Msg bookPanic(int nums,int curPrice,String startTime,String endTime, String uid){

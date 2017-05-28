@@ -59,7 +59,7 @@ public class PanicRedisImpl implements PanicRedis{
                 byte[] bytes = ProtostuffIOUtil.toByteArray(panicId, schema,
                         LinkedBuffer.allocate(LinkedBuffer.DEFAULT_BUFFER_SIZE));
                 // 超时缓存
-                int timeout = 60 * 60;
+                int timeout = 60 * 60;//一小时
                 String result = jedis.setex(key.getBytes(), timeout, bytes);
                 return result;
             } finally {

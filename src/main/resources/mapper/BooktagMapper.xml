@@ -90,6 +90,14 @@
     from booktag_info
     where id = #{id,jdbcType=VARCHAR}
   </select>
+
+  <select id="selectByDescription" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select
+    <include refid="Base_Column_List" />
+    from booktag_info
+    where description = #{description,jdbcType=VARCHAR}
+  </select>
+
   <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
     delete from booktag_info
     where id = #{id,jdbcType=VARCHAR}

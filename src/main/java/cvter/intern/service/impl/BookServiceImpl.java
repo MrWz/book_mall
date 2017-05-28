@@ -1,7 +1,11 @@
 package cvter.intern.service.impl;
+import cvter.intern.dao.BookBooktagDao;
 import cvter.intern.dao.BookDao;
+import cvter.intern.dao.BooktagDao;
 import cvter.intern.exception.ParameterException;
 import cvter.intern.model.Book;
+import cvter.intern.model.BookBooktag;
+import cvter.intern.model.Booktag;
 import cvter.intern.model.Panic;
 import cvter.intern.service.BookService;
 import cvter.intern.service.PanicService;
@@ -25,6 +29,10 @@ public class BookServiceImpl implements BookService {
     private BookDao bookDao;
     @Resource
     private BookService bookService;
+    @Autowired
+    private BooktagDao booktagDao;
+    @Autowired
+    private BookBooktagDao bookBooktagDao;
 
     public BookServiceImpl() {
         super();
@@ -40,6 +48,10 @@ public class BookServiceImpl implements BookService {
             throw new ParameterException("参数为空");
         }
         book.setUid(UIDUtil.getRandomUID());
+        Date date=new Date();
+        Booktag booktag=booktagDao.selectByDescription(bookType);
+        BookBooktag bookBooktag=new BookBooktag(book.getUid(),booktag.getUid(),false,date,date);
+        bookBooktagDao.insert(bookBooktag);
         return bookDao.insert(book);
     }
 
