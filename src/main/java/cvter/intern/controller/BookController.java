@@ -5,15 +5,17 @@ import com.github.pagehelper.PageInfo;
 import cvter.intern.authorization.annotation.Authorization;
 import cvter.intern.authorization.annotation.CurrentUser;
 import cvter.intern.exception.BusinessException;
-import cvter.intern.exception.ParameterException;
 import cvter.intern.lucene.model.BookIndex;
 import cvter.intern.lucene.service.IndexBookService;
 import cvter.intern.lucene.service.impl.IndexBookServiceImpl;
 import cvter.intern.model.Book;
 import cvter.intern.model.Msg;
+import cvter.intern.model.Panic;
 import cvter.intern.model.User;
+import cvter.intern.service.PanicService;
 import cvter.intern.service.UserService;
 import cvter.intern.service.impl.BookServiceImpl;
+import cvter.intern.utils.RedisCountHotBookUtil;
 import cvter.intern.vo.BookInShopCar;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,8 +26,7 @@ import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.List;
 
-import static cvter.intern.exception.ExceptionCode.EX_10001;
-import static cvter.intern.exception.ExceptionCode.EX_20003;
+import static cvter.intern.exception.ExceptionCode.EX_200003;
 
 /**
  * Created by cvter on 2017/5/18.
@@ -39,6 +40,12 @@ public class BookController extends BaseController {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private PanicService panicService;
+
+    @Autowired
+    private RedisCountHotBookUtil redisCountHotBookUtil;
 
     /**
      * 获取图书列表
@@ -68,8 +75,13 @@ public class BookController extends BaseController {
     @ResponseBody
     @RequestMapping(value="/detail/{uid}", method=RequestMethod.GET)
     public Msg list(@PathVariable String uid) {
-        Book book=bookService.selectByUid(uid);
 
+        Book book=redisCountHotBookUtil.getBook(uid);
+        if(book==null){
+            Book bk=bookService.selectByUid(uid);
+            redisCountHotBookUtil.putBook(bk);
+            book=bk;
+        }
         return Msg.success().add("book", book);
     }
 
@@ -84,7 +96,7 @@ public class BookController extends BaseController {
     @ResponseBody
     @RequestMapping(value="/buy", method=RequestMethod.POST)
     //@CurrentUser User user
-    public Msg buy(@CurrentUser User user,@RequestParam String bookuid, @RequestParam int nums) {
+    public Msg buy(@CurrentUser User user, @RequestParam String bookuid, @RequestParam int nums) {
         boolean flag=userService.buy(user.getUid(), bookuid, nums);
 //        boolean flag=userService.buy("c9a8525f76fc408b926a803c84882448", bookuid, nums);
 
@@ -123,7 +135,7 @@ public class BookController extends BaseController {
          * boouid为空就执行清空购物车
          * 反之，删除指定图书
          */
-        if (!StringUtils.equalsAny(bookuid,"null")) {
+        if (!StringUtils.equalsAny(bookuid, "null")) {
             boolean flag=userService.deleteOneBook(user.getUid(), bookuid);
             if (flag) {
                 return Msg.success().setMessage("删除成功");
@@ -166,8 +178,8 @@ public class BookController extends BaseController {
     @ResponseBody
     @RequestMapping(value="/shopcar", method=RequestMethod.POST)
     public Msg shopCarPost(@CurrentUser User user, @RequestParam String bookuid, @RequestParam int nums) {
-        if(nums<=0){
-            throw new BusinessException(EX_20003.getCode(),EX_20003.getMessage());
+        if (nums <= 0) {
+            throw new BusinessException(EX_200003.getCode(), EX_200003.getMessage());
         }
         boolean flag=userService.addShopCar(user.getUid(), bookuid, nums);
         if (flag) {
@@ -220,6 +232,37 @@ public class BookController extends BaseController {
     }
 
     /**
+     * 获取抢购图书列表
+     *
+     * @param pn
+     * @return
+     */
+    @ResponseBody
+    @RequestMapping(value="/panic/list", method=RequestMethod.POST)
+    public Msg panicList(@RequestParam(defaultValue="1") Integer pn,
+                         @RequestParam(defaultValue="7") Integer pageSize,
+                         @RequestParam(defaultValue="5") Integer navigatePages) {
+        PageHelper.startPage(pn, pageSize);
+        List<Panic> allPBook=panicService.selectAll();
+        PageInfo page=new PageInfo(allPBook, navigatePages);
+
+        return Msg.success().add("page", page);
+    }
+
+    /**
+     * 获取抢购图书详情
+     *
+     * @param uid
+     * @return
+     */
+    @ResponseBody
+    @RequestMapping(value="/panic/detail/{uid}", method=RequestMethod.GET)
+    public Msg panicDetil(@PathVariable String uid) {
+        Panic panic=panicService.selectByUID(uid);
+        return Msg.success().add("panic", panic);
+    }
+
+    /**
      * 图书抢购
      *
      * @param userUid
@@ -227,19 +270,16 @@ public class BookController extends BaseController {
      * @param tokenUid
      * @return
      */
-    @Authorization
+    // @Authorization
     @ResponseBody
-    @RequestMapping(path={"/panic"}, method=RequestMethod.POST)
-    public Msg bookPanic(@RequestParam String userUid,
-                         @RequestParam String bookUid,
-                         @RequestParam String tokenUid) {
-
-        List<Book> books=new ArrayList<>();
-        books.add(new Book());
-        books.add(new Book());
-        books.add(new Book());
-
-        return Msg.success().add("books", books);
-
+    @RequestMapping(value="/panic", method=RequestMethod.POST)
+    public Msg bookPanic(@RequestParam String bookUid,
+                         @RequestParam String userUid
+    ) {
+        //@RequestParam String tokenUid
+        if (panicService.executePanic(bookUid, userUid)) {
+            return Msg.success().setMessage("抢购成功");
+        }
+        return Msg.success().setMessage("抢购失败");
     }
 }

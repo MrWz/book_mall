@@ -44,7 +44,7 @@ public class BookServiceTest {
             book.setDeleted(false);
             book.setCreateTime(new Date());
             book.setUpdateTime(new Date());
-            bookService.save(book);
+           // bookService.save(book);
         }
         System.out.println("OK");
     }

@@ -38,15 +38,23 @@
             <mvc:mapping path="/**"/>
             <bean class="cvter.intern.authorization.interceptor.AuthorizationInterceptor"/>
         </mvc:interceptor>
+
         <mvc:interceptor>
             <mvc:mapping path="/**"/>
             <bean class="cvter.intern.interceptor.TimeInteceptor"/>
         </mvc:interceptor>
+
         <mvc:interceptor>
             <mvc:mapping path="/user/v1/*"/>
             <mvc:mapping path="/book/v1/*"/>
             <bean class="cvter.intern.interceptor.ParamInteceptor"/>
         </mvc:interceptor>
+
+        <mvc:interceptor>
+            <mvc:mapping path="/book/v1/*"/>
+            <bean class="cvter.intern.interceptor.PanicInteceptor"/>
+        </mvc:interceptor>
+
     </mvc:interceptors>
 
 </beans>

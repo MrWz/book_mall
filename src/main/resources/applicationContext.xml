@@ -45,6 +45,8 @@
 
 
     <bean class="cvter.intern.utils.RedisLockUtil"/>
+    <bean class="cvter.intern.utils.RedisCountHotBookUtil"/>
+
 
     <!-- mybatis和spring完美整合 -->
     <bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
@@ -59,7 +61,6 @@
         <property name="basePackage" value="cvter.intern.dao"/>
         <property name="sqlSessionFactoryBeanName" value="sqlSessionFactory"/>
     </bean>
-
 
     <!-- (事务管理)transaction manager, use JtaTransactionManager for global tx -->
     <bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
