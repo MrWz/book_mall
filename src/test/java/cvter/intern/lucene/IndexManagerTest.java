@@ -4,14 +4,10 @@ import cvter.intern.BaseTest;
 import cvter.intern.lucene.datasource.DataSource;
 import cvter.intern.lucene.datasource.DbDataSource;
 import cvter.intern.lucene.model.BookIndex;
-import cvter.intern.service.BookService;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,10 +17,7 @@ import static org.junit.Assert.fail;
 /**
  * Created by cvter on 2017/5/19.
  */
-public class IndexManagerTest extends BaseTest{
-
-    @Autowired
-    BookService bookService;
+public class IndexManagerTest extends BaseTest {
 
     private static Logger logger = LoggerFactory.getLogger(IndexManagerTest.class);
 
@@ -65,7 +58,7 @@ public class IndexManagerTest extends BaseTest{
     @Test
     public void searchIndexTopN() {
         try {
-            List<BookIndex> list = indexManager.searchIndexTopN("描述", BookIndex.DESCRIPTION, 100);
+            List<BookIndex> list = indexManager.doSearch("文", BookIndex.DESCRIPTION);
             for (BookIndex b :
                     list) {
                 logger.info(b.toString());

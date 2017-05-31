@@ -5,6 +5,7 @@ import com.github.pagehelper.PageInfo;
 import cvter.intern.authorization.annotation.Authorization;
 import cvter.intern.authorization.annotation.CurrentUser;
 import cvter.intern.exception.BusinessException;
+import cvter.intern.interceptor.annotation.RequestLimit;
 import cvter.intern.lucene.model.BookIndex;
 import cvter.intern.lucene.service.IndexBookService;
 import cvter.intern.model.*;
@@ -95,16 +96,16 @@ public class BookController extends BaseController {
      * @return
      */
     @ResponseBody
-    @RequestMapping(value="/hotBook")
+    @RequestMapping(value = "/hotBook")
     public Msg getTopTen() {
-        Set<String> topTen=redisTopTenUtil.getInRedisTopTen();
-        List<Book> topTenBook=new ArrayList(10);
+        Set<String> topTen = redisTopTenUtil.getInRedisTopTen();
+        List<Book> topTenBook = new ArrayList(10);
         for (String bookUid : topTen) {
-            Book book=(Book) redisCountHotBookUtil.getInRedis(bookUid, Book.class);//在Redis中查询，未查询到，在去Mysql中查找
+            Book book = (Book) redisCountHotBookUtil.getInRedis(bookUid, Book.class);//在Redis中查询，未查询到，在去Mysql中查找
             if (book == null) {
-                Book bk=bookService.selectByUid(bookUid);
+                Book bk = bookService.selectByUid(bookUid);
                 redisCountHotBookUtil.putRedis(bk, Book.class);
-                book=bk;
+                book = bk;
             }
             topTenBook.add(book);
         }
@@ -122,13 +123,13 @@ public class BookController extends BaseController {
     @RequestMapping(value = "/detail/{uid}", method = RequestMethod.GET)
     public Msg list(@PathVariable String uid) {
 
-        Book book=(Book) redisCountHotBookUtil.getInRedis(uid, Book.class);//在Redis中查询，未查询到，在去Mysql中查找
+        Book book = (Book) redisCountHotBookUtil.getInRedis(uid, Book.class);//在Redis中查询，未查询到，在去Mysql中查找
 
         redisTopTenUtil.putRedisTopTen(uid);//将图书id存到redis，统计热点图书。
         if (book == null) {
-            Book bk=bookService.selectByUid(uid);
+            Book bk = bookService.selectByUid(uid);
             redisCountHotBookUtil.putRedis(bk, Book.class);
-            book=bk;
+            book = bk;
         }
         return Msg.success().add("book", book);
     }
@@ -229,7 +230,7 @@ public class BookController extends BaseController {
     @ResponseBody
     @RequestMapping(value = "/shopcar", method = RequestMethod.PUT)
     public Msg shopCarPut(@CurrentUser User user, @RequestParam String bookuid, @RequestParam int flag) {
-        boolean isTrue=userService.updateShopCar(user.getUid(), bookuid, flag);
+        boolean isTrue = userService.updateShopCar(user.getUid(), bookuid, flag);
         if (isTrue) {
             return Msg.success().setMessage("修改成功");
         }
@@ -247,18 +248,18 @@ public class BookController extends BaseController {
      */
     @Authorization
     @ResponseBody
-    @RequestMapping(value="/shopcar", method=RequestMethod.POST)
+    @RequestMapping(value = "/shopcar", method = RequestMethod.POST)
     public Msg shopCarPost(@CurrentUser User user, @RequestParam String bookuid, @RequestParam String nums) {
-        String pt="^[0-9]+$";
-        boolean isNum=nums.matches(pt);
+        String pt = "^[0-9]+$";
+        boolean isNum = nums.matches(pt);
         if (!isNum) {
             throw new BusinessException(EX_20010.getCode(), EX_20010.getMessage());
         }
-        int num=Integer.parseInt(nums);
+        int num = Integer.parseInt(nums);
         if (num <= 0) {
             throw new BusinessException(EX_200003.getCode(), EX_200003.getMessage());
         }
-        boolean flag=userService.addShopCar(user.getUid(), bookuid, num);
+        boolean flag = userService.addShopCar(user.getUid(), bookuid, num);
         if (flag) {
             return Msg.success().setMessage("添加成功，尽快购买");
         }

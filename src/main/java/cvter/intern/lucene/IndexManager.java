@@ -7,9 +7,9 @@ import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
 import org.apache.lucene.document.TextField;
 import org.apache.lucene.index.DirectoryReader;
+import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.IndexWriterConfig;
-import org.apache.lucene.queryparser.classic.ParseException;
 import org.apache.lucene.queryparser.classic.QueryParser;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.Query;
@@ -17,13 +17,13 @@ import org.apache.lucene.search.ScoreDoc;
 import org.apache.lucene.search.TopDocs;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FSDirectory;
-import org.apache.lucene.util.Version;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wltea.analyzer.lucene.IKAnalyzer;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.FileSystems;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -39,13 +39,11 @@ public class IndexManager {
     private String indexDir;         //索引目录
     private int nDocs;               //搜索数目
 
-    private Analyzer analyzer = null;
-    private Directory directory = null;
-    private IndexWriter indexWriter = null;
-    private DirectoryReader ireader = null;
-    private IndexSearcher indexSearcher = null;
-
     private Class indexClass = BookIndex.class;
+
+    private Directory directory = null;
+    private IndexWriter writer = null;
+    private IndexReader reader = null;
 
     public IndexManager(String indexDir, int nDocs) {
         this.indexDir = indexDir;
@@ -64,15 +62,22 @@ public class IndexManager {
 
         for (BookIndex bookIndex : bookIndices) {
             try {
-                analyzer = new IKAnalyzer(true);
-                directory = FSDirectory.open(new File(indexDir));
+                // 创建分词器，标准分词器
+                Analyzer analyzer = new IKAnalyzer(true);
+
+                // 创建IndexWriter
+                // IndexWriterConfig cfg = new IndexWriterConfig(Version.LUCENE_6_5_0,analyzer);
+                IndexWriterConfig cfg = new IndexWriterConfig(analyzer);
+
+                // 指定索引库的地址
+                directory = FSDirectory.open(FileSystems.getDefault().getPath(indexDir));
+
+                writer = new IndexWriter(directory, cfg);
 
                 File indexFile = new File(indexDir);
                 if (!indexFile.exists()) {
                     indexFile.mkdirs();
                 }
-                IndexWriterConfig config = new IndexWriterConfig(Version.LUCENE_4_10_4, analyzer);
-                indexWriter = new IndexWriter(directory, config);
 
                 java.lang.reflect.Field[] fields = indexClass.getDeclaredFields();
 
@@ -82,8 +87,8 @@ public class IndexManager {
                     document.add(new TextField(f.getName(), f.get(bookIndex).toString(), Field.Store.YES));
                 }
 
-                indexWriter.addDocument(document);
-                indexWriter.commit();
+                writer.addDocument(document);
+                writer.commit();
 
             } catch (Exception e) {
                 logger.error(e.getMessage());
@@ -100,26 +105,39 @@ public class IndexManager {
      *
      * @param text       查找的字符串
      * @param queryField 查找的字符串类别
-     * @param nDocs      N
      * @return
      * @throws Exception
      */
-    public List<BookIndex> searchIndexTopN(String text, String queryField, int nDocs) throws IOException, ParseException {
+    public List<BookIndex> doSearch(String text, String queryField) throws Exception {
+        // 创建IndexSearcher
+        // 指定索引库的地址
 
-        directory = FSDirectory.open(new File(indexDir));
-        analyzer = new IKAnalyzer(true);
-        ireader = DirectoryReader.open(directory);
-        indexSearcher = new org.apache.lucene.search.IndexSearcher(ireader);
+        // 创建query对象
+        Analyzer analyzer = new IKAnalyzer(true);
+        // 使用QueryParser搜索时，需要指定分词器，搜索时的分词器要和索引时的分词器一致
+        // 第一个参数：默认搜索的域的名称
+        QueryParser parser = new QueryParser(queryField, analyzer);
 
-        QueryParser parser = new QueryParser(Version.LUCENE_4_10_4, queryField, analyzer);
-        parser.setDefaultOperator(QueryParser.AND_OPERATOR);
+        // 通过queryparser来创建query对象
+        // 参数：输入的lucene的查询语句(关键字一定要大写)
         Query query = parser.parse(text);
 
-        TopDocs topDocs = indexSearcher.search(query, nDocs);
-        System.out.println("命中：" + topDocs.totalHits);
-        ScoreDoc[] hits = topDocs.scoreDocs;
+        Directory directory = FSDirectory.open(FileSystems.getDefault().getPath(indexDir));
+        reader = DirectoryReader.open(directory);
+        IndexSearcher searcher = new IndexSearcher(reader);
+        // 通过searcher来搜索索引库
+        // 第二个参数：指定需要显示的顶部记录的N条
+        TopDocs topDocs = searcher.search(query, nDocs);
 
-        List<BookIndex> indexList = setIndexList(hits);
+        // 根据查询条件匹配出的记录总数
+        int count = topDocs.totalHits;
+        System.out.println("匹配出的记录总数:" + count);
+        // 根据查询条件匹配出的记录
+        ScoreDoc[] scoreDocs = topDocs.scoreDocs;
+
+        List<BookIndex> indexList = setIndexList(scoreDocs, searcher);
+
+        // 关闭资源
         close();
 
         return indexList;
@@ -132,11 +150,11 @@ public class IndexManager {
      * @return
      * @throws IOException
      */
-    private List<BookIndex> setIndexList(ScoreDoc[] hits) throws IOException {
+    private List<BookIndex> setIndexList(ScoreDoc[] hits, IndexSearcher searcher) throws IOException {
         List<BookIndex> indexList = new ArrayList<>();
 
         for (int i = 0; i < hits.length; i++) {
-            Document hitDoc = indexSearcher.doc(hits[i].doc);
+            Document hitDoc = searcher.doc(hits[i].doc);
 
             BookIndex bookIndex = new BookIndex();
 
@@ -162,9 +180,10 @@ public class IndexManager {
      * @return
      * @throws Exception
      */
-    public List<BookIndex> searchIndexPaginated(String text, String queryField, int currentPage, int pageSize) throws IOException, ParseException {
+    public List<BookIndex> searchIndexPaginated(String text, String queryField, int currentPage, int pageSize) throws
+            Exception {
 
-        List<BookIndex> indexList = searchIndexTopN(text, queryField, nDocs);
+        List<BookIndex> indexList = doSearch(text, queryField);
 
         int start = (currentPage - 1) * pageSize;
         int end = currentPage * pageSize;
@@ -187,6 +206,7 @@ public class IndexManager {
      * @return
      * @throws Exception
      */
+
     public boolean updateIndex(List<BookIndex> indices) throws Exception {
         return false;
     }
@@ -236,11 +256,11 @@ public class IndexManager {
      */
     private void close() {
         try {
-            if (indexWriter != null) {
-                indexWriter.close();
+            if (writer != null) {
+                writer.close();
             }
-            if (ireader != null) {
-                ireader.close();
+            if (reader != null) {
+                reader.close();
             }
             if (directory != null) {
                 directory.close();

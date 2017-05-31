@@ -19,7 +19,7 @@ public class IndexBookServiceImpl implements IndexBookService {
 
     @Override
     public List<Book> searchBookTopN(String text, String queryField, int nDocs) throws Exception {
-        return getBook(indexManager.searchIndexTopN(text, queryField, nDocs));
+        return getBook(indexManager.doSearch(text, queryField));
     }
 
     @Override

@@ -14,6 +14,9 @@ import java.util.List;
  */
 public class DbDataSource implements DataSource {
 
+//    @Resource
+//    private BookService bookService;
+
     private List<BookIndex> indices;
 
     public DbDataSource() {
