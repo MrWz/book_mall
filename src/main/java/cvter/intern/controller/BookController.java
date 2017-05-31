@@ -72,7 +72,6 @@ public class BookController extends BaseController {
         PageHelper.startPage(pn, pageSize);
         List<Book> allBook=bookService.selectAll();
         PageInfo page=new PageInfo(allBook, navigatePages);
-
         return Msg.success().add("page", page);
     }
 
@@ -279,14 +278,13 @@ public class BookController extends BaseController {
      * @return
      */
     @ResponseBody
-    @RequestMapping(value="/panic/list", method=RequestMethod.POST)
-    public Msg panicList(@RequestParam(defaultValue="1") Integer pn,
-                         @RequestParam(defaultValue="7") Integer pageSize,
-                         @RequestParam(defaultValue="5") Integer navigatePages) {
+    @RequestMapping(value = "/panic/list", method = RequestMethod.POST)
+    public Msg panicList(@RequestParam(defaultValue = "1") Integer pn,
+                    @RequestParam(defaultValue = "7") Integer pageSize,
+                    @RequestParam(defaultValue = "5") Integer navigatePages) {
         PageHelper.startPage(pn, pageSize);
-        List<Panic> allPBook=panicService.selectAll();
-        PageInfo page=new PageInfo(allPBook, navigatePages);
-
+        List<Panic> allPBook = panicService.selectAll();
+        PageInfo page = new PageInfo(allPBook, navigatePages);
         return Msg.success().add("page", page);
     }
 
@@ -297,29 +295,27 @@ public class BookController extends BaseController {
      * @return
      */
     @ResponseBody
-    @RequestMapping(value="/panic/detail/{uid}", method=RequestMethod.GET)
+    @RequestMapping(value = "/panic/detail/{uid}", method = RequestMethod.GET)
     public Msg panicDetil(@PathVariable String uid) {
-        Panic panic=panicService.selectByUID(uid);
+        Panic panic = panicService.selectByUID(uid);
         return Msg.success().add("panic", panic);
     }
 
     /**
      * 图书抢购
-     *
-     * @param userUid
      * @param bookUid
+     * @param userUid
      * @return
      */
     // @Authorization
     @ResponseBody
-    @RequestMapping(value="/panic", method=RequestMethod.POST)
-    public Msg bookPanic(@RequestParam String bookUid,
-                         @RequestParam String userUid
-    ) {
-        //@RequestParam String tokenUid
-        if (panicService.executePanic(bookUid, userUid)) {
-            return Msg.success().setMessage("抢购成功");
-        }
-        return Msg.success().setMessage("抢购失败");
+        @RequestMapping(value="/panic", method = RequestMethod.POST)
+        public Msg bookPanic(@RequestParam String bookUid,
+                @RequestParam String userUid) {
+            //@RequestParam String tokenUid
+            if (panicService.executePanic(bookUid, userUid)) {
+                return Msg.success().setMessage("抢购成功");
+            }
+            return Msg.success().setMessage("抢购失败");
     }
 }
