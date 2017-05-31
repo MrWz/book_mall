@@ -16,4 +16,11 @@ public @interface RequestLimit {
      * 时间段，单位为秒，默认值0
      */
     int value() default 0;
+
+    /**
+     * 提示信息
+     *
+     * @return 提示信息
+     */
+    String msg() default "";
 }

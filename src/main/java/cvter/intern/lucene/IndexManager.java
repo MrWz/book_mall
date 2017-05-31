@@ -1,17 +1,31 @@
 package cvter.intern.lucene;
 
-import cvter.intern.exception.BusinessException;
-import cvter.intern.exception.ExceptionCode;
-import cvter.intern.lucene.dao.IndexDao;
 import cvter.intern.lucene.datasource.DataSource;
-import cvter.intern.lucene.model.Index;
+import cvter.intern.lucene.model.BookIndex;
+import org.apache.lucene.analysis.Analyzer;
+import org.apache.lucene.document.Document;
+import org.apache.lucene.document.Field;
+import org.apache.lucene.document.TextField;
+import org.apache.lucene.index.DirectoryReader;
+import org.apache.lucene.index.IndexWriter;
+import org.apache.lucene.index.IndexWriterConfig;
+import org.apache.lucene.queryparser.classic.ParseException;
+import org.apache.lucene.queryparser.classic.QueryParser;
+import org.apache.lucene.search.IndexSearcher;
+import org.apache.lucene.search.Query;
+import org.apache.lucene.search.ScoreDoc;
+import org.apache.lucene.search.TopDocs;
+import org.apache.lucene.store.Directory;
+import org.apache.lucene.store.FSDirectory;
+import org.apache.lucene.util.Version;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.wltea.analyzer.lucene.IKAnalyzer;
 
 import java.io.File;
-import java.io.InputStream;
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Properties;
 
 /**
  * 索引管理器
@@ -20,46 +34,22 @@ import java.util.Properties;
  */
 public class IndexManager {
 
-    public static String INDEX_DIR = "";         //索引目录
-    public static int nDocs;                                    //搜索数目
-
-    private static IndexDao indexDao;
-    private static IndexManager indexManager;
     private static Logger logger = LoggerFactory.getLogger(IndexManager.class);
 
-    private IndexManager(Class<IndexDao> clazz) throws Exception {
+    private String indexDir;         //索引目录
+    private int nDocs;               //搜索数目
 
-        //加载配置文件
-        Properties prop = new Properties();
-        InputStream is = IndexManager.class.getClassLoader().getResourceAsStream("conf/common.properties");
+    private Analyzer analyzer = null;
+    private Directory directory = null;
+    private IndexWriter indexWriter = null;
+    private DirectoryReader ireader = null;
+    private IndexSearcher indexSearcher = null;
 
-        prop.load(is);
+    private Class indexClass = BookIndex.class;
 
-        INDEX_DIR = prop.getProperty("indexPath", "D:/lucene/luceneIndex");
-
-        File file = new File(INDEX_DIR);
-        if (!file.exists()) {
-            file.mkdirs();
-        }
-        nDocs = Integer.parseInt(prop.getProperty("nDocs", "1000"));
-
-        indexDao = clazz.newInstance();
-    }
-
-    /**
-     * 创建索引管理器
-     *
-     * @return 返回索引管理器对象
-     */
-    public static <T extends IndexDao> IndexManager builder(Class<T> clazz) {
-        if (indexManager == null) {
-            try {
-                indexManager = new IndexManager((Class<IndexDao>) clazz);
-            } catch (Exception e) {
-                throw new BusinessException(10000, "全文检索初始化异常" + e.getMessage());
-            }
-        }
-        return indexManager;
+    public IndexManager(String indexDir, int nDocs) {
+        this.indexDir = indexDir;
+        this.nDocs = nDocs;
     }
 
     /**
@@ -70,11 +60,39 @@ public class IndexManager {
      */
     public boolean createIndex(DataSource dataSource) {
 
-        try {
-            return indexDao.createIndex(dataSource);
-        } catch (Exception e) {
-            throw new BusinessException(ExceptionCode.EX_10000.getCode(), "创建索引异常");
+        List<BookIndex> bookIndices = dataSource.getIndexData();
+
+        for (BookIndex bookIndex : bookIndices) {
+            try {
+                analyzer = new IKAnalyzer(true);
+                directory = FSDirectory.open(new File(indexDir));
+
+                File indexFile = new File(indexDir);
+                if (!indexFile.exists()) {
+                    indexFile.mkdirs();
+                }
+                IndexWriterConfig config = new IndexWriterConfig(Version.LUCENE_4_10_4, analyzer);
+                indexWriter = new IndexWriter(directory, config);
+
+                java.lang.reflect.Field[] fields = indexClass.getDeclaredFields();
+
+                Document document = new Document();
+                for (java.lang.reflect.Field f : fields) {
+                    f.setAccessible(true);
+                    document.add(new TextField(f.getName(), f.get(bookIndex).toString(), Field.Store.YES));
+                }
+
+                indexWriter.addDocument(document);
+                indexWriter.commit();
+
+            } catch (Exception e) {
+                logger.error(e.getMessage());
+            } finally {
+                close();
+            }
         }
+
+        return true;
     }
 
     /**
@@ -86,13 +104,51 @@ public class IndexManager {
      * @return
      * @throws Exception
      */
-    public List<Index> searchIndexTopN(String text, String queryField, int nDocs) {
+    public List<BookIndex> searchIndexTopN(String text, String queryField, int nDocs) throws IOException, ParseException {
 
-        try {
-            return indexDao.searchIndexTopN(text, queryField, nDocs);
-        } catch (Exception e) {
-            throw new BusinessException(ExceptionCode.EX_10000.getCode(), "搜索TopN异常" + e.getMessage());
+        directory = FSDirectory.open(new File(indexDir));
+        analyzer = new IKAnalyzer(true);
+        ireader = DirectoryReader.open(directory);
+        indexSearcher = new org.apache.lucene.search.IndexSearcher(ireader);
+
+        QueryParser parser = new QueryParser(Version.LUCENE_4_10_4, queryField, analyzer);
+        parser.setDefaultOperator(QueryParser.AND_OPERATOR);
+        Query query = parser.parse(text);
+
+        TopDocs topDocs = indexSearcher.search(query, nDocs);
+        System.out.println("命中：" + topDocs.totalHits);
+        ScoreDoc[] hits = topDocs.scoreDocs;
+
+        List<BookIndex> indexList = setIndexList(hits);
+        close();
+
+        return indexList;
+    }
+
+    /**
+     * 将命中的索引转换
+     *
+     * @param hits
+     * @return
+     * @throws IOException
+     */
+    private List<BookIndex> setIndexList(ScoreDoc[] hits) throws IOException {
+        List<BookIndex> indexList = new ArrayList<>();
+
+        for (int i = 0; i < hits.length; i++) {
+            Document hitDoc = indexSearcher.doc(hits[i].doc);
+
+            BookIndex bookIndex = new BookIndex();
+
+            bookIndex.setUid(hitDoc.get(BookIndex.UID));
+            bookIndex.setName(hitDoc.get(BookIndex.NAME));
+            bookIndex.setAuthor(hitDoc.get(BookIndex.AUTHOR));
+            bookIndex.setDescription(hitDoc.get(BookIndex.DESCRIPTION));
+
+            indexList.add(bookIndex);
         }
+
+        return indexList;
     }
 
 
@@ -106,23 +162,91 @@ public class IndexManager {
      * @return
      * @throws Exception
      */
-    public List<Index> searchIndexPaginated(String text, String queryField, int currentPage, int pageSize) {
+    public List<BookIndex> searchIndexPaginated(String text, String queryField, int currentPage, int pageSize) throws IOException, ParseException {
 
-        try {
-            return indexDao.searchIndexPaginated(text, queryField, currentPage, pageSize);
-        } catch (Exception e) {
-            throw new BusinessException(ExceptionCode.EX_10000.getCode(), "分页搜索异常" + e.getMessage());
+        List<BookIndex> indexList = searchIndexTopN(text, queryField, nDocs);
+
+        int start = (currentPage - 1) * pageSize;
+        int end = currentPage * pageSize;
+
+        if (start < 0 || start > indexList.size()) {
+            start = 0;
         }
+
+        if (end < 0 || end > indexList.size()) {
+            end = indexList.size();
+        }
+
+        return indexList.subList(start, end);
+    }
+
+    /**
+     * 更新索引
+     *
+     * @param indices
+     * @return
+     * @throws Exception
+     */
+    public boolean updateIndex(List<BookIndex> indices) throws Exception {
+        return false;
+    }
+
+    /**
+     * 删除索引
+     *
+     * @param indices
+     * @return
+     * @throws Exception
+     */
+    public boolean deleteIndex(List<BookIndex> indices) throws Exception {
+        return false;
     }
 
     /**
      * 清除索引
      */
     public void clearIndex() {
+        File fileIndex = new File(indexDir);
+        if (deleteDir(fileIndex)) {
+            fileIndex.mkdir();
+        } else {
+            fileIndex.mkdir();
+        }
+    }
+
+    /**
+     * 删除文件目录下的所有文件
+     *
+     * @param file 要删除的文件目录
+     * @return 如果成功，返回true.
+     */
+    private boolean deleteDir(File file) {
+        if (file.isDirectory()) {
+            File[] files = file.listFiles();
+            for (int i = 0; i < files.length; i++) {
+                deleteDir(files[i]);
+            }
+        }
+        file.delete();
+        return true;
+    }
+
+    /**
+     * 关闭资源
+     */
+    private void close() {
         try {
-            indexDao.clearIndex();
-        } catch (Exception e) {
-            logger.error("清除索引出错");
+            if (indexWriter != null) {
+                indexWriter.close();
+            }
+            if (ireader != null) {
+                ireader.close();
+            }
+            if (directory != null) {
+                directory.close();
+            }
+        } catch (IOException e) {
+            logger.error(e.getMessage());
         }
     }
 }

@@ -5,6 +5,7 @@ import cvter.intern.model.Hobby;
 import cvter.intern.service.HobbyService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -20,6 +21,7 @@ public class HobbyServiceImpl implements HobbyService {
     /**
      * 增加记录
      */
+    @Transactional(rollbackFor = Exception.class)
     public int save(Hobby record) {
         return hobbyDao.insert(record);
     }
@@ -27,6 +29,7 @@ public class HobbyServiceImpl implements HobbyService {
     /**
      * 删除记录
      */
+    @Transactional(rollbackFor = Exception.class)
     public int deleteByUid(String uid) {
         return hobbyDao.deleteByPrimaryKey(uid);
     }
@@ -34,6 +37,7 @@ public class HobbyServiceImpl implements HobbyService {
     /**
      * 更新记录
      */
+    @Transactional(rollbackFor = Exception.class)
     public int update(Hobby record) {
         return hobbyDao.updateByPrimaryKey(record);
     }

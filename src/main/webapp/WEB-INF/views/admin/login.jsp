@@ -90,8 +90,8 @@
                 },
                 success: function (result, status, xhr) {
                     if (result.code == 200) {
-                        sessionStorage.setItem("xrf_", xhr.getResponseHeader("AUTH"));
-                        sessionStorage.setItem("admin", true);
+                        localStorage.setItem("axrf_", xhr.getResponseHeader("AUTH"));
+                        localStorage.setItem("admin", true);
                         location.href = "/admin";
                     } else {
                         alert(result.message);

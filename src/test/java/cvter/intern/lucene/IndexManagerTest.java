@@ -1,12 +1,9 @@
 package cvter.intern.lucene;
 
-import cvter.intern.lucene.dao.impl.IndexDaoImpl;
 import cvter.intern.lucene.datasource.DataSource;
 import cvter.intern.lucene.datasource.DbDataSource;
 import cvter.intern.lucene.model.BookIndex;
-import cvter.intern.lucene.model.Index;
 import cvter.intern.service.BookService;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
@@ -33,8 +30,10 @@ public class IndexManagerTest {
     private static Logger logger = LoggerFactory.getLogger(IndexManagerTest.class);
 
     private static DataSource dataSource;
-    private static List<Index> bookData;
-    private static IndexManager indexManager = IndexManager.builder(IndexDaoImpl.class);
+    private static List<BookIndex> bookData;
+
+    @Autowired
+    private IndexManager indexManager;
 
 
     static {
@@ -48,7 +47,7 @@ public class IndexManagerTest {
         bookData.add(new BookIndex("5", "summary name summary", "author", "i love summary"));
     }
 
-//    @Ignore
+    //    @Ignore
     @Test
     public void createIndex() throws Exception {
         dataSource = new DbDataSource();
@@ -67,8 +66,8 @@ public class IndexManagerTest {
     @Test
     public void searchIndexTopN() {
         try {
-            List<Index> list = indexManager.searchIndexTopN("描述", BookIndex.DESCRIPTION, 100);
-            for (Index b :
+            List<BookIndex> list = indexManager.searchIndexTopN("描述", BookIndex.DESCRIPTION, 100);
+            for (BookIndex b :
                     list) {
                 logger.info(b.toString());
             }
@@ -80,8 +79,8 @@ public class IndexManagerTest {
     @Test
     public void searchIndexPaginated() {
         try {
-            List<Index> list = indexManager.searchIndexPaginated("summary", BookIndex.DESCRIPTION, 1, 10);
-            for (Index b :
+            List<BookIndex> list = indexManager.searchIndexPaginated("summary", BookIndex.DESCRIPTION, 1, 10);
+            for (BookIndex b :
                     list) {
                 logger.info(b.toString());
             }

@@ -1,6 +1,7 @@
 package cvter.intern.interceptor;
 
 import cvter.intern.interceptor.annotation.RequestLimit;
+import cvter.intern.utils.Constants;
 import cvter.intern.utils.ResponseUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,19 +42,17 @@ public class TimeInteceptor implements HandlerInterceptor {
          */
         if (method.getAnnotation(RequestLimit.class) != null) {
             Jedis jedis = jedisPool.getResource();
-            if (jedis.get(request.getSession().getId()) == null) {
-                jedis.set(request.getSession().getId(), "true");
-                jedis.expire(request.getSession().getId(), method.getAnnotation(RequestLimit.class).value());
+            if (jedis.get(Constants.REDIS_REQUEST_LIMIT_PREFIX + request.getSession().getId()) == null) {
+                jedis.set(Constants.REDIS_REQUEST_LIMIT_PREFIX + request.getSession().getId(), Constants.REDIS_REQUEST_LIMIT_VALUE);
+                jedis.expire(Constants.REDIS_REQUEST_LIMIT_PREFIX + request.getSession().getId(), method.getAnnotation(RequestLimit.class).value());
                 jedis.close();
             } else {
-                ResponseUtil.write(response, 333, "三秒防刷");
+                ResponseUtil.write(response, Constants.REQUEST_LIMIT_CODE, method.getAnnotation(RequestLimit.class).msg());
                 jedis.close();
-                logger.info("[" + handler + "]" + "扫描防刷");
+                logger.info("[" + handler + "]" + method.getAnnotation(RequestLimit.class).msg());
                 return false;
             }
         }
-
-
         return true;
     }
 

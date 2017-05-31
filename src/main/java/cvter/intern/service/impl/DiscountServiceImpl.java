@@ -5,6 +5,7 @@ import cvter.intern.model.Discount;
 import cvter.intern.service.DiscountService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -20,6 +21,7 @@ public class DiscountServiceImpl implements DiscountService {
     /**
      * 增加记录
      */
+    @Transactional(rollbackFor = Exception.class)
     public int save(Discount record) {
         return discountDao.insert(record);
     }
@@ -27,6 +29,7 @@ public class DiscountServiceImpl implements DiscountService {
     /**
      * 删除记录
      */
+    @Transactional(rollbackFor = Exception.class)
     public int deleteByUid(String uid) {
         return discountDao.deleteByPrimaryKey(uid);
     }
@@ -34,6 +37,7 @@ public class DiscountServiceImpl implements DiscountService {
     /**
      * 更新记录
      */
+    @Transactional(rollbackFor = Exception.class)
     public int update(Discount record) {
         return discountDao.updateByPrimaryKey(record);
     }
