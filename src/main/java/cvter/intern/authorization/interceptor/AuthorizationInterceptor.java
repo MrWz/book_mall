@@ -42,7 +42,7 @@ public class AuthorizationInterceptor extends HandlerInterceptorAdapter {
         }
         if (method.getAnnotation(Authorization.class) != null) {
             try {
-                ResponseUtil.write(response, HttpServletResponse.SC_UNAUTHORIZED, Constants.RESPONSEAUTHMSG);
+                ResponseUtil.write(response, HttpServletResponse.SC_UNAUTHORIZED, Constants.RESPONSE_AUTH_MSG);
             } catch (IOException e) {
                 e.printStackTrace();
             }

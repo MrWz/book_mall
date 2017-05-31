@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <!-- 注入Lucene -->
+    <bean class="cvter.intern.lucene.IndexManager">
+        <constructor-arg name="indexDir" value="${lucene.indexPath}"/>
+        <constructor-arg name="nDocs" value="${lucene.nDocs}"/>
+    </bean>
+    <bean class="cvter.intern.lucene.service.impl.IndexBookServiceImpl"/>
+
+</beans>

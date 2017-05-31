@@ -1,6 +1,6 @@
 package cvter.intern.lucene.datasource;
 
-import cvter.intern.lucene.model.Index;
+import cvter.intern.lucene.model.BookIndex;
 
 import java.util.List;
 
@@ -9,7 +9,7 @@ import java.util.List;
  */
 public interface DataSource {
 
-    List<Index> getIndexData();
+    List<BookIndex> getIndexData();
 
-    void setIndexData(List<Index> indices);
+    void setIndexData(List<BookIndex> indices);
 }

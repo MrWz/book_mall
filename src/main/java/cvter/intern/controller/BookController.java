@@ -7,14 +7,13 @@ import cvter.intern.authorization.annotation.CurrentUser;
 import cvter.intern.exception.BusinessException;
 import cvter.intern.lucene.model.BookIndex;
 import cvter.intern.lucene.service.IndexBookService;
-import cvter.intern.lucene.service.impl.IndexBookServiceImpl;
 import cvter.intern.model.Book;
 import cvter.intern.model.Msg;
 import cvter.intern.model.Panic;
 import cvter.intern.model.User;
+import cvter.intern.service.BookService;
 import cvter.intern.service.PanicService;
 import cvter.intern.service.UserService;
-import cvter.intern.service.impl.BookServiceImpl;
 import cvter.intern.utils.RedisCountHotBookUtil;
 import cvter.intern.utils.RedisTopTenUtil;
 import cvter.intern.vo.BookInShopCar;
@@ -25,39 +24,46 @@ import org.springframework.web.bind.annotation.*;
 
 import java.net.URLDecoder;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
 import static cvter.intern.exception.ExceptionCode.EX_200003;
+import static cvter.intern.exception.ExceptionCode.EX_20010;
 
 /**
- * Created by cvter on 2017/5/18.
+ * 图书Controller
  */
 @Controller
 @RequestMapping("/book/v1")
 public class BookController extends BaseController {
 
     @Autowired
-    private BookServiceImpl bookService;
+    private BookService bookService;
 
     @Autowired
     private UserService userService;
 
     @Autowired
-    private PanicService panicService;
+    private IndexBookService indexBookService;
 
     @Autowired
     private RedisCountHotBookUtil redisCountHotBookUtil;
 
     @Autowired
     private RedisTopTenUtil redisTopTenUtil;
+
+    @Autowired
+    private PanicService panicService;
+
     /**
      * 获取图书列表
      *
-     * @param pn
+     * @param pn            页码
+     * @param pageSize      页大小
+     * @param navigatePages 分页数量
      * @return
      */
-//    @RequestLimit(value = 3) //防刷，value为间隔时间 {@see RequestLimit}
     @ResponseBody
     @RequestMapping("/list")
     public Msg list(@RequestParam(defaultValue="1") Integer pn,
@@ -72,24 +78,27 @@ public class BookController extends BaseController {
 
     /**
      * 点击量前十图书(不够十本，全部返回)
+     *
      * @return
      */
     @ResponseBody
-    @RequestMapping(value="/topTen", method=RequestMethod.POST)
-    public Msg getTopTen(){
+    @RequestMapping(value="/hotBook")
+    public Msg getTopTen() {
         Set<String> topTen=redisTopTenUtil.getInRedisTopTen();
         List<Book> topTenBook=new ArrayList(10);
         for (String bookUid : topTen) {
-            Book book=(Book)redisCountHotBookUtil.getInRedis(bookUid,Book.class);//在Redis中查询，未查询到，在去Mysql中查找
-            if(book==null){
+            Book book=(Book) redisCountHotBookUtil.getInRedis(bookUid, Book.class);//在Redis中查询，未查询到，在去Mysql中查找
+            if (book == null) {
                 Book bk=bookService.selectByUid(bookUid);
-                redisCountHotBookUtil.putRedis(bk,Book.class);
+                redisCountHotBookUtil.putRedis(bk, Book.class);
                 book=bk;
             }
             topTenBook.add(book);
         }
-        return Msg.success().add("TOP-TEN",topTenBook);
+        Collections.reverse(topTenBook);
+        return Msg.success().add("TOP-TEN", topTenBook);
     }
+
     /**
      * 获取图书详情
      *
@@ -100,12 +109,12 @@ public class BookController extends BaseController {
     @RequestMapping(value="/detail/{uid}", method=RequestMethod.GET)
     public Msg list(@PathVariable String uid) {
 
-        Book book=(Book)redisCountHotBookUtil.getInRedis(uid,Book.class);//在Redis中查询，未查询到，在去Mysql中查找
+        Book book=(Book) redisCountHotBookUtil.getInRedis(uid, Book.class);//在Redis中查询，未查询到，在去Mysql中查找
 
         redisTopTenUtil.putRedisTopTen(uid);//将图书id存到redis，统计热点图书。
-        if(book==null){
+        if (book == null) {
             Book bk=bookService.selectByUid(uid);
-            redisCountHotBookUtil.putRedis(bk,Book.class);
+            redisCountHotBookUtil.putRedis(bk, Book.class);
             book=bk;
         }
         return Msg.success().add("book", book);
@@ -114,6 +123,7 @@ public class BookController extends BaseController {
     /**
      * 购买图书
      *
+     * @param user
      * @param bookuid
      * @param nums
      * @return
@@ -124,7 +134,7 @@ public class BookController extends BaseController {
     public Msg buy(@CurrentUser User user, @RequestParam String bookuid, @RequestParam int nums) {
         boolean flag=userService.buy(user.getUid(), bookuid, nums);
         if (flag) {
-            return Msg.fail().setMessage("购买成功");
+            return Msg.success().setMessage("购买成功");
         }
         return Msg.fail().setMessage("库存不足");
     }
@@ -132,6 +142,7 @@ public class BookController extends BaseController {
     /**
      * 获取购物车详情
      *
+     * @param user
      * @return
      */
     @Authorization
@@ -148,18 +159,21 @@ public class BookController extends BaseController {
     /**
      * 清空购物车
      *
+     * @param user
+     * @param bookUid
      * @return
      */
     @Authorization
     @ResponseBody
-    @RequestMapping(value="/shopcar/{bookuid}", method=RequestMethod.DELETE)
-    public Msg shopCarDelete(@CurrentUser User user, @PathVariable String bookuid) {
+    @RequestMapping(value="/shopcar/{bookUid}", method=RequestMethod.DELETE)
+    public Msg shopCarDelete(@CurrentUser User user, @PathVariable String bookUid) {
+        System.out.println(bookUid);
         /**
          * boouid为空就执行清空购物车
          * 反之，删除指定图书
          */
-        if (!StringUtils.equalsAny(bookuid, "null")) {
-            boolean flag=userService.deleteOneBook(user.getUid(), bookuid);
+        if (!StringUtils.isEmpty(bookUid) && !"0".equals(bookUid)) {
+            boolean flag=userService.deleteOneBook(user.getUid(), bookUid);
             if (flag) {
                 return Msg.success().setMessage("删除成功");
             }
@@ -175,19 +189,20 @@ public class BookController extends BaseController {
     /**
      * 更新购物车
      *
+     * @param user
      * @param bookuid
-     * @param count
+     * @param flag
      * @return
      */
     @Authorization
     @ResponseBody
     @RequestMapping(value="/shopcar", method=RequestMethod.PUT)
-    public Msg shopCarPut(@CurrentUser User user, @RequestParam String bookuid, @RequestParam int count) {
-        boolean flag=userService.updateShopCar(user.getUid(), bookuid, count);
-        if (flag) {
+    public Msg shopCarPut(@CurrentUser User user, @RequestParam String bookuid, @RequestParam int flag) {
+        boolean isTrue=userService.updateShopCar(user.getUid(), bookuid, flag);
+        if (isTrue) {
             return Msg.success().setMessage("修改成功");
         }
-        return Msg.fail().setMessage("修改失败");
+        return Msg.success().setMessage("修改成功");
     }
 
     /**
@@ -200,11 +215,17 @@ public class BookController extends BaseController {
     @Authorization
     @ResponseBody
     @RequestMapping(value="/shopcar", method=RequestMethod.POST)
-    public Msg shopCarPost(@CurrentUser User user, @RequestParam String bookuid, @RequestParam int nums) {
-        if (nums <= 0) {
+    public Msg shopCarPost(@CurrentUser User user, @RequestParam String bookuid, @RequestParam String nums) {
+        String pt="^[0-9]+$";
+        boolean isNum=nums.matches(pt);
+        if (!isNum) {
+            throw new BusinessException(EX_20010.getCode(), EX_20010.getMessage());
+        }
+        int num=Integer.parseInt(nums);
+        if (num <= 0) {
             throw new BusinessException(EX_200003.getCode(), EX_200003.getMessage());
         }
-        boolean flag=userService.addShopCar(user.getUid(), bookuid, nums);
+        boolean flag=userService.addShopCar(user.getUid(), bookuid, num);
         if (flag) {
             return Msg.success().setMessage("添加成功，尽快购买");
         }
@@ -232,9 +253,6 @@ public class BookController extends BaseController {
         if (params == null || params.trim().length() == 0) {
             return Msg.fail().setMessage("传参错误");
         }
-
-        IndexBookService indexBookService=new IndexBookServiceImpl();
-
         List<Book> authors=indexBookService.searchBookTopN(params, BookIndex.AUTHOR, 100);
         List<Book> names=indexBookService.searchBookTopN(params, BookIndex.NAME, 100);
         List<Book> description=indexBookService.searchBookTopN(params, BookIndex.DESCRIPTION, 100);
