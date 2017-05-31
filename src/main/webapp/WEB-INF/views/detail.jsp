@@ -330,7 +330,7 @@
             $.ajax({
                 type: "POST",
                 headers: {
-                    AUTH: localStorage.getItem("xrf_")
+                    AUTH: sessionStorage.getItem("xrf_")
                 },
                 url: "/book/v1/buy",
                 data: $('#buyModal form').serialize(),// 你的formid
@@ -361,7 +361,7 @@
                 $.ajax({
                     type: "POST",
                     headers: {
-                        AUTH: localStorage.getItem("xrf_")
+                        AUTH: sessionStorage.getItem("xrf_")
                     },
                     url: "/book/v1/shopcar",
                     data: $('#shopCarModal form').serialize(),// 你的formid

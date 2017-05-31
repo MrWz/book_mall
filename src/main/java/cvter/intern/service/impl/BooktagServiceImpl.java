@@ -4,12 +4,14 @@ import cvter.intern.dao.BooktagDao;
 import cvter.intern.model.Booktag;
 import cvter.intern.service.BooktagService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 /**
  * Created by cvter on 2017/5/27.
  */
+@Service
 public class BooktagServiceImpl implements BooktagService {
 
     @Autowired
@@ -37,6 +39,6 @@ public class BooktagServiceImpl implements BooktagService {
 
     @Override
     public List<Booktag> selectAll() {
-        return null;
+        return booktagDao.selectAll();
     }
 }

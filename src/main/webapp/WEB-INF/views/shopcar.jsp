@@ -99,7 +99,7 @@
 <script>
     $(function () {
 
-        if (localStorage.getItem("username") == null) {
+        if (sessionStorage.getItem("username") == null) {
             alert("您未登录");
             location.href = "/";
             return;
@@ -117,7 +117,7 @@
         $.ajax({
             type: "DELETE",
             headers: {
-                AUTH: localStorage.getItem("xrf_")
+                AUTH: sessionStorage.getItem("xrf_")
             },
             url: "/book/v1/shopcar/" + bookuid,
             data: null,
@@ -144,7 +144,7 @@
         $.ajax({
             type: "GET",
             headers: {
-                AUTH: localStorage.getItem("xrf_")
+                AUTH: sessionStorage.getItem("xrf_")
             },
             url: "/book/v1/shopcar",
             data: null,
@@ -233,7 +233,7 @@
         $.ajax({
             type: "POST",
             headers: {
-                AUTH: localStorage.getItem("xrf_")
+                AUTH: sessionStorage.getItem("xrf_")
             },
             url: "/book/v1/buy",
             data: $('#buyModal form').serialize(),// 你的formid
@@ -256,7 +256,7 @@
         $.ajax({
             type: "PUT",
             headers: {
-                AUTH: localStorage.getItem("xrf_")
+                AUTH: sessionStorage.getItem("xrf_")
             },
             url: "/book/v1/shopcar",
             data: "bookuid=" + bookuid + "&flag=" + flag,

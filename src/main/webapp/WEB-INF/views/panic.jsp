@@ -78,7 +78,7 @@
             $.ajax({
                 type: "POST",
                 headers: {
-                    AUTH: localStorage.getItem("xrf_")
+                    AUTH: sessionStorage.getItem("xrf_")
                 },
                 url: "/book/v1/panic",
                 data: "bookuid=" + getQueryString("bookid") + "&nums=1",// 你的formid

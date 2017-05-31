@@ -1,5 +1,6 @@
 package cvter.intern.lucene;
 
+import cvter.intern.BaseTest;
 import cvter.intern.lucene.datasource.DataSource;
 import cvter.intern.lucene.datasource.DbDataSource;
 import cvter.intern.lucene.model.BookIndex;
@@ -20,9 +21,7 @@ import static org.junit.Assert.fail;
 /**
  * Created by cvter on 2017/5/19.
  */
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = {"classpath:applicationContext.xml"})
-public class IndexManagerTest {
+public class IndexManagerTest extends BaseTest{
 
     @Autowired
     BookService bookService;

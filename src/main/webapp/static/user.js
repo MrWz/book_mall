@@ -11,14 +11,13 @@ $('#userLoginBtn').click(function () {
             switch (code) {
                 case (200):
 //                            alert("欢迎回来");
-                    localStorage.setItem("xrf_", xhr.getResponseHeader("AUTH"));
-                    localStorage.setItem("username", xhr.getResponseHeader("username"));
+                    sessionStorage.setItem("xrf_", xhr.getResponseHeader("AUTH"));
+                    sessionStorage.setItem("username", xhr.getResponseHeader("username"));
                     $('#loginModal').modal('hide');
                     setStatus();
                     break;
-                case (500):
+                default:
                     alert(data.message);
-                    break;
             }
 
         }
@@ -39,14 +38,13 @@ $('#userRegisterBtn').click(function () {
             switch (code) {
                 case (200):
                     alert("注册成功");
-                    localStorage.setItem("xrf_", xhr.getResponseHeader("AUTH"));
-                    localStorage.setItem("username", xhr.getResponseHeader("username"));
+                    sessionStorage.setItem("xrf_", xhr.getResponseHeader("AUTH"));
+                    sessionStorage.setItem("username", xhr.getResponseHeader("username"));
                     $('#registerModal').modal('hide');
                     setStatus();
                     break;
-                case (500):
+                default:
                     alert(data.message);
-                    break;
             }
         }
     });
@@ -57,7 +55,7 @@ $('.Logout').click(function () {
     $.ajax({
         type: "DELETE",
         headers: {
-            AUTH: localStorage.getItem("xrf_")
+            AUTH: sessionStorage.getItem("xrf_")
         },
         url: "/user/v1/login",
         data: null,// 你的formid
@@ -69,13 +67,12 @@ $('.Logout').click(function () {
             switch (code) {
                 case (200):
                     // alert("OK");
-                    localStorage.removeItem("username");
-                    localStorage.removeItem("AUTH");
+                    sessionStorage.removeItem("username");
+                    sessionStorage.removeItem("AUTH");
                     setStatus();
                     break;
-                case (500):
+                default:
                     alert(data.message);
-                    break;
             }
         }
     });
@@ -83,7 +80,7 @@ $('.Logout').click(function () {
 });
 
 function setStatus() {
-    if (localStorage.getItem("username") == null) {
+    if (sessionStorage.getItem("username") == null) {
         $(".unLogin").show();
         $(".Logout").hide();
         $("#username").hide();
@@ -91,12 +88,12 @@ function setStatus() {
         $(".unLogin").hide();
         $(".Logout").show();
         $("#username").show();
-        $("#username a").text("欢迎您，" + localStorage.getItem("username"));
+        $("#username a").text("欢迎您，" + sessionStorage.getItem("username"));
     }
 }
 
 $("#bookCarbtn").click(function () {
-    if (localStorage.getItem("username") == null) {
+    if (sessionStorage.getItem("username") == null) {
         alert("请先登录");
         return false;
     } else {

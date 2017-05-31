@@ -8,9 +8,11 @@ import cvter.intern.interceptor.annotation.RequestLimit;
 import cvter.intern.lucene.model.BookIndex;
 import cvter.intern.lucene.service.IndexBookService;
 import cvter.intern.model.Book;
+import cvter.intern.model.Booktag;
 import cvter.intern.model.Msg;
 import cvter.intern.model.User;
 import cvter.intern.service.BookService;
+import cvter.intern.service.BooktagService;
 import cvter.intern.service.UserService;
 import cvter.intern.vo.BookInShopCar;
 import org.apache.commons.lang3.StringUtils;
@@ -31,6 +33,9 @@ public class BookController extends BaseController {
 
     @Autowired
     private BookService bookService;
+
+    @Autowired
+    private BooktagService booktagService;
 
     @Autowired
     private UserService userService;
@@ -56,6 +61,19 @@ public class BookController extends BaseController {
         PageInfo page = new PageInfo(allBook, navigatePages);
 
         return Msg.success().add("page", page);
+    }
+
+    /**
+     * 获取书籍分类列表
+     *
+     * @return 响应实体 {@link Msg}
+     */
+    @ResponseBody
+    @RequestMapping("/booktag")
+    public Msg listBookTags() {
+        List<Booktag> booktags = booktagService.selectAll();
+
+        return Msg.success().add("booktags", booktags);
     }
 
     /**

@@ -84,6 +84,11 @@
                         <textarea name="description" id="" class="form-control" required
                                   placeholder=""></textarea>
                     </div>
+                    <div class="form-group">
+                        <label for="">图书类别</label>
+                        <select name="bookType" id="bookType" class="form-control" required>
+                        </select>
+                    </div>
                     <div class="text-right">
                         <button class="btn btn-primary" id="book_save_btn">提交</button>
                         <button class="btn btn-danger" data-dismiss="modal">取消</button>
@@ -136,6 +141,48 @@
     </div><!-- /.modal-dialog -->
 </div><!-- /.modal -->
 
+<div id="panicModal" class="modal fade" data-backdrop="static" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-body">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                        aria-hidden="true">&times;</span>
+                </button>
+                <h3 class="modal-title">发布图书抢购</h3>
+            </div>
+            <div class="modal-body">
+                <form class="form-group">
+                    <input type="hidden" name="uid" id="panicuid_input">
+                    <div class="form-group">
+                        <label for="">抢购价格</label>
+                        <input class="form-control" id="panicPrice_input" name="curPrice" required type="number"
+                               placeholder="">
+                    </div>
+                    <div class="form-group">
+                        <label for="">数量</label>
+                        <input class="form-control" id="panicNums_input" name="nums" required type="number"
+                               placeholder="">
+                    </div>
+                    <div class="form-group">
+                        <label for="">开始时间</label>
+                        <input type="datetime-local" name="startTime" id="panic_startTime_input" class="form-control"
+                               required/>
+                    </div>
+                    <div class="form-group">
+                        <label for="">开始时间</label>
+                        <input type="datetime-local" name="endTime" id="panic_endTime_input" class="form-control"
+                               required/>
+                    </div>
+                    <div class="text-right">
+                        <button class="btn btn-primary" id="book_panic_btn">发布</button>
+                        <button class="btn btn-danger" data-dismiss="modal">取消</button>
+                    </div>
+                </form>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
 <script src="https://cdn.bootcss.com/jquery/1.12.4/jquery.min.js"></script>
 <script src="https://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 <script>
@@ -144,7 +191,7 @@
     var currentPage;
 
     $(function () {
-        if (localStorage.getItem("admin") == null) {
+        if (sessionStorage.getItem("admin") == null) {
             location.href = "/admin/login";
             return;
         }
@@ -155,7 +202,7 @@
             $.ajax({
                 type: "DELETE",
                 headers: {
-                    AUTH: localStorage.getItem("axrf_")
+                    AUTH: sessionStorage.getItem("axrf_")
                 },
                 url: "/admin/v1/login",
                 data: null,
@@ -166,8 +213,8 @@
 
                     if (result.code == 200) {
                         alert(result.message);
-                        localStorage.removeItem("admin");
-                        localStorage.removeItem("axrf_");
+                        sessionStorage.removeItem("admin");
+                        sessionStorage.removeItem("axrf_");
                         location.href = "/admin/login";
                     } else {
                         alert(result.message);
@@ -214,6 +261,7 @@
             editBtn.attr("edit-id", item.uid);
             var panicBtn = $("<button>发布抢购</button>").addClass("btn btn-primary btn-sm panic_btn");
             panicBtn.attr("panic-id", item.uid);
+            panicBtn.attr("panic-price", item.price);
 
             var delBtn = $("<button>下架</button>").addClass("btn btn-danger btn-sm delete_btn");
             delBtn.attr("delete-id", item.uid).attr("bookname", item.name);
@@ -288,13 +336,41 @@
 
     $("#book_add_btn").click(function () {
         $("#bookModal form")[0].reset();
+
+        getBookTags();
+
         $("#bookModal").modal("show");
     });
+    function getBookTags() {
+        $.ajax({
+                type: "GET",
+                headers: {
+                    AUTH: sessionStorage.getItem("axrf_")
+                },
+                url: "/book/v1/booktag",
+                data: null,
+                error: function (request) {
+                },
+                success: function (result) {
+                    if (result.code == 200) {
+                        var booktags = result.data.booktags;
+                        $("#bookType").empty();
+                        $.each(booktags, function (index, item) {
+                            $("#bookType").append("<option value='" + item.description + "'>" + item.description + "</option>");
+                        })
+                    } else {
+                        alert("获取图书分类信息失败")
+                    }
+                }
+            }
+        )
+        ;
+    }
     $("#book_save_btn").click(function () {
         $.ajax({
             type: "POST",
             headers: {
-                AUTH: localStorage.getItem("axrf_")
+                AUTH: sessionStorage.getItem("axrf_")
             },
             url: "/admin/v1/book/add",
             data: $("#bookModal form").serialize(),
@@ -303,8 +379,10 @@
             },
             success: function (result) {
                 alert(result.message);
-                $("#bookModal").modal("hide");
-                to_page(totalRecord);
+                if (result.code == 200) {
+                    $("#bookModal").modal("hide");
+                    to_page(totalRecord);
+                }
             }
         });
         return false;
@@ -321,7 +399,7 @@
         $.ajax({
             type: "GET",
             headers: {
-                AUTH: localStorage.getItem("axrf_")
+                AUTH: sessionStorage.getItem("axrf_")
             },
             url: "/book/v1/detail/" + bookuid,
             data: null,
@@ -343,7 +421,7 @@
         $.ajax({
             type: "PUT",
             headers: {
-                AUTH: localStorage.getItem("axrf_")
+                AUTH: sessionStorage.getItem("axrf_")
             },
             url: "/admin/v1/book/adjust",
             data: $("#bookUpdateModal form").serialize(),
@@ -371,7 +449,7 @@
         $.ajax({
             type: "DELETE",
             headers: {
-                AUTH: localStorage.getItem("axrf_")
+                AUTH: sessionStorage.getItem("axrf_")
             },
             url: "/admin/v1/book/del/" + uids,
             data: null,
@@ -386,30 +464,36 @@
     }
 
     $(document).on("click", ".panic_btn", function () {
-//        alert($(this).attr("delete-id"));
-        if (confirm("确定发布 " + $(this).attr("panic-id") + " 抢购吗？")) {
-            panic_book($(this).attr("panic-id"))
-        }
+        $("#panicModal").modal('show');
+        $('#panicuid_input').val($(this).attr("panic-id"));
+        $('#panicPrice_input').val($(this).attr("panic-price"));
+        $('#panicNums_input').val(1);
 
-        return false;
+        return;
     });
 
-    function panic_book(uids) {
+    $("#book_panic_btn").click(function () {
         $.ajax({
-            type: "PUT",
+            type: "POST",
             headers: {
-                AUTH: localStorage.getItem("axrf_")
+                AUTH: sessionStorage.getItem("axrf_")
             },
-            url: "/admin/v1/book/panic/" + uids,
-            data: null,
+            url: "/admin/v1/book/panic",
+            data: $("#panicModal form").serialize(),
             error: function (request) {
                 alert("Connection error");
             },
             success: function (result) {
-                alert(result.message);
+                if (result.code == 200) {
+                    $("#panicModal").modal('hide');
+                    alert(result.message);
+                } else {
+                    alert("参数不能为空");
+                }
             }
         });
-    }
+        return false;
+    });
 
 </script>
 </body>
