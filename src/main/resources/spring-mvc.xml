@@ -10,7 +10,6 @@
 
     <!-- 自动扫描  @Controller-->
     <context:component-scan base-package="cvter.intern.controller"/>
-    <context:component-scan base-package="cvter.intern.service"/>
 
     <!-- 默认的注解映射的支持 -->
     <!--<mvc:annotation-driven/>-->

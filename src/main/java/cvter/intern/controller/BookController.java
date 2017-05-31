@@ -7,12 +7,11 @@ import cvter.intern.authorization.annotation.CurrentUser;
 import cvter.intern.interceptor.annotation.RequestLimit;
 import cvter.intern.lucene.model.BookIndex;
 import cvter.intern.lucene.service.IndexBookService;
-import cvter.intern.lucene.service.impl.IndexBookServiceImpl;
 import cvter.intern.model.Book;
 import cvter.intern.model.Msg;
 import cvter.intern.model.User;
+import cvter.intern.service.BookService;
 import cvter.intern.service.UserService;
-import cvter.intern.service.impl.BookServiceImpl;
 import cvter.intern.vo.BookInShopCar;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,14 +23,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by cvter on 2017/5/18.
+ * 图书Controller
  */
 @Controller
 @RequestMapping("/book/v1")
 public class BookController extends BaseController {
 
     @Autowired
-    private BookServiceImpl bookService;
+    private BookService bookService;
 
     @Autowired
     private UserService userService;
@@ -42,7 +41,9 @@ public class BookController extends BaseController {
     /**
      * 获取图书列表
      *
-     * @param pn
+     * @param pn            页码
+     * @param pageSize      页大小
+     * @param navigatePages 分页数量
      * @return
      */
     @ResponseBody
@@ -74,6 +75,7 @@ public class BookController extends BaseController {
     /**
      * 购买图书
      *
+     * @param user
      * @param bookuid
      * @param nums
      * @return
@@ -93,6 +95,7 @@ public class BookController extends BaseController {
     /**
      * 获取购物车详情
      *
+     * @param user
      * @return
      */
     @Authorization
@@ -109,6 +112,8 @@ public class BookController extends BaseController {
     /**
      * 清空购物车
      *
+     * @param user
+     * @param bookUid
      * @return
      */
     @Authorization
@@ -137,6 +142,7 @@ public class BookController extends BaseController {
     /**
      * 更新购物车
      *
+     * @param user
      * @param bookuid
      * @param flag
      * @return
