@@ -1,51 +1,36 @@
 package cvter.intern.controller;
 
-import org.junit.Before;
+import cvter.intern.BaseTest;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.test.context.transaction.TransactionConfiguration;
-import org.springframework.test.context.web.WebAppConfiguration;
-import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.context.WebApplicationContext;
+import org.springframework.test.web.servlet.MvcResult;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppContextSetup;
 
 /**
  * Created by cvter on 2017/5/19.
  */
-@RunWith(SpringJUnit4ClassRunner.class)
-@WebAppConfiguration
-@ContextConfiguration({"classpath*:/applicationContext.xml", "classpath*:/spring-mvc.xml"})
-@TransactionConfiguration(defaultRollback = true)
-@Transactional
-public class BookControllerTest {
+public class BookControllerTest extends BaseTest {
 
-    @Autowired
-    private BookController bookController;
-
-    @Before
-    public void setUp() {
-        this.mockMvc = webAppContextSetup(this.wac).build();
+    @Test
+    public void bookList() throws Exception {
+        MvcResult mvcResult = super.mockMvc.perform(
+                get("/book/v1/list")
+        )
+                .andExpect(status().isOk())
+                .andDo(print())
+                .andReturn();
+        String result = mvcResult.getResponse().getContentAsString();
+        System.out.println(result);
     }
-
-    @Autowired
-    private WebApplicationContext wac;
-
-    private MockMvc mockMvc;
 
     @Test
     public void bookSearch() throws Exception {
 
-        String responseString = mockMvc.perform
+        String responseString = super.mockMvc.perform
                 (
                         get("/book/v1/search")
                                 .contentType(MediaType.APPLICATION_FORM_URLENCODED)

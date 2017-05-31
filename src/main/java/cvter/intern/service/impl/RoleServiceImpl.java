@@ -5,6 +5,7 @@ import cvter.intern.model.Role;
 import cvter.intern.service.RoleService;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.util.List;
@@ -13,7 +14,6 @@ import java.util.List;
  * Created by cvter on 2017/5/17.
  */
 @Service
-//@Transactional(rollbackFor = Exception.class)
 public class RoleServiceImpl implements RoleService {
 
     @Resource
@@ -26,6 +26,7 @@ public class RoleServiceImpl implements RoleService {
     /**
      * 增加记录
      */
+    @Transactional(rollbackFor = Exception.class)
     public int save(Role role) {
         return roleDao.insert(role);
     }
@@ -33,6 +34,7 @@ public class RoleServiceImpl implements RoleService {
     /**
      * 删除记录
      */
+    @Transactional(rollbackFor = Exception.class)
     public int deleteByUid(String uid) {
         return roleDao.deleteByPrimaryKey(uid);
     }
@@ -40,6 +42,7 @@ public class RoleServiceImpl implements RoleService {
     /**
      * 更新记录
      */
+    @Transactional(rollbackFor = Exception.class)
     public int update(Role role) {
         return roleDao.updateByPrimaryKey(role);
     }

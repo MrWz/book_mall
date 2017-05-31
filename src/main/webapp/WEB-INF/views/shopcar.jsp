@@ -26,7 +26,7 @@
         <p>
             <span><script>document.write(new Date());</script></span>
             <span class="pull-right">
-                <button class="btn btn-warning">清空购物车</button>
+                <button class="btn btn-warning" id="clearShopcar" disabled>清空购物车</button>
                     <a href="/" class="btn btn-default">返回首页</a>
                 </span>
         </p>
@@ -46,7 +46,7 @@
                     单价
                 </th>
                 <th>
-                    购买数量
+                    数量
                 </th>
                 <th>
                     操作
@@ -54,30 +54,6 @@
             </tr>
             </thead>
             <tbody>
-            <tr>
-                <td>
-                    1
-                </td>
-                <td>
-                    Java编程思想
-                </td>
-                <td>
-                    谁谁谁
-                </td>
-                <td>
-                    108
-                </td>
-                <td>
-                    3
-                </td>
-                <td>
-                    <button class="btn btn-info btn-sm increase_btn">+</button>
-                    <button class="btn btn-info btn-sm decrease_btn">-</button>
-                    <button class="btn btn-success btn-sm buynow_btn" data-toggle="modal" data-target="#buyModal">立即购买
-                    </button>
-                    <button class="btn btn-danger btn-sm del_btn">删除</button>
-                </td>
-            </tr>
             </tbody>
         </table>
     </div>
@@ -94,14 +70,23 @@
                 </button>
                 <h3 class="modal-title">购买支付</h3>
             </div>
-            <div class="modal-body">
-                <h4 id="bookPrice">您需支付￥108</h4>
-            </div>
+
             <div class="modal-body">
                 <form class="form-group">
-                    <div class="text-right">
-                        <button class="btn btn-info">立即支付</button>
-                        <button class="btn btn-danger" data-dismiss="modal">取消</button>
+
+                    <input type="hidden" name="bookuid" id="bookuid_hidden">
+                    <input type="hidden" name="nums" id="book_nums">
+
+                    <div class="modal-body">
+                        <h4 id="bookPrice_buy">您需支付￥108</h4>
+                    </div>
+                    <div class="modal-body">
+                        <form class="form-group">
+                            <div class="text-right">
+                                <button class="btn btn-info" id="buyBtn">立即支付</button>
+                                <button class="btn btn-danger" data-dismiss="modal">取消</button>
+                            </div>
+                        </form>
                     </div>
                 </form>
             </div>
@@ -112,12 +97,9 @@
 <script src="https://cdn.bootcss.com/jquery/1.12.4/jquery.min.js"></script>
 <script src="https://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 <script>
-    var totalRecord;
-    var currentPage;
-
     $(function () {
 
-        if (sessionStorage.getItem("username") == null) {
+        if (localStorage.getItem("username") == null) {
             alert("您未登录");
             location.href = "/";
             return;
@@ -125,24 +107,59 @@
         //去首页
         to_page(1);
 
+        $("#clearShopcar").click(function () {
+            deleteShopcar("0");
+        });
+
     });
 
-    function to_page(pn) {
+    function deleteShopcar(bookuid) {
         $.ajax({
-            type: "POST",
-            url: "/book/v1/list",
-            data: "pn=" + pn,
+            type: "DELETE",
+            headers: {
+                AUTH: localStorage.getItem("xrf_")
+            },
+            url: "/book/v1/shopcar/" + bookuid,
+            data: null,
             error: function (request) {
                 alert("Connection error");
             },
             success: function (result) {
 
                 if (result.code == 200) {
-                    //1、解析并显示书籍
+                    if (bookuid == null) {
+                        $("#clearShopcar").attr("disabled", "disabled");
+                        $("tbody").empty();
+                    } else {
+                        location.reload();
+                    }
+                } else {
+                    alert(result.message);
+                }
+            }
+        });
+    }
+
+    function to_page(pn) {
+        $.ajax({
+            type: "GET",
+            headers: {
+                AUTH: localStorage.getItem("xrf_")
+            },
+            url: "/book/v1/shopcar",
+            data: null,
+            error: function (request) {
+                alert("Connection error");
+            },
+            success: function (result) {
+
+                if (result.code == 200) {
+                    $("#clearShopcar").removeAttr("disabled");
                     build_book_table(result);
+                    //1、解析并显示书籍
 
                     //2、显示分页条信息
-                    build_page_nav(result);
+//                    build_page_nav(result);
                 } else {
                     alert(result.message);
                 }
@@ -152,21 +169,24 @@
 
     function build_book_table(result) {
         $("tbody").empty();
-        var books = result.data.page.list;
+        var books = result.data.bookList;
         $.each(books, function (index, item) {
-            var bookCk = $("<td></td>").append(item.id);//$("<input type='checkbox'>")
+            var bookCk = $("<td></td>").append(index + 1);//$("<input type='checkbox'>")
             var bookName = $("<td></td>").append(item.name);
             var bookAuthor = $("<td></td>").append(item.author);
             var bookPrice = $("<td></td>").append("￥" + item.price);
-            var bookStock = $("<td></td>").append(item.stock);
-            var editBtn = $("<button>编辑</button>").addClass("btn btn-info btn-sm edit_btn");
-            editBtn.attr("edit-id", item.uid);
-            var panicBtn = $("<button>发布抢购</button>").addClass("btn btn-primary btn-sm panic_btn");
-            panicBtn.attr("panic-id", item.uid);
+            var bookStock = $("<td></td>").append(item.nums).attr("id", "nums_" + index);
+            var addBtn = $("<button>+</button>").addClass("btn btn-info btn-sm increase_btn").attr("nums", "nums_" + index);
+            addBtn.attr("add-id", item.uid);
+            var decrBtn = $("<button>-</button>").addClass("btn btn-info btn-sm decrease_btn").attr("nums", "nums_" + index);
+            decrBtn.attr("decr-id", item.uid);
+            var buyBtn = $("<button>立即购买</button>").addClass("btn btn-success btn-sm buynow_btn");
+            buyBtn.attr("buy-id", item.uid).attr("buy-num", item.nums).attr("buy-price", item.price);
+            buyBtn.attr("data-toggle", "modal").attr("data-target", "#buyModal");
 
-            var delBtn = $("<button>下架</button>").addClass("btn btn-danger btn-sm delete_btn");
+            var delBtn = $("<button>删除</button>").addClass("btn btn-danger btn-sm del_btn");
             delBtn.attr("delete-id", item.uid).attr("bookname", item.name);
-            var bookTd = $("<td></td>").append(panicBtn).append(" ").append(editBtn).append(" ").append(delBtn);
+            var bookTd = $("<td></td>").append(addBtn).append(" ").append(decrBtn).append(" ").append(buyBtn).append(" ").append(delBtn);
             $("<tr></tr>").append(bookCk)
                 .append(bookName)
                 .append(bookAuthor)
@@ -174,76 +194,83 @@
                 .append(bookStock)
                 .append(bookTd)
                 .appendTo("tbody");
-        })
-
-    }
-
-    function build_page_nav(result) {
-        $("#page_nav_area").empty();
-        var ul = $("<ul></ul>").addClass("pagination");
-        var firstPageLi = $("<li></li>").append($("<a></a>").append("首页").attr("href", "#"));
-        var prePageLi = $("<li></li>").append($("<a></a>").append("&laquo;"));
-        if (result.data.page.hasPreviousPage == false) {
-            firstPageLi.addClass("disabled");
-            prePageLi.addClass("disabled");
-        } else {
-            firstPageLi.click(function () {
-                to_page(1);
-            });
-            prePageLi.click(function () {
-                to_page(result.data.page.pageNum - 1);
-            });
-        }
-
-        var nextPageLi = $("<li></li>").append($("<a></a>").append("&raquo;"));
-        var lastPageLi = $("<li></li>").append($("<a></a>").append("末页").attr("href", "#"));
-        if (result.data.page.hasNextPage == false) {
-            nextPageLi.addClass("disabled");
-            lastPageLi.addClass("disabled");
-        } else {
-            nextPageLi.click(function () {
-                to_page(result.data.page.pageNum + 1);
-            });
-            lastPageLi.click(function () {
-                to_page(result.data.page.pages);
-            });
-        }
-
-        ul.append(firstPageLi).append(prePageLi);
-        $.each(result.data.page.navigatepageNums, function (index, item) {
-            var numLi = $("<li></li>").append($("<a></a>").append(item));
-            if (result.data.page.pageNum == item) {
-                currentPage = item;
-                numLi.addClass("active");
-            }
-            numLi.click(function () {
-                to_page(item);
-            });
-            ul.append(numLi);
         });
-        ul.append(nextPageLi).append(lastPageLi).appendTo($("#page_nav_area"));
     }
 
-    $("#book_add_btn").click(function () {
-        $("#bookModal form")[0].reset();
-        $("#bookModal").modal("show");
+    $(document).on("click", ".increase_btn", function () {
+        var num_id = $(this).attr("nums");
+        if(parseInt($("#" + num_id).text()) > 20) {
+            alert("数量过多");
+            return;
+        }
+        changeBookNum($(this).attr("add-id"), 1);
+        $("#" + num_id).text(parseInt($("#" + num_id).text()) + 1)
     });
-    $("#book_save_btn").click(function () {
+
+    $(document).on("click", ".decrease_btn", function () {
+        var num_id = $(this).attr("nums");
+        if(parseInt($("#" + num_id).text()) <= 1) {
+            return;
+        }
+        changeBookNum($(this).attr("decr-id"), 0);
+        $("#" + num_id).text(parseInt($("#" + num_id).text()) - 1);
+
+    });
+
+    $(document).on("click", ".del_btn", function () {
+        deleteShopcar($(this).attr("delete-id"));
+    });
+
+    $(document).on("click", ".buynow_btn", function () {
+//        $("#buyModal").modal('show');
+        $("#bookuid_hidden").val($(this).attr("buy-id"));
+        $("#book_nums").val($(this).attr("buy-num"));
+        $("#bookPrice_buy").text("您需支付￥" + ($(this).attr("buy-price") * $(this).attr("buy-num")));
+
+    });
+
+    $('#buyBtn').click(function () {
         $.ajax({
             type: "POST",
-            url: "/admin/v1/book/add",
-            data: $("#bookModal form").serialize(),
-            error: function (request) {
-                alert("Connection error");
+            headers: {
+                AUTH: localStorage.getItem("xrf_")
             },
-            success: function (result) {
-                alert(result.message);
-                $("#bookModal").modal("hide");
-                to_page(totalRecord);
+            url: "/book/v1/buy",
+            data: $('#buyModal form').serialize(),// 你的formid
+            error: function (request) {
+                alert("请您先去登录");
+            },
+            success: function (data) {
+                if (data.code == 200) {
+//                    $('#buyModal').modal('hide');
+                    alert("购买成功");
+                    location.reload(true);
+                } else
+                    alert(data.message);
             }
         });
         return false;
     });
+
+    function changeBookNum(bookuid, flag) {
+        $.ajax({
+            type: "PUT",
+            headers: {
+                AUTH: localStorage.getItem("xrf_")
+            },
+            url: "/book/v1/shopcar",
+            data: "bookuid=" + bookuid + "&flag=" + flag,
+            error: function (request) {
+                alert("请您先去登录");
+            },
+            success: function (data) {
+                if (data.code == 200) {
+                } else
+                    alert(data.message);
+            }
+        });
+    }
+
 </script>
 
 </body>

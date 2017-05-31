@@ -204,19 +204,15 @@
             <div class="modal-body">
                 <form class="form-group">
 
-                    <div class="form-group">
-                        <label for="">书Uid</label>
-                        <input class="form-control" name="bookuid" type="text" required placeholder="6-15位字母或数字">
-                        <span id="" class="help-block text-warning"></span>
-                    </div>
+                    <input type="hidden" name="bookuid" id="bookuid_buy">
 
                     <div class="form-group">
                         <label for="">购买数量</label>
-                        <input class="form-control" name="nums" type="text" required placeholder="6-15位字母或数字">
+                        <input class="form-control" name="nums" value="1" type="number" id="book_buy_num">
                         <span id="" class="help-block text-warning"></span>
                     </div>
                     <div class="modal-body">
-                        <h4 id="bookPrice">您需支付￥108</h4>
+                        <h4 id="bookPrice_buy">您需支付￥108</h4>
                     </div>
                     <div class="modal-body">
                         <form class="form-group">
@@ -246,16 +242,11 @@
             <div class="modal-body">
                 <form class="form-group">
 
-                    <div class="form-group">
-                        <label for="">书Uid</label>
-                        <input class="form-control" name="bookuid" type="text" required placeholder="6-15位字母或数字">
-                        <span id="" class="help-block text-warning"></span>
-                    </div>
+                    <input type="hidden" name="bookuid" id="bookuid_add">
 
                     <div class="form-group">
                         <label for="">添加数量</label>
-                        <input class="form-control" name="nums" type="text" required placeholder="6-15位字母或数字">
-                        <span id="" class="help-block text-warning"></span>
+                        <input class="form-control" name="nums" type="number" value="1" required placeholder="6-15位字母或数字">
                     </div>
                     <div class="modal-body">
                         <form class="form-group">
@@ -276,7 +267,10 @@
 <script src="/static/user.js"></script>
 <script src="/static/book.js"></script>
 <script>
+    var bookPrice;
     $(function () {
+
+//        $('#buyBtn').attr("disabled", "disabled");
 
         setStatus();
         getBook(getQueryString("bookid"));
@@ -304,19 +298,39 @@
                     $("#book_author").text(book.author);
                     $("#book_price").text(book.price);
                     $("#book_desc").text(book.description);
+                    $("#bookuid_buy").val(book.uid);
+                    $("#bookuid_add").val(book.uid);
+                    bookPrice = book.price;
                 }
             });
         }
-    });
-</script>
 
-<script>
-    $(function () {
+        $("#book_buy_num").change(function () {
+            if ($("#book_buy_num").val() <= 0) {
+                alert("请输入正确的数量");
+                return;
+            }
+            if ($(this).val().length > 5) {
+                alert("数量过多");
+                return;
+            }
+            $("#bookPrice_buy").text("您需支付￥" + ($(this).val() * bookPrice));
+            $('#buyBtn').removeAttr("disabled");
+        })
+
         $('#buyBtn').click(function () {
+            if ($("#book_buy_num").val() <= 0) {
+                alert("请输入正确的数量");
+                return;
+            }
+            if ($(this).val().length > 5) {
+                alert("数量过多");
+                return;
+            };
             $.ajax({
                 type: "POST",
                 headers: {
-                    AUTH: sessionStorage.getItem("xrf_")
+                    AUTH: localStorage.getItem("xrf_")
                 },
                 url: "/book/v1/buy",
                 data: $('#buyModal form').serialize(),// 你的formid
@@ -324,36 +338,46 @@
                     alert("请您先去登录");
                 },
                 success: function (data) {
-//                $("#commonLayout_appcreshi").parent().html(data);
-                    alert(data.code + "---" + data.message);
-
+                    if (data.code == 200) {
+                        alert("购买成功");
+                        $('#buyModal').modal('hide');
+                    } else
+                        alert(data.message);
                 }
             });
             return false;
         });
-    });
-</script>
 
-<script>
-    $(function () {
-        $('#addBtn').click(function () {
-            $.ajax({
-                type: "POST",
-                headers: {
-                    AUTH: sessionStorage.getItem("xrf_")
-                },
-                url: "/book/v1/shopcar",
-                data: $('#shopCarModal form').serialize(),// 你的formid
-                error: function (request) {
-                    alert("请您先去登录");
-                },
-                success: function (data) {
-//                $("#commonLayout_appcreshi").parent().html(data);
-                    alert(data.code + "---" + data.message);
-
+        $(function () {
+            $('#addBtn').click(function () {
+                if ($("#book_buy_num").val() <= 0) {
+                    alert("请输入正确的数量");
+                    return;
                 }
+                if ($(this).val().length > 5) {
+                    alert("数量过多");
+                    return;
+                };
+                $.ajax({
+                    type: "POST",
+                    headers: {
+                        AUTH: localStorage.getItem("xrf_")
+                    },
+                    url: "/book/v1/shopcar",
+                    data: $('#shopCarModal form').serialize(),// 你的formid
+                    error: function (request) {
+                        alert("请您先去登录");
+                    },
+                    success: function (data) {
+                        if (data.code == 200) {
+                            $('#shopCarModal').modal('hide');
+                        } else
+                            alert(data.message);
+
+                    }
+                });
+                return false;
             });
-            return false;
         });
     });
 </script>

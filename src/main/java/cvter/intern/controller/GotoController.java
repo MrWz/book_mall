@@ -33,6 +33,11 @@ public class GotoController extends BaseController {
         return "detail";
     }
 
+    @RequestMapping(value = "/book/panic")
+    public String panic() {
+        return "panic";
+    }
+
     @RequestMapping(value = "/book/search")
     public String search() {
         return "result";
