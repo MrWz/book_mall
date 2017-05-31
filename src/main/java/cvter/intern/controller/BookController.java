@@ -16,6 +16,7 @@ import cvter.intern.service.PanicService;
 import cvter.intern.service.UserService;
 import cvter.intern.service.impl.BookServiceImpl;
 import cvter.intern.utils.RedisCountHotBookUtil;
+import cvter.intern.utils.RedisTopTenUtil;
 import cvter.intern.vo.BookInShopCar;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +26,7 @@ import org.springframework.web.bind.annotation.*;
 import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import static cvter.intern.exception.ExceptionCode.EX_200003;
 
@@ -47,6 +49,8 @@ public class BookController extends BaseController {
     @Autowired
     private RedisCountHotBookUtil redisCountHotBookUtil;
 
+    @Autowired
+    private RedisTopTenUtil redisTopTenUtil;
     /**
      * 获取图书列表
      *
@@ -67,6 +71,26 @@ public class BookController extends BaseController {
     }
 
     /**
+     * 点击量前十图书(不够十本，全部返回)
+     * @return
+     */
+    @ResponseBody
+    @RequestMapping(value="/topTen", method=RequestMethod.POST)
+    public Msg getTopTen(){
+        Set<String> topTen=redisTopTenUtil.getInRedisTopTen();
+        List<Book> topTenBook=new ArrayList(10);
+        for (String bookUid : topTen) {
+            Book book=(Book)redisCountHotBookUtil.getInRedis(bookUid,Book.class);//在Redis中查询，未查询到，在去Mysql中查找
+            if(book==null){
+                Book bk=bookService.selectByUid(bookUid);
+                redisCountHotBookUtil.putRedis(bk,Book.class);
+                book=bk;
+            }
+            topTenBook.add(book);
+        }
+        return Msg.success().add("TOP-TEN",topTenBook);
+    }
+    /**
      * 获取图书详情
      *
      * @param uid
@@ -76,10 +100,12 @@ public class BookController extends BaseController {
     @RequestMapping(value="/detail/{uid}", method=RequestMethod.GET)
     public Msg list(@PathVariable String uid) {
 
-        Book book=redisCountHotBookUtil.getBook(uid);
+        Book book=(Book)redisCountHotBookUtil.getInRedis(uid,Book.class);//在Redis中查询，未查询到，在去Mysql中查找
+
+        redisTopTenUtil.putRedisTopTen(uid);//将图书id存到redis，统计热点图书。
         if(book==null){
             Book bk=bookService.selectByUid(uid);
-            redisCountHotBookUtil.putBook(bk);
+            redisCountHotBookUtil.putRedis(bk,Book.class);
             book=bk;
         }
         return Msg.success().add("book", book);
@@ -95,11 +121,8 @@ public class BookController extends BaseController {
     @Authorization
     @ResponseBody
     @RequestMapping(value="/buy", method=RequestMethod.POST)
-    //@CurrentUser User user
     public Msg buy(@CurrentUser User user, @RequestParam String bookuid, @RequestParam int nums) {
         boolean flag=userService.buy(user.getUid(), bookuid, nums);
-//        boolean flag=userService.buy("c9a8525f76fc408b926a803c84882448", bookuid, nums);
-
         if (flag) {
             return Msg.fail().setMessage("购买成功");
         }
@@ -267,7 +290,6 @@ public class BookController extends BaseController {
      *
      * @param userUid
      * @param bookUid
-     * @param tokenUid
      * @return
      */
     // @Authorization

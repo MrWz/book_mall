@@ -8,6 +8,7 @@ import cvter.intern.exception.ParameterException;
 import cvter.intern.model.*;
 import cvter.intern.service.UserService;
 import cvter.intern.utils.Md5SaltUtil;
+import cvter.intern.utils.RedisCountHotBookUtil;
 import cvter.intern.utils.RedisLockUtil;
 import cvter.intern.utils.UIDUtil;
 import cvter.intern.vo.BookInShopCar;
@@ -47,7 +48,6 @@ public class UserServiceImpl implements UserService {
     @Autowired
     private JedisPool jedisPool;
 
-
     @Autowired
     RedisTokenManager redisTokenManager;
 
@@ -56,6 +56,9 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     private ShopCarDao shopCarDao;
+
+    @Autowired
+    private RedisCountHotBookUtil redisCountHotBookUtil;
 
     /**
      * 更新购物车
@@ -184,7 +187,7 @@ public class UserServiceImpl implements UserService {
          * 反之插入一条新的记录
          */
         if (car != null) {
-            int newNums=car.getNums()+nums;
+            int newNums=car.getNums() + nums;
             car.setNums(newNums);
             car.setUpdateTime(date);
             shopCarDao.updateByPrimaryKey(car);
@@ -192,6 +195,7 @@ public class UserServiceImpl implements UserService {
         }
         ShopCar shopCar=new ShopCar(userUid, bookUid, nums, false, date, date);
         shopCarDao.insert(shopCar);
+
         return true;
     }
 
@@ -210,7 +214,12 @@ public class UserServiceImpl implements UserService {
             throw new ParameterException(EX_10001.getMessage());
         }
         Date date=new Date();
-        Book book=bookDao.selectByBookUid(bookUid);
+        Book book=(Book)redisCountHotBookUtil.getInRedis(bookUid,Book.class);//在Redis中查询，未查询到，在去Mysql中查找。
+        if (book == null) {
+            Book bk=bookDao.selectByBookUid(bookUid);
+            redisCountHotBookUtil.putRedis(bk,Book.class);
+            book=bk;
+        }
         boolean lockStatus=redisLockUtil.getLock("redisKey-" + book.getUid(), 3 * 1000);
         if (lockStatus) {
             int newStock=book.getStock() - nums;
@@ -223,11 +232,10 @@ public class UserServiceImpl implements UserService {
             bookDao.updateByPrimaryKey(book);
             redisLockUtil.unLock("redisKey-" + book.getUid());
         } else {
-            //redisLockUtil.unLock("redisKey-"+book.getUid());
             throw new BusinessException(ExceptionCode.EX_20002.getCode(), ExceptionCode.EX_20002.getMessage());
         }
 
-        deleteOneBook(userUid,bookUid);//将该商品从用户的购物车中去掉
+        deleteOneBook(userUid, bookUid);//将该商品从用户的购物车中去掉
         UserBook userBook=userBookDao.selectByUuidAndBuid(userUid, bookUid, false);
         /**
          * 如果用户购买表中已经有该书且未是通过正常通道购买而来，则只更新数量和时间即可
@@ -258,15 +266,18 @@ public class UserServiceImpl implements UserService {
         if (flag) {
             throw new ParameterException(EX_10001.getMessage());
         }
-        User user=selectByName(username);
+        User user=(User)redisCountHotBookUtil.getInRedis(username,User.class);
+        if(user==null){
+            User us=selectByName(username);
+            redisCountHotBookUtil.putRedis(us,User.class);
+            user=us;
+        }
         if (user != null) {
             /**
              * 验证权限
              */
             String uid=user.getUid();
-
             UserRole userRole=userRoleDao.selectByUserUid(uid);
-
             Role role=roleDao.selectByPrimaryKey(userRole.getRoleUid());
             if (role.getDescription().equals(ROLE_1.getRole())) {//权限不对，抛出异常
                 throw new BusinessException(ExceptionCode.EX_30001.getCode(), ExceptionCode.EX_30001.getMessage());
@@ -299,7 +310,12 @@ public class UserServiceImpl implements UserService {
         }
         Role role;
         UserRole userRole;
-        User userInfo=selectByName(username);
+        User userInfo=(User)redisCountHotBookUtil.getInRedis(username,User.class);//在Redis中查询
+        if(userInfo==null){
+            User us=selectByName(username);
+            redisCountHotBookUtil.putRedis(us,User.class);
+            userInfo=us;
+        }
         if (userInfo == null) {//用户不存在
             String uid=UIDUtil.getRandomUID();
             String mdPassword=Md5SaltUtil.getMD5(password, uid);
@@ -307,6 +323,7 @@ public class UserServiceImpl implements UserService {
             User user=new User(uid, username, mdPassword, false, date, date);
             save(user);
 
+            redisCountHotBookUtil.putRedis(user,User.class);//用户注册后，将用户信息放到Redis中
             role=roleDao.selectByDescription(ROLE_2.getRole());
             String roleUid=role.getUid();
 
