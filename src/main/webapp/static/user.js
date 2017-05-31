@@ -84,11 +84,13 @@ function setStatus() {
         $(".unLogin").show();
         $(".Logout").hide();
         $("#username").hide();
+        $("#shopcarSize").text(0);
     } else {
         $(".unLogin").hide();
         $(".Logout").show();
         $("#username").show();
         $("#username a").text("欢迎您，" + sessionStorage.getItem("username"));
+        getShopcarSize();
     }
 }
 
@@ -100,3 +102,27 @@ $("#bookCarbtn").click(function () {
         location.href = "/book/shopcar";
     }
 });
+
+function getShopcarSize() {
+    $.ajax({
+        type: "GET",
+        headers: {
+            AUTH: sessionStorage.getItem("xrf_")
+        },
+        url: "/book/v1/shopcar/size",
+        data: null,
+        error: function (request) {
+            alert("请先登录");
+        },
+        success: function (data) {
+            var code = data.code;
+            switch (code) {
+                case (200):
+                    $("#shopcarSize").text(data.data.size);
+                    break;
+                default:
+                    console.log(data.message);
+            }
+        }
+    });
+}

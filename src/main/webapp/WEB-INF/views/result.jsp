@@ -39,7 +39,7 @@
                 <li>
                     <a href="#" id="bookCarbtn">
                         <span class="glyphicon glyphicon-shopping-cart "></span> 购物车
-                        <span class="badge">4</span>
+                        <span class="badge" id="shopcarSize">0</span>
                     </a>
                 </li>
                 <li class="" id="username">

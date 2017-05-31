@@ -7,11 +7,7 @@ import cvter.intern.authorization.annotation.CurrentUser;
 import cvter.intern.interceptor.annotation.RequestLimit;
 import cvter.intern.lucene.model.BookIndex;
 import cvter.intern.lucene.service.IndexBookService;
-import cvter.intern.model.Book;
-import cvter.intern.model.Booktag;
-import cvter.intern.model.Msg;
-import cvter.intern.model.Panic;
-import cvter.intern.model.User;
+import cvter.intern.model.*;
 import cvter.intern.service.BookService;
 import cvter.intern.service.BooktagService;
 import cvter.intern.service.PanicService;
@@ -112,6 +108,23 @@ public class BookController extends BaseController {
             return Msg.success().setMessage("购买成功");
         }
         return Msg.fail().setMessage("库存不足");
+    }
+
+    /**
+     * 获取购物车详情
+     *
+     * @param user
+     * @return
+     */
+    @Authorization
+    @ResponseBody
+    @RequestMapping(value = "/shopcar/size", method = RequestMethod.GET)
+    public Msg shopCarSizeGet(@CurrentUser User user) {
+        List<BookInShopCar> bookList = userService.getShopCar(user.getUid());
+        if (bookList == null) {
+            return Msg.success().add("size", 0);
+        }
+        return Msg.success().add("size", bookList.size());
     }
 
     /**
@@ -254,8 +267,8 @@ public class BookController extends BaseController {
     @ResponseBody
     @RequestMapping(value = "/panic/list", method = RequestMethod.POST)
     public Msg panicList(@RequestParam(defaultValue = "1") Integer pn,
-                    @RequestParam(defaultValue = "7") Integer pageSize,
-                    @RequestParam(defaultValue = "5") Integer navigatePages) {
+                         @RequestParam(defaultValue = "7") Integer pageSize,
+                         @RequestParam(defaultValue = "5") Integer navigatePages) {
         PageHelper.startPage(pn, pageSize);
         List<Panic> allPBook = panicService.selectAll();
         PageInfo page = new PageInfo(allPBook, navigatePages);
@@ -268,6 +281,7 @@ public class BookController extends BaseController {
      * @param uid
      * @return
      */
+    @RequestLimit(value = 3, msg = "三秒防刷")
     @ResponseBody
     @RequestMapping(value = "/panic/detail/{uid}", method = RequestMethod.GET)
     public Msg panicDetil(@PathVariable String uid) {
@@ -277,20 +291,20 @@ public class BookController extends BaseController {
 
     /**
      * 图书抢购
+     *
      * @param bookUid
-     * @param userUid
+     * @param user
      * @return
      */
     @RequestLimit(value = 3, msg = "三秒防刷")
     @Authorization
     @ResponseBody
-        @RequestMapping(value="/panic", method = RequestMethod.POST)
-        public Msg bookPanic(@RequestParam String bookUid,
-                @RequestParam String userUid) {
-            //@RequestParam String tokenUid
-            if (panicService.executePanic(bookUid, userUid)) {
-                return Msg.success().setMessage("抢购成功");
-            }
-            return Msg.success().setMessage("抢购失败");
+    @RequestMapping(value = "/panic", method = RequestMethod.POST)
+    public Msg bookPanic(@RequestParam String bookUid,
+                         @CurrentUser User user) {
+        if (panicService.executePanic(bookUid, user.getUid())) {
+            return Msg.success().setMessage("抢购成功");
+        }
+        return Msg.success().setMessage("抢购失败");
     }
 }

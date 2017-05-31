@@ -96,7 +96,7 @@ public class PanicServiceImpl implements PanicService {
 
         System.out.println(startTime);
         Panic pbook = new Panic(nums, curPrice, TimeUtil.strToDateLong(startTime), TimeUtil.strToDateLong(endTime), date, date);
-        pbook.setUid(UIDUtil.getRandomUID());
+        pbook.setUid(uid);
         panicService.save(pbook);
         panicRedis.putPanic(pbook);
         return true;

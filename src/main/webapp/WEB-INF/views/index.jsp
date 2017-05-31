@@ -39,7 +39,7 @@
                 <li>
                     <a href="#" id="bookCarbtn">
                         <span class="glyphicon glyphicon-shopping-cart "></span> 购物车
-                        <span class="badge">4</span>
+                        <span class="badge" id="shopcarSize">0</span>
                     </a>
                 </li>
                 <li class="" id="username">
@@ -80,12 +80,12 @@
     <div class="row clearfix">
 
         <div class="col-md-3 column">
-            <div class="list-group">
+            <div class="list-group" id="panic_list">
                 <a class="list-group-item active">抢购活动</a>
-                <div class="list-group-item">
-                    <h3><a href="/book/panic?bookid=04303d63f90344609977f92844ebdd09">Java编程思想</a></h3>
-                    <p>14:30准时开始</p>
-                </div>
+                <%--<div class="list-group-item">--%>
+                <%--<h3><a href="/book/panic?bookid=04303d63f90344609977f92844ebdd09">Java编程思想</a></h3>--%>
+                <%--<p>14:30准时开始</p>--%>
+                <%--</div>--%>
             </div>
         </div>
 
@@ -264,6 +264,8 @@
             to_page(1);
         });
 
+        getPanicList();
+
         function to_page(pn) {
             $.ajax({
 
@@ -367,7 +369,65 @@
             ul.append(nextPageLi).append(lastPageLi).appendTo($("#page_nav_area"));
         }
 
+        function getPanicList() {
+            $.ajax({
 
+                    type: "POST",
+                    url: "/book/v1/panic/list",
+                    data: null,
+                    error: function (XMLHttpRequest, textStatus, errorThrown) {
+                        if (XMLHttpRequest.responseJSON.code == 333) {
+                            alert("三秒防刷");
+//                            location.reload(true);
+                        } else
+                            alert("Connection error");
+                    },
+                    success: function (result) {
+                        if (result.code == 200) {
+//                            alert(result.data.page.list.length);
+                            build_panic_list(result);
+                        }
+                        else {
+                            alert(result.message);
+                        }
+                    }
+                }
+            );
+        }
+
+//        <div class="list-group-item">
+//            <h3><a href="/book/panic?bookid=04303d63f90344609977f92844ebdd09">Java编程思想</a></h3>
+//            <p>14:30准时开始</p>
+//        </div>
+        function build_panic_list(result) {
+            var page = result.data.page.list;
+            $.each(page, function (index, item) {
+                var aDiv = $("<div></div>").addClass("list-group-item");
+
+                var h3Div = $("<h3></h3>").append($("<a>" + "" + "</a>").attr("id", "panic_" + index).attr("href", "/book/panic?bookid=" + item.uid));
+                var pDiv = $("<p></p>").text(new Date(item.startTime).toLocaleString() + " 准时开始");
+
+                aDiv.append(h3Div).append(pDiv);
+                $("#panic_list").append(aDiv);
+
+                $.ajax({
+                    type: "GET",
+                    url: "/book/v1/detail/" + item.uid,
+                    data: null,
+                    error: function (request) {
+                        alert("Connection error");
+                    },
+                    success: function (result) {
+                        var book = result.data.book;
+                        $("#" + "panic_" + index).text(book.name);
+                    }
+                });
+            });
+        }
+
+        function getBookName(bookuid) {
+
+        }
     })
     ;
 </script>
