@@ -29,19 +29,6 @@
         <property name="maxWait" value="${jdbc.maxWait}"/>
     </bean>
 
-    <!--&lt;!&ndash; 单机版 &ndash;&gt;-->
-    <!--&lt;!&ndash; 配置jedis连接池 &ndash;&gt;-->
-    <!--<bean class="redis.clients.jedis.JedisPool">-->
-        <!--<constructor-arg name="host" value="${redis.host}"/>-->
-        <!--<constructor-arg name="port" value="${redis.port}"/>-->
-    <!--</bean>-->
-    <!--&lt;!&ndash; 配置单机版工具类 &ndash;&gt;-->
-    <!--<bean class="cvter.intern.authorization.manager.RedisTokenManager"/>-->
-    <!--<bean class="cvter.intern.model.UserBook"/>-->
-
-
-    <!--<bean class="cvter.intern.utils.RedisLockUtil"/>-->
-
     <!-- mybatis和spring完美整合 -->
     <bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
         <property name="dataSource" ref="dataSource"/>

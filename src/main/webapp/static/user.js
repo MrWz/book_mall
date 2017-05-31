@@ -10,6 +10,7 @@ $('#userLoginBtn').click(function () {
             var code = data.code;
             switch (code) {
                 case (200):
+
 //                            alert("欢迎回来");
                     sessionStorage.setItem("xrf_", xhr.getResponseHeader("AUTH"));
                     sessionStorage.setItem("username", xhr.getResponseHeader("username"));
