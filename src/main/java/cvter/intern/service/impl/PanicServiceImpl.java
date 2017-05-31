@@ -1,5 +1,4 @@
 package cvter.intern.service.impl;
-//import cvter.intern.dao.cache.PanicRedis;
 import cvter.intern.dao.PanicDao;
 import cvter.intern.dao.UserBookDao;
 import cvter.intern.exception.BusinessException;
@@ -11,6 +10,7 @@ import cvter.intern.model.UserBook;
 import cvter.intern.service.BookService;
 import cvter.intern.service.PanicRedis;
 import cvter.intern.service.PanicService;
+import cvter.intern.utils.RedisLockUtil;
 import cvter.intern.utils.TimeUtil;
 import cvter.intern.utils.UIDUtil;
 import org.apache.commons.lang3.StringUtils;
@@ -38,6 +38,8 @@ public class PanicServiceImpl implements PanicService {
     private UserBookDao userBookDao;
     @Autowired
     private PanicRedis panicRedis;
+    @Autowired
+    RedisLockUtil redisLockUtil;
     /**
      * 增加记录
      */
@@ -126,17 +128,18 @@ public class PanicServiceImpl implements PanicService {
             throw new BusinessException(ExceptionCode.EX_20003.getCode(), ExceptionCode.EX_20003.getMessage());
         }
         Date date = new Date();
-        int updateTime = panicDao.reduceNumber(bookId, date);
-        if (updateTime <= 0) {
-            //抢购失败
-            throw new BusinessException(ExceptionCode.EX_20007.getCode(), ExceptionCode.EX_20007.getMessage());
-        }
-        if(userBookHave!=null){
-            //重复抢购
-            throw new BusinessException(ExceptionCode.EX_20003.getCode(), ExceptionCode.EX_20003.getMessage());
+        boolean lockStatus=redisLockUtil.getLock("redisKey-"+bookId,3*1000 );
+        if(lockStatus){
+            int updateTime = panicDao.reduceNumber(bookId, date);
+            if (updateTime <= 0) {
+                //抢购失败
+                redisLockUtil.unLock("redisKey-"+bookId);
+                throw new BusinessException(ExceptionCode.EX_20007.getCode(), ExceptionCode.EX_20007.getMessage());
+            }
         }
         UserBook userBook = new UserBook(userId, bookId, pbook.getCurPrice(), 1, true, false, date, date);
         userBookDao.insert(userBook);
+        redisLockUtil.unLock("redisKey-"+bookId);
         return true;
     }
 }
