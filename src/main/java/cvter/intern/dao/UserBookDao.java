@@ -4,13 +4,14 @@ import cvter.intern.model.Book;
 import cvter.intern.model.Panic;
 import cvter.intern.model.UserBook;
 import cvter.intern.model.UserBookExample;
-import java.util.List;
 import org.apache.ibatis.annotations.Param;
 
+import java.util.List;
+
 public interface UserBookDao {
-    UserBook selectByUuidAndBuid(@Param(value = "userUid")String userUid,
-                                 @Param(value = "bookUid") String bookUid,
-                                 @Param(value = "buyWay") boolean buyWay);
+    UserBook selectByUuidAndBuid(@Param(value="userUid") String userUid,
+                                 @Param(value="bookUid") String bookUid,
+                                 @Param(value="buyWay") boolean buyWay);
 
     int countByExample(UserBookExample example);
 
@@ -25,9 +26,9 @@ public interface UserBookDao {
 
     int insertSelective(cvter.intern.model.UserBook record);
 
-    List<Panic> selectByPaginate(@Param(value = "m") int m, @Param(value = "n") int n);
+    List<Panic> selectByPaginate(@Param(value="m") int m, @Param(value="n") int n);
 
-    UserBook selectByPrimaryKey(String  userUid);
+    UserBook selectByPrimaryKey(String userUid);
 
     List<cvter.intern.model.UserBook> selectByUserUid(String userUid);
 

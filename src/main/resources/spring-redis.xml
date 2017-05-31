@@ -12,5 +12,8 @@
     <!-- 配置单机版工具类 -->
     <bean class="cvter.intern.authorization.manager.RedisTokenManager"/>
 
+    <!-- 配置Redis相关Bean -->
     <bean class="cvter.intern.utils.RedisLockUtil"/>
+    <bean class="cvter.intern.utils.RedisCountHotBookUtil"/>
+    <bean class="cvter.intern.utils.RedisTopTenUtil"/>
 </beans>

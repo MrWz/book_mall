@@ -22,5 +22,4 @@ public class ResponseUtil {
                 + "\",\"data\": null}");
         writer.close();
     }
-
 }

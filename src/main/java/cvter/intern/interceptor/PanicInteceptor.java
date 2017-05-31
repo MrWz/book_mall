@@ -1,7 +1,10 @@
 package cvter.intern.interceptor;
 
+import cvter.intern.dao.PanicDao;
+import cvter.intern.model.Panic;
 import cvter.intern.service.PanicService;
 import cvter.intern.utils.ResponseUtil;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,12 +16,14 @@ import redis.clients.jedis.JedisPool;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.lang.reflect.Method;
+import java.util.Date;
+import java.util.Enumeration;
 
 /**
- * 统计controller层执行时间，时间三秒防刷功能
+ * 判断抢购时间
  */
 public class PanicInteceptor implements HandlerInterceptor {
-    private static Logger logger = LoggerFactory.getLogger(PanicInteceptor.class);
+    private static Logger logger=LoggerFactory.getLogger(PanicInteceptor.class);
 
     @Autowired
     private JedisPool jedisPool;
@@ -26,18 +31,30 @@ public class PanicInteceptor implements HandlerInterceptor {
     @Autowired
     private PanicService panicService;
 
+    @Autowired
+    private PanicDao panicDao;
+
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
-        long startTime = System.currentTimeMillis();
-        request.setAttribute("startTime", startTime);
+        Enumeration<String> keys=request.getParameterNames();
+        String bookUid=null;
+        while (keys.hasMoreElements()) {
+            String k=keys.nextElement();
+            if (StringUtils.equals(k, "bookUid")) {
+                bookUid=request.getParameter(k);
+                break;
+            }
+        }
+        Panic panic= panicDao.selectByPrimaryKey(bookUid);
 
-        // 如果不是映射到方法直接通过
-        if (!(handler instanceof HandlerMethod)) {
+        Date now=new Date();
+        Date startDate=panic.getStartTime();
+        Date endDate=panic.getStartTime();
+
+        if(now.after(startDate) && now.before(endDate)){
             return true;
         }
-        HandlerMethod handlerMethod = (HandlerMethod) handler;
-        Method method = handlerMethod.getMethod();
-
+        return false;
         /*
          * 定时防刷新
          */
@@ -47,16 +64,13 @@ public class PanicInteceptor implements HandlerInterceptor {
 //            ResponseUtil.write(response, 404, "抢购时间未到");
 //            return false;
 //        }
-
-
-        return true;
     }
 
     @Override
     public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler, ModelAndView modelAndView) throws Exception {
-        long startTime = (Long) request.getAttribute("startTime");
-        long endTime = System.currentTimeMillis();
-        long executeTime = endTime - startTime;
+        long startTime=(Long) request.getAttribute("startTime");
+        long endTime=System.currentTimeMillis();
+        long executeTime=endTime - startTime;
 
         //Controller层执行时间统计
         if (logger.isDebugEnabled()) {

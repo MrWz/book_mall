@@ -2,7 +2,7 @@ package cvter.intern.model;
 
 import java.util.Date;
 
-public class User extends AbstractParent {
+public class User extends AbstractParent implements GetRedisKey {
 
     private String name;
 

@@ -10,13 +10,14 @@ $('#userLoginBtn').click(function () {
             var code = data.code;
             switch (code) {
                 case (200):
+
 //                            alert("欢迎回来");
                     localStorage.setItem("xrf_", xhr.getResponseHeader("AUTH"));
                     localStorage.setItem("username", xhr.getResponseHeader("username"));
                     $('#loginModal').modal('hide');
                     setStatus();
                     break;
-                case (500):
+                default:
                     alert(data.message);
                     break;
             }
@@ -44,7 +45,7 @@ $('#userRegisterBtn').click(function () {
                     $('#registerModal').modal('hide');
                     setStatus();
                     break;
-                case (500):
+                default:
                     alert(data.message);
                     break;
             }
