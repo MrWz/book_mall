@@ -10,11 +10,11 @@ import cvter.intern.model.Book;
 import cvter.intern.model.Msg;
 import cvter.intern.model.User;
 import cvter.intern.service.BookService;
+import cvter.intern.service.PanicService;
 import cvter.intern.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
-
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
 
@@ -30,6 +30,8 @@ public class AdminController extends BaseController {
 
     @Resource
     private BookService bookService;
+    @Resource
+    private PanicService panicService;
 
     @Autowired
     private TokenManager tokenManager;
@@ -72,31 +74,45 @@ public class AdminController extends BaseController {
         return Msg.success().setMessage("成功退出");
     }
 
+    /**
+     *管理员图书上架
+     *
+     * @param book  上架图书
+     * @param bookType  图书类型
+     * @return 响应实体 {@link Msg}
+     */
     @Authorization
     @ResponseBody
     @RequestMapping(value = "/book/add", method = RequestMethod.POST)
-    public Msg bookAdd(Book book) {
-        if (bookService.save(book)) {
+    public Msg bookAdd(Book book,String bookType) {
+        if (bookService.save(book,bookType)) {
             return Msg.success().setMessage("图书上架成功");
         }
         return Msg.success().setMessage("图书上架失败");
     }
 
+    /**
+     * 管理员图书下架
+     *
+     * @param uids  图书UID
+     * @return 响应实体 {@link Msg}
+     */
     @Authorization
     @ResponseBody
     @RequestMapping(value = "/book/del/{uids}", method = RequestMethod.DELETE)
     public Msg bookDel(@PathVariable String uids) {
-        boolean flag = true;
-        String[] uidArr = uids.split("-");
-        for (int i = 0; i < uidArr.length; i++) {
-            flag = bookService.bookDel(uids);
-        }
-        if (flag) {
+        if (bookService.bookDel(uids)) {
             return Msg.success().setMessage("图书删除成功");
-        }
+    }
         return Msg.success().setMessage("图书删除失败");
     }
 
+    /**
+     * 图书价格和库存调整
+     *
+     * @param book  要调整图书
+     * @return 响应实体 {@link Msg}
+     */
     @Authorization
     @ResponseBody
     @RequestMapping(value = "/book/adjust", method = RequestMethod.PUT)
@@ -107,4 +123,31 @@ public class AdminController extends BaseController {
         return Msg.success().setMessage("图书信息更新成功");
     }
 
+    @Authorization
+    @ResponseBody
+    @RequestMapping(value = "/book/sale", method = RequestMethod.POST)
+    public Msg bookSale(){
+
+        return Msg.success().setMessage("查看销售表成功");
+    }
+    /**
+     * 管理员发布图书抢购
+     *
+     * @param nums  数量
+     * @param curPrice  抢购价格
+     * @param startTime  抢购开始时间
+     * @param endTime   抢购结束时间
+     * @param uid  抢购书UID
+     * @return 响应实体 {@link Msg}
+     */
+    //@Authorization
+    @ResponseBody
+    @RequestMapping(value="/book/panic",method = RequestMethod.POST)
+    public  Msg bookPanic(int nums,int curPrice,String startTime,String endTime, String uid){
+
+        if(panicService.bookPanic(nums,curPrice,startTime,endTime,uid)){
+            return Msg.success().setMessage("抢购发布成功");
+        }
+        return Msg.success().setMessage("抢购发布失败");
+    }
 }

@@ -1,13 +1,10 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="cvter.intern.dao.UserBookDao" >
-  <resultMap id="BaseResultMap" type="cvter.intern.model.UserBook" >
+<mapper namespace="cvter.intern.dao.BookBooktagDao" >
+  <resultMap id="BaseResultMap" type="cvter.intern.model.BookBooktag" >
     <id column="id" property="id" jdbcType="INTEGER" />
-    <result column="user_uid" property="userUid" jdbcType="VARCHAR" />
     <result column="book_uid" property="bookUid" jdbcType="VARCHAR" />
-    <result column="buy_price" property="buyPrice" jdbcType="INTEGER" />
-    <result column="buy_nums" property="buyNums" jdbcType="INTEGER" />
-    <result column="buy_way" property="buyWay" jdbcType="BIT" />
+    <result column="booktag_uid" property="booktagUid" jdbcType="VARCHAR" />
     <result column="deleted" property="deleted" jdbcType="BIT" />
     <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
     <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
@@ -71,68 +68,57 @@
     </where>
   </sql>
   <sql id="Base_Column_List" >
-    id, user_uid, book_uid, buy_price, buy_nums, buy_way, deleted, create_time, update_time
+    id, book_uid, booktag_uid, deleted, create_time, update_time
   </sql>
-  <select id="selectByUserUid" resultMap="BaseResultMap" parameterType="java.lang.String" >
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="cvter.intern.model.BookBooktagExample" >
     select
+    <if test="distinct" >
+      distinct
+    </if>
     <include refid="Base_Column_List" />
-    from user_book
-    where user_uid = #{userUid}
+    from book_booktag
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
   </select>
-
-  <select id="selectByUuidAndBuid" resultMap="BaseResultMap">
-    select
-    <include refid="Base_Column_List" />
-    from user_book
-    where user_uid = #{userUid} and book_uid = #{bookUid} and buy_way = #{buyWay}
-  </select>
-
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
     select 
     <include refid="Base_Column_List" />
-    from user_book
-    where user_uid = #{userUid,jdbcType=VARCHAR}
+    from book_booktag
+    where id = #{id,jdbcType=VARCHAR}
   </select>
-  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
-    delete from user_book
-    where id = #{id,jdbcType=INTEGER}
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from book_booktag
+    where id = #{id,jdbcType=VARCHAR}
   </delete>
-  <delete id="deleteByExample" parameterType="cvter.intern.model.UserBookExample" >
-    delete from user_book
+  <delete id="deleteByExample" parameterType="cvter.intern.model.BookBooktagExample" >
+    delete from book_booktag
     <if test="_parameter != null" >
       <include refid="Example_Where_Clause" />
     </if>
   </delete>
-  <insert id="insert" parameterType="cvter.intern.model.UserBook" >
-    insert into user_book (id, user_uid, book_uid, 
-      buy_price, buy_nums, buy_way, 
+  <insert id="insert" parameterType="cvter.intern.model.BookBooktag" >
+    insert into book_booktag (book_uid, booktag_uid,
       deleted, create_time, update_time
       )
-    values (#{id,jdbcType=INTEGER}, #{userUid,jdbcType=VARCHAR}, #{bookUid,jdbcType=VARCHAR}, 
-      #{buyPrice,jdbcType=INTEGER}, #{buyNums,jdbcType=INTEGER}, #{buyWay,jdbcType=BIT}, 
-      #{deleted,jdbcType=BIT}, #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP}
+    values (#{bookUid,jdbcType=VARCHAR}, #{booktagUid,jdbcType=VARCHAR},
+      #{deleted,jdbcType=BIT},now(),now()
       )
   </insert>
-  <insert id="insertSelective" parameterType="cvter.intern.model.UserBook" >
-    insert into user_book
+  <insert id="insertSelective" parameterType="cvter.intern.model.BookBooktag" >
+    insert into book_booktag
     <trim prefix="(" suffix=")" suffixOverrides="," >
       <if test="id != null" >
         id,
       </if>
-      <if test="userUid != null" >
-        user_uid,
-      </if>
       <if test="bookUid != null" >
         book_uid,
       </if>
-      <if test="buyPrice != null" >
-        buy_price,
-      </if>
-      <if test="buyNums != null" >
-        buy_nums,
-      </if>
-      <if test="buyWay != null" >
-        buy_way,
+      <if test="booktagUid != null" >
+        booktag_uid,
       </if>
       <if test="deleted != null" >
         deleted,
@@ -148,20 +134,11 @@
       <if test="id != null" >
         #{id,jdbcType=INTEGER},
       </if>
-      <if test="userUid != null" >
-        #{userUid,jdbcType=VARCHAR},
-      </if>
       <if test="bookUid != null" >
         #{bookUid,jdbcType=VARCHAR},
       </if>
-      <if test="buyPrice != null" >
-        #{buyPrice,jdbcType=INTEGER},
-      </if>
-      <if test="buyNums != null" >
-        #{buyNums,jdbcType=INTEGER},
-      </if>
-      <if test="buyWay != null" >
-        #{buyWay,jdbcType=BIT},
+      <if test="booktagUid != null" >
+        #{booktagUid,jdbcType=VARCHAR},
       </if>
       <if test="deleted != null" >
         #{deleted,jdbcType=BIT},
@@ -174,32 +151,23 @@
       </if>
     </trim>
   </insert>
-  <select id="countByExample" parameterType="cvter.intern.model.UserBookExample" resultType="java.lang.Integer" >
-    select count(*) from user_book
+  <select id="countByExample" parameterType="cvter.intern.model.BookBooktagExample" resultType="java.lang.Integer" >
+    select count(*) from book_booktag
     <if test="_parameter != null" >
       <include refid="Example_Where_Clause" />
     </if>
   </select>
   <update id="updateByExampleSelective" parameterType="map" >
-    update user_book
+    update book_booktag
     <set >
       <if test="record.id != null" >
         id = #{record.id,jdbcType=INTEGER},
       </if>
-      <if test="record.userUid != null" >
-        user_uid = #{record.userUid,jdbcType=VARCHAR},
-      </if>
       <if test="record.bookUid != null" >
         book_uid = #{record.bookUid,jdbcType=VARCHAR},
       </if>
-      <if test="record.buyPrice != null" >
-        buy_price = #{record.buyPrice,jdbcType=INTEGER},
-      </if>
-      <if test="record.buyNums != null" >
-        buy_nums = #{record.buyNums,jdbcType=INTEGER},
-      </if>
-      <if test="record.buyWay != null" >
-        buy_way = #{record.buyWay,jdbcType=BIT},
+      <if test="record.booktagUid != null" >
+        booktag_uid = #{record.booktagUid,jdbcType=VARCHAR},
       </if>
       <if test="record.deleted != null" >
         deleted = #{record.deleted,jdbcType=BIT},
@@ -216,13 +184,10 @@
     </if>
   </update>
   <update id="updateByExample" parameterType="map" >
-    update user_book
+    update book_booktag
     set id = #{record.id,jdbcType=INTEGER},
-      user_uid = #{record.userUid,jdbcType=VARCHAR},
       book_uid = #{record.bookUid,jdbcType=VARCHAR},
-      buy_price = #{record.buyPrice,jdbcType=INTEGER},
-      buy_nums = #{record.buyNums,jdbcType=INTEGER},
-      buy_way = #{record.buyWay,jdbcType=BIT},
+      booktag_uid = #{record.booktagUid,jdbcType=VARCHAR},
       deleted = #{record.deleted,jdbcType=BIT},
       create_time = #{record.createTime,jdbcType=TIMESTAMP},
       update_time = #{record.updateTime,jdbcType=TIMESTAMP}
@@ -230,23 +195,14 @@
       <include refid="Update_By_Example_Where_Clause" />
     </if>
   </update>
-  <update id="updateByPrimaryKeySelective" parameterType="cvter.intern.model.UserBook" >
-    update user_book
+  <update id="updateByPrimaryKeySelective" parameterType="cvter.intern.model.BookBooktag" >
+    update book_booktag
     <set >
-      <if test="userUid != null" >
-        user_uid = #{userUid,jdbcType=VARCHAR},
-      </if>
       <if test="bookUid != null" >
         book_uid = #{bookUid,jdbcType=VARCHAR},
       </if>
-      <if test="buyPrice != null" >
-        buy_price = #{buyPrice,jdbcType=INTEGER},
-      </if>
-      <if test="buyNums != null" >
-        buy_nums = #{buyNums,jdbcType=INTEGER},
-      </if>
-      <if test="buyWay != null" >
-        buy_way = #{buyWay,jdbcType=BIT},
+      <if test="booktagUid != null" >
+        booktag_uid = #{booktagUid,jdbcType=VARCHAR},
       </if>
       <if test="deleted != null" >
         deleted = #{deleted,jdbcType=BIT},
@@ -260,16 +216,12 @@
     </set>
     where id = #{id,jdbcType=INTEGER}
   </update>
-  <update id="updateByPrimaryKey" parameterType="cvter.intern.model.UserBook" >
-    update user_book
-    set user_uid = #{userUid,jdbcType=VARCHAR},
-      book_uid = #{bookUid,jdbcType=VARCHAR},
-      buy_price = #{buyPrice,jdbcType=INTEGER},
-      buy_nums = #{buyNums,jdbcType=INTEGER},
-      buy_way = #{buyWay,jdbcType=BIT},
+  <update id="updateByPrimaryKey" parameterType="cvter.intern.model.BookBooktag" >
+    update book_booktag
+    set book_uid = #{bookUid,jdbcType=VARCHAR},
+      booktag_uid = #{booktagUid,jdbcType=VARCHAR},
       deleted = #{deleted,jdbcType=BIT},
       create_time = #{createTime,jdbcType=TIMESTAMP},
-      update_time = #{updateTime,jdbcType=TIMESTAMP}
       update_time = #{updateTime,jdbcType=TIMESTAMP}
     where id = #{id,jdbcType=INTEGER}
   </update>

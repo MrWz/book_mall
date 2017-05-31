@@ -15,7 +15,7 @@ public class Book extends AbstractParent {
     private String description;
 
     public Book() {
-
+        super();
     }
 
     public Book(String uid, String name, String author, Integer price, Integer stock, Boolean deleted, Date createTime, Date updateTime, String description) {

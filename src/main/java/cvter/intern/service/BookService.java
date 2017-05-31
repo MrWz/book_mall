@@ -13,7 +13,7 @@ public interface BookService {
 
     List<Book> selectByPaginate(int m, int n);
 
-    boolean save(Book book);
+    boolean save(Book book,String bookType);
 
     boolean update(Book book);
 
@@ -26,4 +26,5 @@ public interface BookService {
     boolean bookAdjustPrice(String uid, int price);
 
     void bookAdjustStock(String uid, int stock);
+    
 }

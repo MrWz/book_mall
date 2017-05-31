@@ -93,6 +93,20 @@
     from panic_info
     where uid = #{uid,jdbcType=VARCHAR}
   </select>
+
+  <select id="selectAll" resultMap="BaseResultMap" >
+    select
+    <include refid="Base_Column_List" />
+    from panic_info
+  </select>
+
+  <select id="selectByPaginate" resultMap="BaseResultMap" parameterType="java.lang.Integer">
+    select
+    *
+    from panic_info
+    limit #{m},#{n}
+  </select>
+
   <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
     delete from panic_info
     where uid = #{uid,jdbcType=VARCHAR}
@@ -104,13 +118,13 @@
     </if>
   </delete>
   <insert id="insert" parameterType="cvter.intern.model.Panic" >
-    insert into panic_info (id, uid, nums, 
+    insert into panic_info (uid, nums,
       cur_price, start_time, end_time, 
-      deleted, create_time, update_time
+      create_time, update_time
       )
-    values (#{id,jdbcType=INTEGER}, #{uid,jdbcType=VARCHAR}, #{nums,jdbcType=TINYINT}, 
-      #{curPrice,jdbcType=INTEGER}, #{startTime,jdbcType=TIMESTAMP}, #{endTime,jdbcType=TIMESTAMP}, 
-      #{deleted,jdbcType=BIT}, #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP}
+    values (#{uid,jdbcType=VARCHAR}, #{nums,jdbcType=TINYINT},
+      #{curPrice,jdbcType=INTEGER}, #{startTime,jdbcType=TIMESTAMP}, #{endTime,jdbcType=TIMESTAMP},
+      now(), now()
       )
   </insert>
   <insert id="insertSelective" parameterType="cvter.intern.model.Panic" >
@@ -180,6 +194,7 @@
       <include refid="Example_Where_Clause" />
     </if>
   </select>
+
   <update id="updateByExampleSelective" parameterType="map" >
     update panic_info
     <set >
@@ -271,5 +286,14 @@
       create_time = #{createTime,jdbcType=TIMESTAMP},
       update_time = #{updateTime,jdbcType=TIMESTAMP}
     where id = #{id,jdbcType=INTEGER}
+   </update>
+  <update id="reduceNumber" parameterType="cvter.intern.model.Panic">
+    update panic_info
+    set nums = nums - 1
+    where
+    uid = #{uid}
+    and start_time <![CDATA[ <= ]]> #{killTime}
+    and end_time >= #{killTime}
+    and nums > 0
   </update>
 </mapper>
