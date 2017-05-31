@@ -1,22 +1,25 @@
 package cvter.intern.controller;
 
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import cvter.intern.authorization.annotation.Authorization;
 import cvter.intern.authorization.annotation.CurrentUser;
 import cvter.intern.authorization.manager.TokenManager;
 import cvter.intern.authorization.model.TokenModel;
 import cvter.intern.authorization.util.Constants;
+import cvter.intern.dao.SaleDao;
 import cvter.intern.exception.BusinessException;
-import cvter.intern.model.Book;
-import cvter.intern.model.Msg;
-import cvter.intern.model.User;
+import cvter.intern.model.*;
 import cvter.intern.service.BookService;
 import cvter.intern.service.PanicService;
+import cvter.intern.service.SaleService;
 import cvter.intern.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
+import java.util.List;
 
 /**
  * 管理员操作类
@@ -27,14 +30,14 @@ public class AdminController extends BaseController {
 
     @Resource
     private UserService userService;
-
     @Resource
     private BookService bookService;
     @Resource
     private PanicService panicService;
-
     @Autowired
     private TokenManager tokenManager;
+    @Resource
+    private SaleService saleService;
 
     /**
      * 管理员登录
@@ -123,12 +126,16 @@ public class AdminController extends BaseController {
         return Msg.success().setMessage("图书信息更新成功");
     }
 
-    @Authorization
+   // @Authorization
     @ResponseBody
     @RequestMapping(value = "/book/sale", method = RequestMethod.POST)
-    public Msg bookSale(){
-
-        return Msg.success().setMessage("查看销售表成功");
+    public Msg bookSale(@RequestParam(defaultValue = "1") Integer pn,
+                        @RequestParam(defaultValue = "7") Integer pageSize,
+                        @RequestParam(defaultValue = "5") Integer navigatePages){
+        PageHelper.startPage(pn, pageSize);
+        List<SaleSum> saleSums=saleService.saleTable();
+        PageInfo page = new PageInfo(saleSums, navigatePages);
+        return Msg.success().add("page",page);
     }
     /**
      * 管理员发布图书抢购

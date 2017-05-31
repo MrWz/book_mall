@@ -56,7 +56,6 @@ public class BookController extends BaseController {
         PageHelper.startPage(pn, pageSize);
         List<Book> allBook = bookService.selectAll();
         PageInfo page = new PageInfo(allBook, navigatePages);
-
         return Msg.success().add("page", page);
     }
 
@@ -228,7 +227,6 @@ public class BookController extends BaseController {
         PageHelper.startPage(pn, pageSize);
         List<Panic> allPBook = panicService.selectAll();
         PageInfo page = new PageInfo(allPBook, navigatePages);
-
         return Msg.success().add("page", page);
     }
 
@@ -255,14 +253,14 @@ public class BookController extends BaseController {
      */
    // @Authorization
     @ResponseBody
-    @RequestMapping(value="/panic", method = RequestMethod.POST)
-    public Msg bookPanic(@RequestParam String bookUid,
-                         @RequestParam String userUid
+        @RequestMapping(value="/panic", method = RequestMethod.POST)
+        public Msg bookPanic(@RequestParam String bookUid,
+                @RequestParam String userUid
                         ) {
-        //@RequestParam String tokenUid
-        if (panicService.executePanic(bookUid, userUid)) {
-            return Msg.success().setMessage("抢购成功");
-        }
-        return Msg.success().setMessage("抢购失败");
+            //@RequestParam String tokenUid
+            if (panicService.executePanic(bookUid, userUid)) {
+                return Msg.success().setMessage("抢购成功");
+            }
+            return Msg.success().setMessage("抢购失败");
     }
 }

@@ -42,6 +42,7 @@
     </bean>
     <!-- 配置单机版工具类 -->
     <bean class="cvter.intern.authorization.manager.RedisTokenManager"/>
+    <bean class="cvter.intern.model.UserBook"/>
 
 
     <bean class="cvter.intern.utils.RedisLockUtil"/>
