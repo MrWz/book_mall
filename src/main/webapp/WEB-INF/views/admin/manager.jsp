@@ -488,7 +488,7 @@
                     $("#panicModal").modal('hide');
                     alert(result.message);
                 } else {
-                    alert("参数不能为空");
+                    alert(result.message);
                 }
             }
         });

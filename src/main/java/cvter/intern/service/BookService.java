@@ -26,5 +26,4 @@ public interface BookService {
     boolean bookAdjustPrice(String uid, int price);
 
     void bookAdjustStock(String uid, int stock);
-    
 }

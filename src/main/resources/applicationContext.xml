@@ -10,6 +10,45 @@
     <!-- 加载properties文件 -->
     <context:property-placeholder location="classpath:conf/*.properties"/>
 
+    <!-- 配置数据源 -->
+    <bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource"
+          destroy-method="close">
+        <property name="driverClassName" value="${jdbc.driver}"/>
+        <property name="url" value="${jdbc.url}"/>
+        <property name="username" value="${jdbc.username}"/>
+        <property name="password" value="${jdbc.password}"/>
+        <!-- 初始化连接大小 -->
+        <property name="initialSize" value="${jdbc.initialSize}"/>
+        <!-- 连接池最大数量 -->
+        <property name="maxActive" value="${jdbc.maxActive}"/>
+        <!-- 连接池最大空闲 -->
+        <property name="maxIdle" value="${jdbc.maxIdle}"/>
+        <!-- 连接池最小空闲 -->
+        <property name="minIdle" value="${jdbc.minIdle}"/>
+        <!-- 获取连接最大等待时间 -->
+        <property name="maxWait" value="${jdbc.maxWait}"/>
+    </bean>
+
+    <!--&lt;!&ndash; 单机版 &ndash;&gt;-->
+    <!--&lt;!&ndash; 配置jedis连接池 &ndash;&gt;-->
+    <!--<bean class="redis.clients.jedis.JedisPool">-->
+        <!--<constructor-arg name="host" value="${redis.host}"/>-->
+        <!--<constructor-arg name="port" value="${redis.port}"/>-->
+    <!--</bean>-->
+    <!--&lt;!&ndash; 配置单机版工具类 &ndash;&gt;-->
+    <!--<bean class="cvter.intern.authorization.manager.RedisTokenManager"/>-->
+    <!--<bean class="cvter.intern.model.UserBook"/>-->
+
+
+    <!--<bean class="cvter.intern.utils.RedisLockUtil"/>-->
+
+    <!-- mybatis和spring完美整合 -->
+    <bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+        <property name="dataSource" ref="dataSource"/>
+        <!-- 自动扫描mapping.xml文件 -->
+        <property name="mapperLocations" value="classpath:mapper/*.xml"/>
+        <property name="configLocation" value="classpath:mybatis-config.xml"/>
+    </bean>
     <!-- 自动扫描 -->
     <context:component-scan base-package="cvter.intern.service,cvter.intern.task"/>
 
