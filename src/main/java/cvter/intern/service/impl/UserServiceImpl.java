@@ -372,9 +372,9 @@ public class UserServiceImpl implements UserService {
     }
 
     /*
-     * 管理员登录
-     * @param username
-     * @param password
+     * 验证管理员登录
+     * @param username  用户名
+     * @param password  密码
      * @return
      */
     public boolean checkAdimLogin(String username, String password) {

@@ -85,17 +85,11 @@
       order by ${orderByClause}
     </if>
   </select>
-  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+  <select id="selectByBookUid" resultMap="BaseResultMap" parameterType="java.lang.String" >
     select 
     <include refid="Base_Column_List" />
     from sale
-    where id = #{id,jdbcType=INTEGER}
-  </select>
-  <select id="saleSum" resultType="cvter.intern.model.SaleSum">
-    select book_uid,sum(total_price) as total_price,sum(nums) as nums
-    from sale
-    where deleted=false
-    group by book_uid
+    where id = #{bookUid,jdbcType=INTEGER}
   </select>
   <select id="selectAll" resultMap="BaseResultMap">
     select
@@ -113,10 +107,10 @@
     </if>
   </delete>
   <insert id="insert" parameterType="cvter.intern.model.Sale" >
-    insert into sale (id, book_uid, total_price, 
+    insert into sale (id, book_uid, total_price,
       nums, deleted, create_time, 
       update_time)
-    values (#{id,jdbcType=INTEGER}, #{bookUid,jdbcType=VARCHAR}, #{totalPrice,jdbcType=INTEGER}, 
+    values (#{id,jdbcType=INTEGER}, #{bookUid,jdbcType=VARCHAR}, #{totalPrice,jdbcType=INTEGER},
       #{nums,jdbcType=INTEGER}, #{deleted,jdbcType=BIT}, #{createTime,jdbcType=TIMESTAMP}, 
       #{updateTime,jdbcType=TIMESTAMP})
   </insert>

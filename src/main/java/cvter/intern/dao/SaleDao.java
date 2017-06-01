@@ -23,9 +23,7 @@ public interface SaleDao {
 
     int insertPart();
 
-    List<SaleSum> saleSum();
-
-    Sale selectByPrimaryKey(String uid);
+    Sale selectByBookUid(String bookUid);
 
     int updateByExampleSelective(@Param("record") Sale record, @Param("example") SaleExample example);
 

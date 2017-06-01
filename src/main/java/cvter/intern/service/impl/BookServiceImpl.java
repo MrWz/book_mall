@@ -6,16 +6,13 @@ import cvter.intern.exception.ParameterException;
 import cvter.intern.model.Book;
 import cvter.intern.model.BookBooktag;
 import cvter.intern.model.Booktag;
-import cvter.intern.model.Panic;
 import cvter.intern.service.BookService;
-import cvter.intern.service.PanicService;
 import cvter.intern.utils.UIDUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.annotation.Resource;
 import java.util.Date;
 import java.util.List;
 
@@ -27,19 +24,17 @@ public class BookServiceImpl implements BookService {
 
     @Autowired
     private BookDao bookDao;
-    @Resource
-    private BookService bookService;
     @Autowired
     private BooktagDao booktagDao;
     @Autowired
     private BookBooktagDao bookBooktagDao;
 
-    public BookServiceImpl() {
-        super();
-    }
-
     /**
-     * 增加记录
+     *增加图书
+     *
+     * @param book  图书
+     * @param bookType  图书类型
+     * @return 成功或失败
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
@@ -56,74 +51,90 @@ public class BookServiceImpl implements BookService {
     }
 
     /**
-     * 删除图书
-     * */
+     *删除图书
+     *
+     * @param uid  图书UID
+     * @return  成功或失败
+     */
     @Override
     @Transactional(rollbackFor = Exception.class)
-
     public boolean bookDel(String uid) {
         if (StringUtils.isBlank(uid)) {
             throw new ParameterException("参数为空");
         }
-        return bookService.deleteByUid(uid);
+//        Book book = bookService.selectByUid(uid);
+        //Book book = this.selectByUid(uid);
+        Book book=bookDao.selectByBookUid(uid);
+        book.setDeleted(true);
+        book.setUpdateTime(new Date());
+        //return this.update(book);
+        return bookDao.updateByPrimaryKey(book);
     }
 
     /**
-     * 修改价钱
-     * */
+     * 修改图书价格
+     *
+     * @param uid  图书UID
+     * @param price  要修改的价钱
+     * @return  成功或失败
+     */
     @Override
     @Transactional(rollbackFor = Exception.class)
-
     public boolean bookAdjustPrice(String uid, int price) {
         if (StringUtils.isAnyBlank(uid, price + "")) {
             throw new ParameterException("参数为空");
         }
-        Book book = bookService.selectByUid(uid);
+        Book book=bookDao.selectByBookUid(uid);
         book.setPrice(price);
         book.setUpdateTime(new Date());
-        return bookService.update(book);
+        return bookDao.updateByPrimaryKey(book);
     }
 
     /**
-     * 修改库存
-     * */
+     * 修改图书库存
+     *
+     * @param uid  图书UID
+     * @param stock  要修改的库存数
+     */
     @Override
     @Transactional(rollbackFor = Exception.class)
-
     public void bookAdjustStock(String uid, int stock) {
         if (StringUtils.isAnyBlank(uid, stock + "")) {
             throw new ParameterException("参数为空");
         }
-        Book book = bookService.selectByUid(uid);
+        Book book=bookDao.selectByBookUid(uid);
         book.setStock(stock);
         book.setUpdateTime(new Date());
-        bookService.update(book);
+        bookDao.updateByPrimaryKey(book);
     }
+
 
     /**
-     * 删除记录
+     * 查看所有图书
+     *
+     * @return  图书列表
      */
-    @Override
-    @Transactional(rollbackFor = Exception.class)
-    public boolean deleteByUid(String uid) {
-        return bookDao.deleteByPrimaryKey(uid);
-    }
-
     @Override
     public List<Book> selectAll() {
         return bookDao.selectAll();
     }
+
     /**
-     * 更新记录
+     * 图书信息更新
+     *
+     * @param book  要更新的图书
+     * @return  成功或失败
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
     public boolean update(Book book) {
         return bookDao.updateByPrimaryKey(book);
     }
-
     /**
-     * 查询
+     * 查询图书
+     *
+     * @param uid   图书UID
+     * @return  图书实体
      */
     @Override
     public Book selectByUid(String uid) {
@@ -131,7 +142,11 @@ public class BookServiceImpl implements BookService {
     }
 
     /**
-     * 查询全部记录，采用分表查询
+     *查询所有图书，分页查询
+     *
+     * @param m
+     * @param n
+     * @return   图书列表
      */
     @Override
     public List<Book> selectByPaginate(int m, int n) {

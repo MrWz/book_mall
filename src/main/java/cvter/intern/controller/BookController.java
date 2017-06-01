@@ -20,7 +20,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
-
 import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -310,7 +309,9 @@ public class BookController extends BaseController {
     /**
      * 获取抢购图书列表
      *
-     * @param pn
+     * @param pn  页码
+     * @param pageSize  页大小
+     * @param navigatePages  页数
      * @return
      */
     @ResponseBody
@@ -327,7 +328,7 @@ public class BookController extends BaseController {
     /**
      * 获取抢购图书详情
      *
-     * @param uid
+     * @param uid  图书UID
      * @return
      */
     @RequestLimit(value = 3, msg = "三秒防刷")
