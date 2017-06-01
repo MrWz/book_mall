@@ -19,11 +19,11 @@ public class BookInShopCar {
     }
 
     public BookInShopCar(String uid, String name, String author, Integer price, int nums) {
-        this.uid=uid;
-        this.name=name;
-        this.author=author;
-        this.price=price;
-        this.nums=nums;
+        this.uid = uid;
+        this.name = name;
+        this.author = author;
+        this.price = price;
+        this.nums = nums;
     }
 
     public String getUid() {
@@ -31,7 +31,7 @@ public class BookInShopCar {
     }
 
     public void setUid(String uid) {
-        this.uid=uid;
+        this.uid = uid;
     }
 
     public String getName() {
@@ -39,7 +39,7 @@ public class BookInShopCar {
     }
 
     public void setName(String name) {
-        this.name=name;
+        this.name = name;
     }
 
     public String getAuthor() {
@@ -47,7 +47,7 @@ public class BookInShopCar {
     }
 
     public void setAuthor(String author) {
-        this.author=author;
+        this.author = author;
     }
 
     public Integer getPrice() {
@@ -55,7 +55,7 @@ public class BookInShopCar {
     }
 
     public void setPrice(Integer price) {
-        this.price=price;
+        this.price = price;
     }
 
     public int getNums() {
@@ -63,6 +63,6 @@ public class BookInShopCar {
     }
 
     public void setNums(int nums) {
-        this.nums=nums;
+        this.nums = nums;
     }
 }

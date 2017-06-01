@@ -15,5 +15,10 @@ public class TimeUtil {
         Date strtodate = formatter.parse(strDate, pos);
         return strtodate;
     }
+
+    public static String strReplaceChar(String strDate, String str) {
+        strDate = strDate.replace(str, " ") + ":00";
+        return strDate;
+    }
 }
 

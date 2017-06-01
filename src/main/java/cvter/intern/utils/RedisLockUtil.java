@@ -46,13 +46,14 @@ public class RedisLockUtil {
                 return true;
             }
             try {
+
                 Thread.sleep(100);
                 --timeoutMsecs;
             } catch (Exception e) {
 
             }
         }
-
+//jmeter
         /**
          * 如过执行到这里，说明此线程在规定等待的时间内并未获得锁
          */

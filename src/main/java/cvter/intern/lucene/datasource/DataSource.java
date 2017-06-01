@@ -5,7 +5,7 @@ import cvter.intern.lucene.model.BookIndex;
 import java.util.List;
 
 /**
- * Created by cvter on 2017/5/18.
+ * 构建图书检索数据源接口
  */
 public interface DataSource {
 

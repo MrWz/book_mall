@@ -5,7 +5,7 @@ import cvter.intern.model.Book;
 import java.util.List;
 
 /**
- * Created by cvter on 2017/5/21.
+ * 图书检索业务接口
  */
 public interface IndexBookService {
 

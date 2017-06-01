@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by cvter on 2017/5/21.
+ * 图书检索业务接口的实现类
  */
 public class IndexBookServiceImpl implements IndexBookService {
 
@@ -19,7 +19,7 @@ public class IndexBookServiceImpl implements IndexBookService {
 
     @Override
     public List<Book> searchBookTopN(String text, String queryField, int nDocs) throws Exception {
-        return getBook(indexManager.searchIndexTopN(text, queryField, nDocs));
+        return getBook(indexManager.doSearch(text, queryField));
     }
 
     @Override

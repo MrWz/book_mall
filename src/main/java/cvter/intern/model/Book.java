@@ -2,7 +2,7 @@ package cvter.intern.model;
 
 import java.util.Date;
 
-public class Book extends AbstractParent {
+public class Book extends AbstractParent implements GetRedisKey {
 
     private String name;
 
@@ -18,6 +18,9 @@ public class Book extends AbstractParent {
         super();
     }
 
+    public String getUid(){
+        return  super.getUid();
+    }
     public Book(String uid, String name, String author, Integer price, Integer stock, Boolean deleted, Date createTime, Date updateTime, String description) {
         this.uid = uid;
         this.name = name;
