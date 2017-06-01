@@ -13,7 +13,7 @@ $(function () {
 function to_page(pn) {
     $.ajax({
         type: "POST",
-        url: "/admin/v1/book/sale",
+        url: "/admin/v1/book/saleAll",
         data: "pn=" + pn,
         error: function (request) {
             alert("Connection error");
@@ -38,15 +38,15 @@ function build_book_table(result) {
     var books = result.data.page.list;
     $.each(books, function (index, item) {
         var bookCk = $("<td></td>").append(index + 1);//$("<input type='checkbox'>")
-        var bookName = $("<td></td>").append(item.book_uid).attr("id", "id_" + index);
-        var bookPrice = $("<td></td>").append("￥" + item.total_price);
+        var bookName = $("<td></td>").append(item.bookUid).attr("id", "id_" + index);
+        var bookPrice = $("<td></td>").append("￥" + item.totalPrice);
         var bookNums = $("<td></td>").append(item.nums);
         $("<tr></tr>").append(bookCk)
             .append(bookName)
             .append(bookPrice)
             .append(bookNums)
             .appendTo("tbody");
-        getBook("id_" + index, item.book_uid);
+        getBook("id_" + index, item.bookUid);
     })
 
 }
