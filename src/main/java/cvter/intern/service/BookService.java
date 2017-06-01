@@ -17,8 +17,6 @@ public interface BookService {
 
     boolean update(Book book);
 
-    boolean deleteByUid(String uid);
-
     List<Book> selectAll();
 
     boolean bookDel(String uid);

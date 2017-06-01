@@ -75,20 +75,27 @@
     <sql id="Base_Column_List">
     id, user_uid, book_uid, buy_price, buy_nums, buy_way, deleted, create_time, update_time
   </sql>
-    <select id="selectByUserUid" resultMap="BaseResultMap" parameterType="java.lang.String">
-        select
-        <include refid="Base_Column_List"/>
-        from user_book
-        where user_uid = #{userUid}
-    </select>
-
-    <select id="selectByUuidAndBuid" resultMap="BaseResultMap">
-        select
-        <include refid="Base_Column_List"/>
-        from user_book
-        where user_uid = #{userUid} and book_uid = #{bookUid} and buy_way = #{buyWay}
-    </select>
-
+  <select id="selectByUserUid" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select
+    <include refid="Base_Column_List" />
+    from user_book
+    where user_uid = #{userUid}
+  </select>
+  <select id="saleSum" resultType="cvter.intern.model.SaleSum">
+    select
+    book_uid,sum(buy_price) as total_price,sum(buy_nums) as nums,create_time as updateTime
+    from user_book
+    <if test="today != null" >
+      where create_time>#{today,jdbcType=TIMESTAMP}
+    </if>
+    group by book_uid
+  </select>
+  <select id="selectByUuidAndBuid" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from user_book
+    where user_uid = #{userUid} and book_uid = #{bookUid} and buy_way = #{buyWay}
+  </select>
     <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String">
         select
         <include refid="Base_Column_List"/>

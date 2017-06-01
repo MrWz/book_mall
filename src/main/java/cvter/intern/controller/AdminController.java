@@ -8,10 +8,7 @@ import cvter.intern.authorization.manager.TokenManager;
 import cvter.intern.authorization.model.TokenModel;
 import cvter.intern.authorization.util.Constants;
 import cvter.intern.exception.BusinessException;
-import cvter.intern.model.Book;
-import cvter.intern.model.Msg;
-import cvter.intern.model.SaleSum;
-import cvter.intern.model.User;
+import cvter.intern.model.*;
 import cvter.intern.service.BookService;
 import cvter.intern.service.PanicService;
 import cvter.intern.service.SaleService;
@@ -64,7 +61,6 @@ public class AdminController extends BaseController {
             // 生成一个 token，保存用户登录状态
             TokenModel model = tokenManager.createToken(user.getUid());
             response.setHeader(Constants.AUTHORIZATION, model.toString());
-
             return Msg.success().setMessage("您已登录成功");
         }
         throw new BusinessException(50000, "用户名或密码错误");
@@ -104,14 +100,14 @@ public class AdminController extends BaseController {
     /**
      * 管理员图书下架
      *
-     * @param uids 图书UID
+     * @param bookUid  图书UID
      * @return 响应实体 {@link Msg}
      */
-    @Authorization
+    //@Authorization
     @ResponseBody
-    @RequestMapping(value = "/book/del/{uids}", method = RequestMethod.DELETE)
-    public Msg bookDel(@PathVariable String uids) {
-        if (bookService.bookDel(uids)) {
+    @RequestMapping(value = "/book/del/{bookUid}", method = RequestMethod.DELETE)
+    public Msg bookDel(@PathVariable String bookUid) {
+        if (bookService.bookDel(bookUid)) {
             return Msg.success().setMessage("图书删除成功");
         }
         return Msg.success().setMessage("图书删除失败");
@@ -129,22 +125,48 @@ public class AdminController extends BaseController {
     public Msg bookAdjust(Book book) {
         bookService.bookAdjustPrice(book.getUid(), book.getPrice());
         bookService.bookAdjustStock(book.getUid(), book.getStock());
-
         return Msg.success().setMessage("图书信息更新成功");
     }
 
-    @Authorization
+    /**
+     * 查看日销售统计表
+     *
+     * @param pn
+     * @param pageSize
+     * @param navigatePages
+     * @return
+     */
+    //@Authorization
     @ResponseBody
     @RequestMapping(value = "/book/sale", method = RequestMethod.POST)
     public Msg bookSale(@RequestParam(defaultValue = "1") Integer pn,
                         @RequestParam(defaultValue = "7") Integer pageSize,
                         @RequestParam(defaultValue = "5") Integer navigatePages) {
         PageHelper.startPage(pn, pageSize);
-        List<SaleSum> saleSums = saleService.saleTable();
+        List<SaleSum> saleSums=saleService.saleTable();
+        saleService.save(saleSums);
         PageInfo page = new PageInfo(saleSums, navigatePages);
         return Msg.success().add("page", page);
     }
 
+    /**
+     * 查看总销售表
+     *
+     * @param pn
+     * @param pageSize
+     * @param navigatePages
+     * @return
+     */
+    @ResponseBody
+    @RequestMapping(value = "/book/saleAll", method = RequestMethod.POST)
+    public Msg bookSaleAll(@RequestParam(defaultValue = "1") Integer pn,
+                        @RequestParam(defaultValue = "7") Integer pageSize,
+                        @RequestParam(defaultValue = "5") Integer navigatePages){
+        PageHelper.startPage(pn, pageSize);
+        List<Sale> allSale=saleService.selectAll();
+        PageInfo page = new PageInfo(allSale, navigatePages);
+        return Msg.success().add("page",page);
+    }
     /**
      * 管理员发布图书抢购
      *
