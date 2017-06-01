@@ -24,18 +24,4 @@ public interface HobbyDao {
      */
     Hobby selectByPrimaryKey(String uid);
 
-//    int insertSelective(Hobby record);
-//
-//    List<Hobby> selectByExample(HobbyInfoExample example);
-//
-//    int updateByExampleSelective(@Param("record") Hobby record, @Param("example") HobbyInfoExample example);
-//
-//    int updateByExample(@Param("record") Hobby record, @Param("example") HobbyInfoExample example);
-//
-//    int updateByPrimaryKeySelective(Hobby record);
-//
-//    int countByExample(HobbyInfoExample example);
-//
-//    int deleteByExample(HobbyInfoExample example);
-
 }

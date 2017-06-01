@@ -7,7 +7,10 @@ import cvter.intern.exception.ExceptionCode;
 import cvter.intern.exception.ParameterException;
 import cvter.intern.model.*;
 import cvter.intern.service.UserService;
-import cvter.intern.utils.*;
+import cvter.intern.utils.Md5SaltUtil;
+import cvter.intern.utils.RedisCountHotBookUtil;
+import cvter.intern.utils.RedisLockUtil;
+import cvter.intern.utils.UIDUtil;
 import cvter.intern.vo.BookInShopCar;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,10 +20,9 @@ import redis.clients.jedis.JedisPool;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.regex.Pattern;
 
-import static cvter.intern.exception.ExceptionCode.EX_10001;
-import static cvter.intern.exception.ExceptionCode.EX_20008;
-import static cvter.intern.exception.ExceptionCode.EX_20009;
+import static cvter.intern.exception.ExceptionCode.*;
 import static cvter.intern.utils.RoleUtil.ROLE_1;
 import static cvter.intern.utils.RoleUtil.ROLE_2;
 
@@ -76,7 +78,7 @@ public class UserServiceImpl implements UserService {
 
         ShopCar car=shopCarDao.selectByUuidAndBuid(userUid, bookUid, false);
         if (car != null) {
-            if(count==0){
+            if (count == 0) {
                 --count;
             }
             int oldNum=car.getNums();
@@ -224,7 +226,7 @@ public class UserServiceImpl implements UserService {
         }
         boolean lockStatus=redisLockUtil.getLock("redisKey-" + book.getUid(), 3 * 1000);
         if (lockStatus) {
-            book=(Book)redisCountHotBookUtil.getInRedis(bookUid, Book.class);
+            book=(Book) redisCountHotBookUtil.getInRedis(bookUid, Book.class);
             int newStock=book.getStock() - nums;
             if (newStock < 0) {
                 redisLockUtil.unLock("redisKey-" + book.getUid());
@@ -243,18 +245,7 @@ public class UserServiceImpl implements UserService {
         }
 
         deleteOneBook(userUid, bookUid);//将该商品从用户的购物车中去掉
-        UserBook userBook=userBookDao.selectByUuidAndBuid(userUid, bookUid, false);
-        /**
-         * 如果用户购买表中已经有该书且未是通过正常通道购买而来，则只更新数量和时间即可
-         * 反之，要构建一个新的记录插入数据库
-         */
-        if (userBook != null) {
-            int newNums=userBook.getBuyNums() + nums;
-            userBook.setBuyNums(newNums);
-            userBook.setUpdateTime(date);
-            userBookDao.updateByPrimaryKey(userBook);
-            return true;
-        }
+
         UserBook newUserBook=new UserBook(userUid, bookUid, book.getPrice(), nums, false, false, date, date);
         userBookDao.insert(newUserBook);
         return true;
@@ -316,13 +307,12 @@ public class UserServiceImpl implements UserService {
         if (flag) {
             throw new ParameterException(EX_10001.getMessage());
         }
-
-        String pt="^[0-9a-zA-Z]+$";
-        boolean boolName=username.matches(pt);
+        Pattern pattern=Pattern.compile("[0-9a-zA-Z]*");
+        boolean boolName=pattern.matcher(username).matches();
         if (username.length() < 6 || username.length() > 15 || !boolName) {
             throw new ParameterException(EX_20008.getMessage());
         }
-        boolean boolPwd=username.matches(pt);
+        boolean boolPwd=pattern.matcher(password).matches();
         if (password.length() < 6 || password.length() > 15 || !boolPwd) {
             throw new ParameterException(EX_20009.getMessage());
         }

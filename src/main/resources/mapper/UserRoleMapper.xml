@@ -70,36 +70,19 @@
   <sql id="Base_Column_List" >
     id, user_uid, role_uid, deleted, create_time, update_time
   </sql>
-  <select id="selectByExample" resultMap="BaseResultMap" parameterType="cvter.intern.model.UserRoleExample" >
-    select
-    <if test="distinct" >
-      distinct
-    </if>
-    <include refid="Base_Column_List" />
-    from user_role
-    <if test="_parameter != null" >
-      <include refid="Example_Where_Clause" />
-    </if>
-    <if test="orderByClause != null" >
-      order by ${orderByClause}
-    </if>
-  </select>
+
   <select id="selectByUserUid" resultMap="BaseResultMap" parameterType="java.lang.String" >
     select 
     <include refid="Base_Column_List" />
     from user_role
     where user_uid = #{userUid}
   </select>
+
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
     delete from user_role
     where id = #{id,jdbcType=INTEGER}
   </delete>
-  <delete id="deleteByExample" parameterType="cvter.intern.model.UserRoleExample" >
-    delete from user_role
-    <if test="_parameter != null" >
-      <include refid="Example_Where_Clause" />
-    </if>
-  </delete>
+
   <insert id="insert" parameterType="cvter.intern.model.UserRole" >
     insert into user_role (id, user_uid, role_uid, 
       deleted, create_time, update_time
@@ -108,114 +91,7 @@
       #{deleted,jdbcType=BIT}, #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP}
       )
   </insert>
-  <insert id="insertSelective" parameterType="cvter.intern.model.UserRole" >
-    insert into user_role
-    <trim prefix="(" suffix=")" suffixOverrides="," >
-      <if test="id != null" >
-        id,
-      </if>
-      <if test="userUid != null" >
-        user_uid,
-      </if>
-      <if test="roleUid != null" >
-        role_uid,
-      </if>
-      <if test="deleted != null" >
-        deleted,
-      </if>
-      <if test="createTime != null" >
-        create_time,
-      </if>
-      <if test="updateTime != null" >
-        update_time,
-      </if>
-    </trim>
-    <trim prefix="values (" suffix=")" suffixOverrides="," >
-      <if test="id != null" >
-        #{id,jdbcType=INTEGER},
-      </if>
-      <if test="userUid != null" >
-        #{userUid,jdbcType=VARCHAR},
-      </if>
-      <if test="roleUid != null" >
-        #{roleUid,jdbcType=VARCHAR},
-      </if>
-      <if test="deleted != null" >
-        #{deleted,jdbcType=BIT},
-      </if>
-      <if test="createTime != null" >
-        #{createTime,jdbcType=TIMESTAMP},
-      </if>
-      <if test="updateTime != null" >
-        #{updateTime,jdbcType=TIMESTAMP},
-      </if>
-    </trim>
-  </insert>
-  <select id="countByExample" parameterType="cvter.intern.model.UserRoleExample" resultType="java.lang.Integer" >
-    select count(*) from user_role
-    <if test="_parameter != null" >
-      <include refid="Example_Where_Clause" />
-    </if>
-  </select>
-  <update id="updateByExampleSelective" parameterType="map" >
-    update user_role
-    <set >
-      <if test="record.id != null" >
-        id = #{record.id,jdbcType=INTEGER},
-      </if>
-      <if test="record.userUid != null" >
-        user_uid = #{record.userUid,jdbcType=VARCHAR},
-      </if>
-      <if test="record.roleUid != null" >
-        role_uid = #{record.roleUid,jdbcType=VARCHAR},
-      </if>
-      <if test="record.deleted != null" >
-        deleted = #{record.deleted,jdbcType=BIT},
-      </if>
-      <if test="record.createTime != null" >
-        create_time = #{record.createTime,jdbcType=TIMESTAMP},
-      </if>
-      <if test="record.updateTime != null" >
-        update_time = #{record.updateTime,jdbcType=TIMESTAMP},
-      </if>
-    </set>
-    <if test="_parameter != null" >
-      <include refid="Update_By_Example_Where_Clause" />
-    </if>
-  </update>
-  <update id="updateByExample" parameterType="map" >
-    update user_role
-    set id = #{record.id,jdbcType=INTEGER},
-      user_uid = #{record.userUid,jdbcType=VARCHAR},
-      role_uid = #{record.roleUid,jdbcType=VARCHAR},
-      deleted = #{record.deleted,jdbcType=BIT},
-      create_time = #{record.createTime,jdbcType=TIMESTAMP},
-      update_time = #{record.updateTime,jdbcType=TIMESTAMP}
-    <if test="_parameter != null" >
-      <include refid="Update_By_Example_Where_Clause" />
-    </if>
-  </update>
-  <update id="updateByPrimaryKeySelective" parameterType="cvter.intern.model.UserRole" >
-    update user_role
-    <set >
-      <if test="userUid != null" >
-        user_uid = #{userUid,jdbcType=VARCHAR},
-      </if>
-      <if test="roleUid != null" >
-        role_uid = #{roleUid,jdbcType=VARCHAR},
-      </if>
-      <if test="deleted != null" >
-        deleted = #{deleted,jdbcType=BIT},
-      </if>
-      <if test="createTime != null" >
-        create_time = #{createTime,jdbcType=TIMESTAMP},
-      </if>
-      <if test="updateTime != null" >
-        update_time = #{updateTime,jdbcType=TIMESTAMP},
-      </if>
-    </set>
-    where id = #{id,jdbcType=INTEGER}
-  </update>
+
   <update id="updateByPrimaryKey" parameterType="cvter.intern.model.UserRole" >
     update user_role
     set user_uid = #{userUid,jdbcType=VARCHAR},

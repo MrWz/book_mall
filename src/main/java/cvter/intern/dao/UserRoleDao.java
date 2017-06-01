@@ -11,5 +11,4 @@ public interface UserRoleDao {
     int updateByPrimaryKey(UserRole record);
 
     UserRole selectByUserUid(String userUid);
-
 }

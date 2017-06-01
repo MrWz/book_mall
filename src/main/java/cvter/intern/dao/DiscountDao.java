@@ -24,17 +24,4 @@ public interface DiscountDao {
      */
     Discount selectByPrimaryKey(String uid);
 
-//    int insertSelective(Discount record);
-//
-//    List<Discount> selectByExample(DiscountInfoExample example);
-//
-//    int updateByExampleSelective(@Param("record") Discount record, @Param("example") DiscountInfoExample example);
-//
-//    int updateByExample(@Param("record") Discount record, @Param("example") DiscountInfoExample example);
-//
-//    int updateByPrimaryKeySelective(Discount record);
-//
-//    int countByExample(DiscountInfoExample example);
-//
-//    int deleteByExample(DiscountInfoExample example);
 }

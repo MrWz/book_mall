@@ -49,7 +49,7 @@ public class PanicInteceptor implements HandlerInterceptor {
 
         Date now=new Date();
         Date startDate=panic.getStartTime();
-        Date endDate=panic.getStartTime();
+        Date endDate=panic.getEndTime();
 
         if(now.after(startDate) && now.before(endDate)){
             return true;
