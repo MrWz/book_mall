@@ -27,6 +27,8 @@
             <span id="countTime">倒计时长：<kbd>0天0小时0分0秒</kbd></span>
             <br>
             <span id="startTime">开始时间：<kbd>2017-5-26 17:20</kbd></span>
+            <br>
+            <span id="endTime">结束时间：<kbd>2017-5-26 17:20</kbd></span>
             <span class="pull-right">
                     <button class="btn btn-success" disabled id="panicBtn">立即抢购</button>
                     <a href="/" class="btn btn-default">返回首页</a>

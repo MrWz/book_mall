@@ -100,14 +100,14 @@ public class AdminController extends BaseController {
     /**
      * 管理员图书下架
      *
-     * @param bookUid  图书UID
+     * @param uids 图书UID
      * @return 响应实体 {@link Msg}
      */
-    //@Authorization
+    @Authorization
     @ResponseBody
-    @RequestMapping(value = "/book/del/{bookUid}", method = RequestMethod.DELETE)
-    public Msg bookDel(@PathVariable String bookUid) {
-        if (bookService.bookDel(bookUid)) {
+    @RequestMapping(value = "/book/del/{uids}", method = RequestMethod.DELETE)
+    public Msg bookDel(@PathVariable String uids) {
+        if (bookService.bookDel(uids)) {
             return Msg.success().setMessage("图书删除成功");
         }
         return Msg.success().setMessage("图书删除失败");
@@ -125,6 +125,7 @@ public class AdminController extends BaseController {
     public Msg bookAdjust(Book book) {
         bookService.bookAdjustPrice(book.getUid(), book.getPrice());
         bookService.bookAdjustStock(book.getUid(), book.getStock());
+
         return Msg.success().setMessage("图书信息更新成功");
     }
 

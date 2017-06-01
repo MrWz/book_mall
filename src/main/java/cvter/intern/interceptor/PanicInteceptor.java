@@ -1,7 +1,9 @@
 package cvter.intern.interceptor;
 
 import cvter.intern.dao.PanicDao;
+import cvter.intern.exception.ExceptionCode;
 import cvter.intern.model.Panic;
+import cvter.intern.utils.ResponseUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.servlet.HandlerInterceptor;
@@ -35,11 +37,13 @@ public class PanicInteceptor implements HandlerInterceptor {
 
         Date now = new Date();
         Date startDate = panic.getStartTime();
-        Date endDate = panic.getStartTime();
+        Date endDate = panic.getEndTime();
 
         if (now.after(startDate) && now.before(endDate)) {
             return true;
         }
+        //向页面输出提示信息
+        ResponseUtil.write(response, ExceptionCode.EX_20004.getCode(), ExceptionCode.EX_20004.getMessage());
         return false;
     }
 
