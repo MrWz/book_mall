@@ -27,11 +27,21 @@
         <p>
             <span><script>document.write(new Date());</script></span>
             <span class="pull-right">
-                    <a class="btn btn-warning" href="/admin/book/sale">销售统计</a>
                     <button class="btn btn-success" id="book_add_btn">新增图书</button>
                     <button class="btn btn-default" id="log_off_btn">退出管理</button>
                 </span>
+
         </p>
+        <div class="btn-group">
+            <button type="button" class="btn btn-warning dropdown-toggle" data-toggle="dropdown" aria-haspopup="true"
+                    aria-expanded="false">
+                销售统计 <span class="caret"></span>
+            </button>
+            <ul class="dropdown-menu">
+                <li><a href="/admin/book/sale">当日销售统计</a></li>
+                <li><a href="/admin/book/saleAll">总销售统计</a></li>
+            </ul>
+        </div>
         <table class="table table-hover">
             <thead>
             <tr>
