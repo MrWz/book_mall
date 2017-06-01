@@ -1,5 +1,6 @@
 var interval;
 var startTime;
+var endTime;
 $(function () {
 
     if (getQueryString("bookid") == null) {
@@ -21,7 +22,12 @@ $(function () {
         },
         success: function (result) {
             startTime = new Date(result.data.panic.startTime);
+            endTime = new Date(result.data.panic.endTime);
             $("#startTime").html("开始时间：<kbd>" + startTime.toLocaleString() + "</kbd>");
+            $("#endTime").html("结束时间：<kbd>" + endTime.toLocaleString() + "</kbd>");
+            if(startTime > new Date() || endTime < new Date()) {
+                $("#panicBtn").attr("disabled", "disabled");
+            }
         }
     });
 
@@ -37,8 +43,11 @@ $(function () {
             },
             url: "/book/v1/panic",
             data: "bookUid=" + getQueryString("bookid"),// 你的formid
-            error: function (request) {
-                alert("请您先去登录");
+            error: function (XMLHttpRequest, textStatus, errorThrown) {
+                if (XMLHttpRequest.responseJSON.code == 20004) {
+                    alert("抢购未开始");
+                } else
+                    alert("Connection error");
             },
             success: function (data) {
                 if (data.code == 200) {
@@ -48,6 +57,7 @@ $(function () {
                     alert(data.message);
             }
         });
+        return false;
     });
 });
 
@@ -62,10 +72,13 @@ function ShowCountDown(year, month, day, min, sec, divname) {
     var second = Math.floor(leftSecond - day1 * 24 * 60 * 60 - hour * 3600 - minute * 60);
     var cc = document.getElementById(divname);
     cc.innerHTML = "倒计时长：<kbd>" + day1 + "天" + hour + "小时" + minute + "分" + second + "秒</kbd>";
-    if (day1 <= 0 && hour <= 0 && minute <= 0 && second <= 0) {
+    if (day1 < 0 || hour < 0 || minute < 0 || second <= 0) {
         window.clearInterval(interval);
-        $("#panicBtn").removeAttr("disabled");
+        if(startTime < new Date() && endTime > new Date()) {
+            $("#panicBtn").removeAttr("disabled");
+        }
     }
+
 }
 
 function getQueryString(name) {

@@ -345,7 +345,7 @@ public class BookController extends BaseController {
      * @param user
      * @return
      */
-    @RequestLimit(value = 3, msg = "三秒防刷")
+//    @RequestLimit(value = 3, msg = "三秒防刷")
     @Authorization
     @ResponseBody
     @RequestMapping(value = "/panic", method = RequestMethod.POST)

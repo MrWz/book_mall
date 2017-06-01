@@ -133,7 +133,7 @@ public class AdminController extends BaseController {
         return Msg.success().setMessage("图书信息更新成功");
     }
 
-    @Authorization
+//    @Authorization
     @ResponseBody
     @RequestMapping(value = "/book/sale", method = RequestMethod.POST)
     public Msg bookSale(@RequestParam(defaultValue = "1") Integer pn,

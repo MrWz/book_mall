@@ -27,6 +27,7 @@
         <p>
             <span><script>document.write(new Date());</script></span>
             <span class="pull-right">
+                    <a class="btn btn-warning" href="/admin/book/sale">销售统计</a>
                     <button class="btn btn-success" id="book_add_btn">新增图书</button>
                     <button class="btn btn-default" id="log_off_btn">退出管理</button>
                 </span>
