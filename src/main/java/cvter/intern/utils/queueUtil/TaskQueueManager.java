@@ -21,11 +21,11 @@ public class TaskQueueManager {
         initQueneMap();
     }
 
-    public static TaskQueue get(String name){
+    public static TaskQueue get(String name) {
         return getRedisTaskQueue(name);
     }
 
-    public static TaskQueue getRedisTaskQueue(String name){
+    public static TaskQueue getRedisTaskQueue(String name) {
         return queneMap.get(name);
     }
 

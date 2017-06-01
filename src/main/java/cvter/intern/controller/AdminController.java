@@ -7,16 +7,19 @@ import cvter.intern.authorization.annotation.CurrentUser;
 import cvter.intern.authorization.manager.TokenManager;
 import cvter.intern.authorization.model.TokenModel;
 import cvter.intern.authorization.util.Constants;
-import cvter.intern.dao.SaleDao;
 import cvter.intern.exception.BusinessException;
-import cvter.intern.model.*;
+import cvter.intern.model.Book;
+import cvter.intern.model.Msg;
+import cvter.intern.model.SaleSum;
+import cvter.intern.model.User;
 import cvter.intern.service.BookService;
 import cvter.intern.service.PanicService;
 import cvter.intern.service.SaleService;
 import cvter.intern.service.UserService;
-import org.springframework.beans.factory.annotation.Autowired;
+import cvter.intern.utils.TimeUtil;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
 import java.util.List;
@@ -30,12 +33,16 @@ public class AdminController extends BaseController {
 
     @Resource
     private UserService userService;
+
     @Resource
     private BookService bookService;
+
     @Resource
     private PanicService panicService;
-    @Autowired
+
+    @Resource
     private TokenManager tokenManager;
+
     @Resource
     private SaleService saleService;
 
@@ -78,17 +85,17 @@ public class AdminController extends BaseController {
     }
 
     /**
-     *管理员图书上架
+     * 管理员图书上架
      *
-     * @param book  上架图书
-     * @param bookType  图书类型
+     * @param book     上架图书
+     * @param bookType 图书类型
      * @return 响应实体 {@link Msg}
      */
     @Authorization
     @ResponseBody
     @RequestMapping(value = "/book/add", method = RequestMethod.POST)
-    public Msg bookAdd(Book book,String bookType) {
-        if (bookService.save(book,bookType)) {
+    public Msg bookAdd(Book book, String bookType) {
+        if (bookService.save(book, bookType)) {
             return Msg.success().setMessage("图书上架成功");
         }
         return Msg.success().setMessage("图书上架失败");
@@ -97,7 +104,7 @@ public class AdminController extends BaseController {
     /**
      * 管理员图书下架
      *
-     * @param uids  图书UID
+     * @param uids 图书UID
      * @return 响应实体 {@link Msg}
      */
     @Authorization
@@ -106,14 +113,14 @@ public class AdminController extends BaseController {
     public Msg bookDel(@PathVariable String uids) {
         if (bookService.bookDel(uids)) {
             return Msg.success().setMessage("图书删除成功");
-    }
+        }
         return Msg.success().setMessage("图书删除失败");
     }
 
     /**
      * 图书价格和库存调整
      *
-     * @param book  要调整图书
+     * @param book 要调整图书
      * @return 响应实体 {@link Msg}
      */
     @Authorization
@@ -126,35 +133,35 @@ public class AdminController extends BaseController {
         return Msg.success().setMessage("图书信息更新成功");
     }
 
-   // @Authorization
+    @Authorization
     @ResponseBody
     @RequestMapping(value = "/book/sale", method = RequestMethod.POST)
     public Msg bookSale(@RequestParam(defaultValue = "1") Integer pn,
                         @RequestParam(defaultValue = "7") Integer pageSize,
-                        @RequestParam(defaultValue = "5") Integer navigatePages){
+                        @RequestParam(defaultValue = "5") Integer navigatePages) {
         PageHelper.startPage(pn, pageSize);
-        List<SaleSum> saleSums=saleService.saleTable();
+        List<SaleSum> saleSums = saleService.saleTable();
         PageInfo page = new PageInfo(saleSums, navigatePages);
-        return Msg.success().add("page",page);
+        return Msg.success().add("page", page);
     }
+
     /**
      * 管理员发布图书抢购
      *
-     * @param nums  数量
+     * @param nums      数量
      * @param curPrice  抢购价格
-     * @param startTime  抢购开始时间
+     * @param startTime 抢购开始时间
      * @param endTime   抢购结束时间
-     * @param uid  抢购书UID
+     * @param uid       抢购书UID
      * @return 响应实体 {@link Msg}
      */
-    //@Authorization
+    @Authorization
     @ResponseBody
-    @RequestMapping(value="/book/panic",method = RequestMethod.POST)
-    public  Msg bookPanic(int nums,int curPrice,String startTime,String endTime, String uid){
-
-        if(panicService.bookPanic(nums,curPrice,startTime,endTime,uid)){
+    @RequestMapping(value = "/book/panic", method = RequestMethod.POST)
+    public Msg bookPanic(int nums, int curPrice, String startTime, String endTime, String uid) {
+        if (panicService.bookPanic(nums, curPrice, TimeUtil.strReplaceChar(startTime, "T"), TimeUtil.strReplaceChar(endTime, "T"), uid)) {
             return Msg.success().setMessage("抢购发布成功");
         }
-        return Msg.success().setMessage("抢购发布失败");
+        return Msg.fail().setMessage("抢购发布失败");
     }
 }

@@ -31,7 +31,7 @@
                 <li>
                     <a href="#" id="bookCarbtn">
                         <span class="glyphicon glyphicon-shopping-cart "></span> 购物车
-                        <span class="badge">4</span>
+                        <span class="badge" id="shopcarSize">0</span>
                     </a>
                 </li>
                 <li class="" id="username">
@@ -106,14 +106,14 @@
             <div class="modal-body">
                 <form class="form-group">
                     <div class="form-group">
-                        <label for="">用户名</label>
+                        <label>用户名</label>
                         <input class="form-control" name="username" type="text" required placeholder="6-15位字母或数字">
-                        <span id="" class="help-block text-warning"></span>
+                        <span class="help-block text-warning"></span>
                     </div>
                     <div class="form-group">
-                        <label for="">密码</label>
+                        <label>密码</label>
                         <input class="form-control" name="password" type="password" required placeholder="至少6位字母或数字">
-                        <span id="" class="help-block text-warning"></span>
+                        <span class="help-block text-warning"></span>
                     </div>
                     <!--<div class="form-group">
                         <label for="">验证码</label>
@@ -154,17 +154,17 @@
                     <div class="form-group">
                         <label for="">用户名</label>
                         <input class="form-control" name="username" type="text" required placeholder="6-15位字母或数字">
-                        <span id="" class="help-block text-warning"></span>
+                        <span class="help-block text-warning"></span>
                     </div>
                     <div class="form-group">
                         <label for="">密码</label>
                         <input class="form-control" name="password" type="password" required placeholder="至少6位字母或数字">
-                        <span id="" class="help-block text-warning"></span>
+                        <span class="help-block text-warning"></span>
                     </div>
                     <div class="form-group">
                         <label for="">再次输入密码</label>
                         <input class="form-control" name="rePassword" type="password" required placeholder="至少6位字母或数字">
-                        <span id="" class="help-block text-warning"></span>
+                        <span class="help-block text-warning"></span>
                     </div>
                     <%--<div class="form-group">--%>
                     <%--<label for="">验证码</label>--%>
@@ -246,7 +246,8 @@
 
                     <div class="form-group">
                         <label for="">添加数量</label>
-                        <input class="form-control" name="nums" type="number" value="1" required placeholder="6-15位字母或数字">
+                        <input class="form-control" name="nums" type="number" value="1" required
+                               placeholder="6-15位字母或数字">
                     </div>
                     <div class="modal-body">
                         <form class="form-group">
@@ -264,122 +265,9 @@
 
 <script src="https://cdn.bootcss.com/jquery/1.12.4/jquery.min.js"></script>
 <script src="https://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-<script src="/static/user.js"></script>
-<script src="/static/book.js"></script>
-<script>
-    var bookPrice;
-    $(function () {
+<script src="/static/min/user.js"></script>
+<script src="/static/min/book.js"></script>
+<script src="/static/min/detail.js"></script>
 
-//        $('#buyBtn').attr("disabled", "disabled");
-
-        setStatus();
-        getBook(getQueryString("bookid"));
-
-
-        function getQueryString(name) {
-            var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)", "i");
-            var r = window.location.search.substr(1).match(reg);
-            if (r != null) return unescape(r[2]);
-            return null;
-        }
-
-        function getBook(bookuid) {
-            $.ajax({
-                type: "GET",
-                url: "/book/v1/detail/" + bookuid,
-                data: null,
-                error: function (request) {
-                    alert("Connection error");
-                },
-                success: function (result) {
-                    var book = result.data.book;
-                    $("#book_uid").val(book.uid);
-                    $("#book_name").text(book.name);
-                    $("#book_author").text(book.author);
-                    $("#book_price").text(book.price);
-                    $("#book_desc").text(book.description);
-                    $("#bookuid_buy").val(book.uid);
-                    $("#bookuid_add").val(book.uid);
-                    bookPrice = book.price;
-                }
-            });
-        }
-
-        $("#book_buy_num").change(function () {
-            if ($("#book_buy_num").val() <= 0) {
-                alert("请输入正确的数量");
-                return;
-            }
-            if ($(this).val().length > 5) {
-                alert("数量过多");
-                return;
-            }
-            $("#bookPrice_buy").text("您需支付￥" + ($(this).val() * bookPrice));
-            $('#buyBtn').removeAttr("disabled");
-        })
-
-        $('#buyBtn').click(function () {
-            if ($("#book_buy_num").val() <= 0) {
-                alert("请输入正确的数量");
-                return;
-            }
-            if ($(this).val().length > 5) {
-                alert("数量过多");
-                return;
-            };
-            $.ajax({
-                type: "POST",
-                headers: {
-                    AUTH: localStorage.getItem("xrf_")
-                },
-                url: "/book/v1/buy",
-                data: $('#buyModal form').serialize(),// 你的formid
-                error: function (request) {
-                    alert("请您先去登录");
-                },
-                success: function (data) {
-                    if (data.code == 200) {
-                        alert("购买成功");
-                        $('#buyModal').modal('hide');
-                    } else
-                        alert(data.message);
-                }
-            });
-            return false;
-        });
-
-        $(function () {
-            $('#addBtn').click(function () {
-                if ($("#book_buy_num").val() <= 0) {
-                    alert("请输入正确的数量");
-                    return;
-                }
-                if ($(this).val().length > 5) {
-                    alert("数量过多");
-                    return;
-                };
-                $.ajax({
-                    type: "POST",
-                    headers: {
-                        AUTH: localStorage.getItem("xrf_")
-                    },
-                    url: "/book/v1/shopcar",
-                    data: $('#shopCarModal form').serialize(),// 你的formid
-                    error: function (request) {
-                        alert("请您先去登录");
-                    },
-                    success: function (data) {
-                        if (data.code == 200) {
-                            $('#shopCarModal').modal('hide');
-                        } else
-                            alert(data.message);
-
-                    }
-                });
-                return false;
-            });
-        });
-    });
-</script>
 </body>
 </html>

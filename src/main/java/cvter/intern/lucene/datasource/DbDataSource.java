@@ -10,9 +10,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by cvter on 2017/5/18.
+ * 构建图书检索数据源接口的实现类 - 从数据库获取数据
  */
 public class DbDataSource implements DataSource {
+
+//    @Resource
+//    private BookService bookService;
 
     private List<BookIndex> indices;
 
