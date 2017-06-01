@@ -149,7 +149,7 @@
       description)
     values (#{uid,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR},
       #{author,jdbcType=VARCHAR}, #{price,jdbcType=INTEGER}, #{stock,jdbcType=INTEGER}, 
-      now(), now(),
+      #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP},
       #{description,jdbcType=LONGVARCHAR})
   </insert>
   <insert id="insertSelective" parameterType="cvter.intern.model.Book" >

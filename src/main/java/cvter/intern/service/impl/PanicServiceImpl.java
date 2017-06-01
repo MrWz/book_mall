@@ -17,7 +17,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import javax.annotation.Resource;
 import java.util.Date;
 import java.util.List;
@@ -40,29 +39,42 @@ public class PanicServiceImpl implements PanicService {
     private PanicRedis panicRedis;
     @Autowired
     RedisLockUtil redisLockUtil;
+
     /**
-     * 增加记录
+     * 增加抢购记录
+     *
+     * @param record  抢购实体
+     * @return  成功或失败
      */
     public boolean save(Panic record) {
         return panicDao.insert(record);
     }
 
     /**
-     * 删除记录
+     * 抢购删除
+     *
+     * @param uid   图书UID
+     * @return
      */
     public int deleteByUid(String uid) {
         return panicDao.deleteByPrimaryKey(uid);
     }
 
     /**
-     * 更新记录
+     * 更新抢购记录
+     *
+     * @param record  抢购实体
+     * @return
      */
     public int update(Panic record) {
         return panicDao.updateByPrimaryKey(record);
     }
 
     /**
-     * 查询
+     * 查询抢购记录
+     *
+     * @param uid  抢购实体UID
+     * @return
      */
     public Panic selectByUID(String uid) {
         return panicDao.selectByPrimaryKey(uid);
@@ -70,6 +82,8 @@ public class PanicServiceImpl implements PanicService {
 
     /**
      * 查询全部记录，采用分表查询
+     *
+     * @return  抢购列表
      */
     public List<Panic> selectAll() {
         return panicDao.selectAll();
@@ -77,6 +91,13 @@ public class PanicServiceImpl implements PanicService {
 
     /**
      * 发布抢购
+     *
+     * @param nums   抢购数量
+     * @param curPrice  抢购价格
+     * @param startTime  抢购开始时间
+     * @param endTime   抢购结束时间
+     * @param uid  抢购图书UID
+     * @return  成功或失败
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
@@ -93,8 +114,6 @@ public class PanicServiceImpl implements PanicService {
         book.setStock(book.getStock() - nums);
         book.setUpdateTime(date);
         bookService.update(book);
-
-        System.out.println(startTime);
         Panic pbook = new Panic(nums, curPrice, TimeUtil.strToDateLong(startTime), TimeUtil.strToDateLong(endTime), date, date);
         pbook.setUid(UIDUtil.getRandomUID());
         panicService.save(pbook);
@@ -103,25 +122,29 @@ public class PanicServiceImpl implements PanicService {
     }
 
     /**
-    *秒杀执行
-    */
+     * 执行抢购
+     *
+     * @param bookId  图书ID
+     * @param userId  用户ID
+     * @return 成功或失败
+     */
     @Transactional(rollbackFor = Exception.class)
     public boolean executePanic(String bookId, String userId){
         if(StringUtils.isAnyEmpty(bookId,userId)){
             throw new ParameterException("参数为空");
         }
-    //缓存优化
-    //1.访问redis
-    Panic pbook= panicRedis.getPanic(bookId);
-    if(pbook==null){
-        //访问数据库
-        pbook = panicDao.selectByPrimaryKey(bookId);
+        //缓存优化
+        //1.访问redis
+        Panic pbook= panicRedis.getPanic(bookId);
         if(pbook==null){
-            throw new BusinessException(ExceptionCode.EX_20005.getCode(), ExceptionCode.EX_20005.getMessage());
-        }else{
-            panicRedis.putPanic(pbook);
+            //访问数据库
+            pbook = panicDao.selectByPrimaryKey(bookId);
+            if(pbook==null){
+                throw new BusinessException(ExceptionCode.EX_20005.getCode(), ExceptionCode.EX_20005.getMessage());
+            }else{
+                panicRedis.putPanic(pbook);
+            }
         }
-    }
         UserBook userBookHave=userBookDao.selectByUuidAndBuid(userId,bookId,true);
         if(userBookHave!=null){
             //重复抢购
@@ -132,7 +155,7 @@ public class PanicServiceImpl implements PanicService {
         if(lockStatus){
             int updateTime = panicDao.reduceNumber(bookId, date);
             if (updateTime <= 0) {
-                //抢购失败
+                //已抢完
                 redisLockUtil.unLock("redisKey-"+bookId);
                 throw new BusinessException(ExceptionCode.EX_20007.getCode(), ExceptionCode.EX_20007.getMessage());
             }

@@ -1,9 +1,8 @@
 package cvter.intern.dao;
 
-import cvter.intern.model.Book;
-import cvter.intern.model.Panic;
-import cvter.intern.model.UserBook;
-import cvter.intern.model.UserBookExample;
+import cvter.intern.model.*;
+
+import java.util.Date;
 import java.util.List;
 import org.apache.ibatis.annotations.Param;
 
@@ -17,6 +16,8 @@ public interface UserBookDao {
     int deleteByExample(UserBookExample example);
 
     int deleteByPrimaryKey(Integer id);
+
+    List<SaleSum> saleSum(@Param(value = "today")Date today);
 
     //插入购买明细
     int insert(UserBook record);

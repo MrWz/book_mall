@@ -11,7 +11,7 @@ import java.util.List;
  * Created by cvter on 2017/5/30.
  */
 public interface SaleService {
-    int save(Sale sale);
+    void save(List<SaleSum> listSale);
 
     int deleteByUid(String uid);
 

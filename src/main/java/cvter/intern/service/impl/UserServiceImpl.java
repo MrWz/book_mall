@@ -1,7 +1,6 @@
 package cvter.intern.service.impl;
 
 import cvter.intern.authorization.manager.RedisTokenManager;
-import cvter.intern.authorization.model.TokenModel;
 import cvter.intern.dao.*;
 import cvter.intern.exception.BusinessException;
 import cvter.intern.exception.ExceptionCode;
@@ -17,7 +16,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import redis.clients.jedis.JedisPool;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 import static cvter.intern.exception.ExceptionCode.EX_10001;
 import static cvter.intern.utils.RoleUtil.ROLE_1;
@@ -330,9 +331,9 @@ public class UserServiceImpl implements UserService {
     }
 
     /*
-     * 管理员登录
-     * @param username
-     * @param password
+     * 验证管理员登录
+     * @param username  用户名
+     * @param password  密码
      * @return
      */
     public boolean checkAdimLogin(String username, String password) {

@@ -1,5 +1,7 @@
 package cvter.intern.model;
 
+import java.util.Date;
+
 /**
  * Created by cvter on 2017/5/31.
  */
@@ -8,6 +10,23 @@ public class SaleSum {
     String book_uid;
     int total_price;
     int nums;
+    Date updateTime;
+    boolean deleted;
+    public SaleSum(String book_uid, int total_price, int nums,Date updateTime) {
+        this.book_uid = book_uid;
+        this.total_price = total_price;
+        this.nums = nums;
+        this.deleted=false;
+        this.updateTime = updateTime;
+    }
+
+    public Date getUpdateTime() {
+        return updateTime;
+    }
+
+    public void setUpdateTime(Date updateTime) {
+        this.updateTime = updateTime;
+    }
 
     public String getBook_uid() {
         return book_uid;
