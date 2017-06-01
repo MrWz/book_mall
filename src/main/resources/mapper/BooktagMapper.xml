@@ -110,4 +110,10 @@
       update_time = #{updateTime,jdbcType=TIMESTAMP}
     where id = #{id,jdbcType=INTEGER}
   </update>
+
+    <select id="selectAll" resultType="cvter.intern.model.Booktag">
+    SELECT
+     id,uid,description,deleted,create_time createTime,update_time updateTime
+    FROM booktag_info;
+  </select>
 </mapper>

@@ -5,7 +5,7 @@
     <artifactId>seewo-bookmall-system</artifactId>
     <packaging>war</packaging>
     <version>1.0-SNAPSHOT</version>
-    <name>seewo-bookmall-system Maven Webapp</name>
+    <name>seewo-bookmall-system</name>
     <url>http://maven.apache.org</url>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -25,7 +25,7 @@
         <log4j.version>1.2.17</log4j.version>
 
         <!--Lucene包版本号-->
-        <lucene.version>4.10.4</lucene.version>
+        <lucene.version>6.5.0</lucene.version>
 
     </properties>
 
@@ -141,9 +141,8 @@
         </dependency>
         <dependency>
             <groupId>javax.servlet</groupId>
-            <artifactId>servlet-api</artifactId>
-            <!--<scope>provided</scope>-->
-            <version>2.5</version>
+            <artifactId>javax.servlet-api</artifactId>
+            <version>3.0.1</version>
         </dependency>
 
         <dependency>
@@ -191,26 +190,12 @@
             <artifactId>lucene-facet</artifactId>
             <version>${lucene.version}</version>
         </dependency>
-        <!--<dependency>-->
-        <!--<groupId>org.apacvter.intern.lucenecene</groupId>-->
-        <!--<artifaccvter.intern.lucenecene-sandbox</artifactId>-->
-        <!--<versiocvter.intern.lucenecene.version}</version>-->
-        <!--</dependency>-->
-        <!--<dependency>-->
-        <!--<groupId>org.apacvter.intern.lucenecene</groupId>-->
-        <!--<artifaccvter.intern.lucenecene-codecs</artifactId>-->
-        <!--<versiocvter.intern.lucenecene.version}</version>-->
-        <!--</dependency>-->
         <dependency>
             <groupId>org.apache.lucene</groupId>
             <artifactId>lucene-test-framework</artifactId>
             <version>${lucene.version}</version>
         </dependency>
-        <dependency>
-            <groupId>org.elasticsearch.client</groupId>
-            <artifactId>transport</artifactId>
-            <version>5.4.0</version>
-        </dependency>
+        
         <!-- 集成Redis -->
         <!-- spring Redis -->
         <dependency>

@@ -13,6 +13,19 @@ public class Sale {
 
     private Boolean deleted;
 
+    public Sale() {
+        super();
+    }
+
+    public Sale(String bookUid, Integer totalPrice, Integer nums, Boolean deleted, Date createTime, Date updateTime) {
+        this.bookUid = bookUid;
+        this.totalPrice = totalPrice;
+        this.nums = nums;
+        this.deleted = deleted;
+        this.createTime = createTime;
+        this.updateTime = updateTime;
+    }
+
     private Date createTime;
 
     private Date updateTime;

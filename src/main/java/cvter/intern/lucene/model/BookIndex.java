@@ -1,7 +1,7 @@
 package cvter.intern.lucene.model;
 
 /**
- * Created by cvter on 2017/5/18.
+ * 图书索引
  */
 public class BookIndex {
 
@@ -57,13 +57,4 @@ public class BookIndex {
         this.description = description;
     }
 
-    @Override
-    public String toString() {
-        return "BookIndex{" +
-                "uid='" + uid + '\'' +
-                ", name='" + name + '\'' +
-                ", author='" + author + '\'' +
-                ", description='" + description + '\'' +
-                '}';
-    }
 }

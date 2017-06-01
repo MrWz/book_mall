@@ -18,16 +18,6 @@ public class GotoController extends BaseController {
         return "index";
     }
 
-    @RequestMapping(value = "/admin")
-    public String adminIndex() {
-        return "admin/manager";
-    }
-
-    @RequestMapping(value = "/admin/login")
-    public String adminLogin() {
-        return "admin/login";
-    }
-
     @RequestMapping(value = "/book/detail")
     public String detail() {
         return "detail";
@@ -46,5 +36,20 @@ public class GotoController extends BaseController {
     @RequestMapping(value = "/book/shopcar")
     public String shopCar() {
         return "shopcar";
+    }
+
+    @RequestMapping(value = "/admin")
+    public String adminIndex() {
+        return "admin/manager";
+    }
+
+    @RequestMapping(value = "/admin/login")
+    public String adminLogin() {
+        return "admin/login";
+    }
+
+    @RequestMapping(value = "admin/book/sale")
+    public String sale() {
+        return "admin/sale";
     }
 }

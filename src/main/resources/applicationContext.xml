@@ -9,7 +9,6 @@
 
     <!-- 加载properties文件 -->
     <context:property-placeholder location="classpath:conf/*.properties"/>
-
     <!-- 配置数据源 -->
     <bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource"
           destroy-method="close">

@@ -6,7 +6,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Created by cvter on 2017/5/25.
+ * 请求限制注解，使用时加在需要限制的action上
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)
