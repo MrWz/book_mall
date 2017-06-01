@@ -52,4 +52,9 @@ public class GotoController extends BaseController {
     public String sale() {
         return "admin/sale";
     }
+
+    @RequestMapping(value = "admin/book/saleAll")
+    public String saleAll() {
+        return "admin/saleall";
+    }
 }
