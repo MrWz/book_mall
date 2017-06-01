@@ -20,6 +20,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+
 import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -67,12 +68,12 @@ public class BookController extends BaseController {
      */
     @ResponseBody
     @RequestMapping("/list")
-    public Msg list(@RequestParam(defaultValue = "1") Integer pn,
-                    @RequestParam(defaultValue = "7") Integer pageSize,
-                    @RequestParam(defaultValue = "5") Integer navigatePages) {
+    public Msg list(@RequestParam(defaultValue="1") Integer pn,
+                    @RequestParam(defaultValue="7") Integer pageSize,
+                    @RequestParam(defaultValue="5") Integer navigatePages) {
         PageHelper.startPage(pn, pageSize);
-        List<Book> allBook = bookService.selectAll();
-        PageInfo page = new PageInfo(allBook, navigatePages);
+        List<Book> allBook=bookService.selectAll();
+        PageInfo page=new PageInfo(allBook, navigatePages);
         return Msg.success().add("page", page);
     }
 
@@ -84,7 +85,7 @@ public class BookController extends BaseController {
     @ResponseBody
     @RequestMapping("/booktag")
     public Msg listBookTags() {
-        List<Booktag> booktags = booktagService.selectAll();
+        List<Booktag> booktags=booktagService.selectAll();
 
         return Msg.success().add("booktags", booktags);
     }
@@ -95,16 +96,16 @@ public class BookController extends BaseController {
      * @return
      */
     @ResponseBody
-    @RequestMapping(value = "/hotBook")
+    @RequestMapping(value="/hotBook")
     public Msg getTopTen() {
-        Set<String> topTen = redisTopTenUtil.getInRedisTopTen();
-        List<Book> topTenBook = new ArrayList(10);
+        Set<String> topTen=redisTopTenUtil.getInRedisTopTen();
+        List<Book> topTenBook=new ArrayList(10);
         for (String bookUid : topTen) {
-            Book book = (Book) redisCountHotBookUtil.getInRedis(bookUid, Book.class);//在Redis中查询，未查询到，在去Mysql中查找
+            Book book=(Book) redisCountHotBookUtil.getInRedis(bookUid, Book.class);//在Redis中查询，未查询到，在去Mysql中查找
             if (book == null) {
-                Book bk = bookService.selectByUid(bookUid);
+                Book bk=bookService.selectByUid(bookUid);
                 redisCountHotBookUtil.putRedis(bk, Book.class);
-                book = bk;
+                book=bk;
             }
             topTenBook.add(book);
         }
@@ -119,16 +120,16 @@ public class BookController extends BaseController {
      * @return
      */
     @ResponseBody
-    @RequestMapping(value = "/detail/{uid}", method = RequestMethod.GET)
+    @RequestMapping(value="/detail/{uid}", method=RequestMethod.GET)
     public Msg list(@PathVariable String uid) {
 
-        Book book = (Book) redisCountHotBookUtil.getInRedis(uid, Book.class);//在Redis中查询，未查询到，在去Mysql中查找
+        Book book=(Book) redisCountHotBookUtil.getInRedis(uid, Book.class);//在Redis中查询，未查询到，在去Mysql中查找
 
         redisTopTenUtil.putRedisTopTen(uid);//将图书id存到redis，统计热点图书。
         if (book == null) {
-            Book bk = bookService.selectByUid(uid);
+            Book bk=bookService.selectByUid(uid);
             redisCountHotBookUtil.putRedis(bk, Book.class);
-            book = bk;
+            book=bk;
         }
         return Msg.success().add("book", book);
     }
@@ -143,9 +144,9 @@ public class BookController extends BaseController {
      */
     @Authorization
     @ResponseBody
-    @RequestMapping(value = "/buy", method = RequestMethod.POST)
+    @RequestMapping(value="/buy", method=RequestMethod.POST)
     public Msg buy(@CurrentUser User user, @RequestParam String bookuid, @RequestParam int nums) {
-        boolean flag = userService.buy(user.getUid(), bookuid, nums);
+        boolean flag=userService.buy(user.getUid(), bookuid, nums);
 
         if (flag) {
             return Msg.success().setMessage("购买成功");
@@ -161,9 +162,9 @@ public class BookController extends BaseController {
      */
     @Authorization
     @ResponseBody
-    @RequestMapping(value = "/shopcar/size", method = RequestMethod.GET)
+    @RequestMapping(value="/shopcar/size", method=RequestMethod.GET)
     public Msg shopCarSizeGet(@CurrentUser User user) {
-        List<BookInShopCar> bookList = userService.getShopCar(user.getUid());
+        List<BookInShopCar> bookList=userService.getShopCar(user.getUid());
         if (bookList == null) {
             return Msg.success().add("size", 0);
         }
@@ -178,9 +179,9 @@ public class BookController extends BaseController {
      */
     @Authorization
     @ResponseBody
-    @RequestMapping(value = "/shopcar", method = RequestMethod.GET)
+    @RequestMapping(value="/shopcar", method=RequestMethod.GET)
     public Msg shopCarGet(@CurrentUser User user) {
-        List<BookInShopCar> bookList = userService.getShopCar(user.getUid());
+        List<BookInShopCar> bookList=userService.getShopCar(user.getUid());
         if (bookList.size() == 0) {
             return Msg.fail().setMessage("购物车空空如也");
         }
@@ -196,7 +197,7 @@ public class BookController extends BaseController {
      */
     @Authorization
     @ResponseBody
-    @RequestMapping(value = "/shopcar/{bookUid}", method = RequestMethod.DELETE)
+    @RequestMapping(value="/shopcar/{bookUid}", method=RequestMethod.DELETE)
     public Msg shopCarDelete(@CurrentUser User user, @PathVariable String bookUid) {
         System.out.println(bookUid);
         /**
@@ -204,13 +205,13 @@ public class BookController extends BaseController {
          * 反之，删除指定图书
          */
         if (!StringUtils.isEmpty(bookUid) && !"0".equals(bookUid)) {
-            boolean flag = userService.deleteOneBook(user.getUid(), bookUid);
+            boolean flag=userService.deleteOneBook(user.getUid(), bookUid);
             if (flag) {
                 return Msg.success().setMessage("删除成功");
             }
             return Msg.fail().setMessage("删除失败");
         }
-        boolean flag = userService.clearShopCar(user.getUid());
+        boolean flag=userService.clearShopCar(user.getUid());
         if (flag) {
             return Msg.success().setMessage("清空完毕");
         }
@@ -227,15 +228,13 @@ public class BookController extends BaseController {
      */
     @Authorization
     @ResponseBody
-    @RequestMapping(value = "/shopcar", method = RequestMethod.PUT)
+    @RequestMapping(value="/shopcar", method=RequestMethod.PUT)
     public Msg shopCarPut(@CurrentUser User user, @RequestParam String bookuid, @RequestParam int flag) {
-        boolean isTrue = userService.updateShopCar(user.getUid(), bookuid, flag);
+        boolean isTrue=userService.updateShopCar(user.getUid(), bookuid, flag);
         if (isTrue) {
             return Msg.success().setMessage("修改成功");
         }
-        return Msg.success().setMessage("修改成功");
-//        }
-//        return Msg.fail().setMessage("修改失败");
+        return Msg.fail().setMessage("修改成功");
     }
 
     /**
@@ -247,18 +246,18 @@ public class BookController extends BaseController {
      */
     @Authorization
     @ResponseBody
-    @RequestMapping(value = "/shopcar", method = RequestMethod.POST)
+    @RequestMapping(value="/shopcar", method=RequestMethod.POST)
     public Msg shopCarPost(@CurrentUser User user, @RequestParam String bookuid, @RequestParam String nums) {
-        String pt = "^[0-9]+$";
-        boolean isNum = nums.matches(pt);
+        String pt="^[0-9]+$";
+        boolean isNum=nums.matches(pt);
         if (!isNum) {
             throw new BusinessException(EX_20010.getCode(), EX_20010.getMessage());
         }
-        int num = Integer.parseInt(nums);
+        int num=Integer.parseInt(nums);
         if (num <= 0) {
             throw new BusinessException(EX_200003.getCode(), EX_200003.getMessage());
         }
-        boolean flag = userService.addShopCar(user.getUid(), bookuid, num);
+        boolean flag=userService.addShopCar(user.getUid(), bookuid, num);
         if (flag) {
             return Msg.success().setMessage("添加成功，尽快购买");
         }
@@ -276,22 +275,22 @@ public class BookController extends BaseController {
      * @throws Exception
      */
     @ResponseBody
-    @RequestMapping(path = {"/search"})
+    @RequestMapping(path={"/search"})
     public Msg bookSearch(
-            @RequestParam(value = "pn", defaultValue = "1") Integer pn,
-            @RequestParam(value = "pageSize", defaultValue = "5") Integer pageSize,
-            @RequestParam(required = false) String params) throws Exception {
-        params = URLDecoder.decode(params, "UTF-8");
+            @RequestParam(value="pn", defaultValue="1") Integer pn,
+            @RequestParam(value="pageSize", defaultValue="5") Integer pageSize,
+            @RequestParam(required=false) String params) throws Exception {
+        params=URLDecoder.decode(params, "UTF-8");
 
         if (params == null || params.trim().length() == 0) {
             return Msg.fail().setMessage("传参错误");
         }
 
-        List<Book> authors = indexBookService.searchBookTopN(params, BookIndex.AUTHOR, 100);
-        List<Book> names = indexBookService.searchBookTopN(params, BookIndex.NAME, 100);
-        List<Book> description = indexBookService.searchBookTopN(params, BookIndex.DESCRIPTION, 100);
+        List<Book> authors=indexBookService.searchBookTopN(params, BookIndex.AUTHOR, 100);
+        List<Book> names=indexBookService.searchBookTopN(params, BookIndex.NAME, 100);
+        List<Book> description=indexBookService.searchBookTopN(params, BookIndex.DESCRIPTION, 100);
 
-        List bookInfos = new ArrayList();
+        List bookInfos=new ArrayList();
         if (authors != null) {
             bookInfos.addAll(authors);
         }
@@ -309,33 +308,33 @@ public class BookController extends BaseController {
     /**
      * 获取抢购图书列表
      *
-     * @param pn  页码
-     * @param pageSize  页大小
-     * @param navigatePages  页数
+     * @param pn            页码
+     * @param pageSize      页大小
+     * @param navigatePages 页数
      * @return
      */
     @ResponseBody
-    @RequestMapping(value = "/panic/list", method = RequestMethod.POST)
-    public Msg panicList(@RequestParam(defaultValue = "1") Integer pn,
-                         @RequestParam(defaultValue = "7") Integer pageSize,
-                         @RequestParam(defaultValue = "5") Integer navigatePages) {
+    @RequestMapping(value="/panic/list", method=RequestMethod.POST)
+    public Msg panicList(@RequestParam(defaultValue="1") Integer pn,
+                         @RequestParam(defaultValue="7") Integer pageSize,
+                         @RequestParam(defaultValue="5") Integer navigatePages) {
         PageHelper.startPage(pn, pageSize);
-        List<Panic> allPBook = panicService.selectAll();
-        PageInfo page = new PageInfo(allPBook, navigatePages);
+        List<Panic> allPBook=panicService.selectAll();
+        PageInfo page=new PageInfo(allPBook, navigatePages);
         return Msg.success().add("page", page);
     }
 
     /**
      * 获取抢购图书详情
      *
-     * @param uid  图书UID
+     * @param uid 图书UID
      * @return
      */
-    @RequestLimit(value = 3, msg = "三秒防刷")
+    @RequestLimit(value=3, msg="三秒防刷")
     @ResponseBody
-    @RequestMapping(value = "/panic/detail/{uid}", method = RequestMethod.GET)
+    @RequestMapping(value="/panic/detail/{uid}", method=RequestMethod.GET)
     public Msg panicDetil(@PathVariable String uid) {
-        Panic panic = panicService.selectByUID(uid);
+        Panic panic=panicService.selectByUID(uid);
         return Msg.success().add("panic", panic);
     }
 
@@ -349,7 +348,7 @@ public class BookController extends BaseController {
 //    @RequestLimit(value = 3, msg = "三秒防刷")
     @Authorization
     @ResponseBody
-    @RequestMapping(value = "/panic", method = RequestMethod.POST)
+    @RequestMapping(value="/panic", method=RequestMethod.POST)
     public Msg bookPanic(@RequestParam String bookUid,
                          @CurrentUser User user) {
         if (panicService.executePanic(bookUid, user.getUid())) {
