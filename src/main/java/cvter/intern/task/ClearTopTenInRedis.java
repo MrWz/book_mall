@@ -24,7 +24,7 @@ public class ClearTopTenInRedis {
         jedis.del(Constants.TOP_TEN_KEY);
 
         /**
-         * 居然不释放连接。。。
+         * 居然不释放连接。。。已修改
          */
         jedis.close();
     }

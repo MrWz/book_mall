@@ -66,7 +66,6 @@ public class IndexManager {
                 Analyzer analyzer = new IKAnalyzer(true);
 
                 // 创建IndexWriter
-                // IndexWriterConfig cfg = new IndexWriterConfig(Version.LUCENE_6_5_0,analyzer);
                 IndexWriterConfig cfg = new IndexWriterConfig(analyzer);
 
                 // 指定索引库的地址
@@ -109,9 +108,6 @@ public class IndexManager {
      * @throws Exception
      */
     public List<BookIndex> doSearch(String text, String queryField) throws Exception {
-        // 创建IndexSearcher
-        // 指定索引库的地址
-
         // 创建query对象
         Analyzer analyzer = new IKAnalyzer(true);
         // 使用QueryParser搜索时，需要指定分词器，搜索时的分词器要和索引时的分词器一致
@@ -119,7 +115,6 @@ public class IndexManager {
         QueryParser parser = new QueryParser(queryField, analyzer);
 
         // 通过queryparser来创建query对象
-        // 参数：输入的lucene的查询语句(关键字一定要大写)
         Query query = parser.parse(text);
 
         Directory directory = FSDirectory.open(FileSystems.getDefault().getPath(indexDir));

@@ -110,7 +110,7 @@ public class BookController extends BaseController {
             topTenBook.add(book);
         }
         Collections.reverse(topTenBook);
-        return Msg.success().add("TOP-TEN", topTenBook);
+        return Msg.success().add("TOP_TEN", topTenBook);
     }
 
     /**

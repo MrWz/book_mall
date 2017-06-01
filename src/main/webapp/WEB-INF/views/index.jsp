@@ -72,8 +72,8 @@
                     </span>
                 </div>
             </form>
-        </div><!-- /.navbar-collapse -->
-    </div><!-- /.container-fluid -->
+        </div>
+    </div>
 </nav>
 
 <div class="container-fluid">
@@ -82,10 +82,7 @@
         <div class="col-md-3 column">
             <div class="list-group" id="panic_list">
                 <a class="list-group-item active">抢购活动</a>
-                <%--<div class="list-group-item">--%>
-                <%--<h3><a href="/book/panic?bookid=04303d63f90344609977f92844ebdd09">Java编程思想</a></h3>--%>
-                <%--<p>14:30准时开始</p>--%>
-                <%--</div>--%>
+                <!-- 此处放置抢购图书列表 -->
             </div>
         </div>
 
@@ -98,12 +95,13 @@
         </div>
 
         <div class="col-md-3 column">
-            <div class="list-group">
+            <div class="list-group" id="hotBooks">
                 <a class="list-group-item active">图书推荐</a>
-                <div class="list-group-item">
-                    <span class="badge">14</span>
-                    <a href="/book/detail?bookid=04303d63f90344609977f92844ebdd09">Java编程思想</a>
-                </div>
+                <!-- 此处放置推荐图书列表 -->
+                <%--<div class="list-group-item">--%>
+                <%--<span class="badge">14</span>--%>
+                <%--<a href="/book/detail?bookid=04303d63f90344609977f92844ebdd09">Java编程思想</a>--%>
+                <%--</div>--%>
             </div>
         </div>
 
@@ -166,12 +164,12 @@
                     <div class="form-group">
                         <label for="">用户名</label>
                         <input class="form-control" name="username" type="text" required placeholder="6-15位字母或数字">
-                        <span id="" class="help-block text-warning"></span>
+                        <span class="help-block text-warning"></span>
                     </div>
                     <div class="form-group">
                         <label for="">密码</label>
                         <input class="form-control" name="password" type="password" required placeholder="至少6位字母或数字">
-                        <span id="" class="help-block text-warning"></span>
+                        <span class="help-block text-warning"></span>
                     </div>
                     <!--<div class="form-group">
                         <label for="">验证码</label>
@@ -210,19 +208,19 @@
             <div class="modal-body">
                 <form class="form-group">
                     <div class="form-group">
-                        <label for="">用户名</label>
+                        <label>用户名</label>
                         <input class="form-control" name="username" type="text" required placeholder="6-15位字母或数字">
-                        <span id="" class="help-block text-warning"></span>
+                        <span class="help-block text-warning"></span>
                     </div>
                     <div class="form-group">
-                        <label for="">密码</label>
+                        <label>密码</label>
                         <input class="form-control" name="password" type="password" required placeholder="至少6位字母或数字">
-                        <span id="" class="help-block text-warning"></span>
+                        <span class="help-block text-warning"></span>
                     </div>
                     <div class="form-group">
-                        <label for="">再次输入密码</label>
+                        <label>再次输入密码</label>
                         <input class="form-control" name="rePassword" type="password" required placeholder="至少6位字母或数字">
-                        <span id="" class="help-block text-warning"></span>
+                        <span class="help-block text-warning"></span>
                     </div>
                     <%--<div class="form-group">--%>
                     <%--<label for="">验证码</label>--%>
@@ -251,186 +249,9 @@
 
 <script src="https://cdn.bootcss.com/jquery/1.12.4/jquery.min.js"></script>
 <script src="https://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-<script src="/static/user.js"></script>
-<script src="/static/book.js"></script>
-<script>
-    var currentPage;
-
-    $(function () {
-        setStatus();
-
-        $(function () {
-            //去首页
-            to_page(1);
-        });
-
-        getPanicList();
-
-        function to_page(pn) {
-            $.ajax({
-
-                    type: "POST",
-                    url: "/book/v1/list",
-                    data: "pn=" + pn + "&pageSize=" + 9,
-                    error: function (XMLHttpRequest, textStatus, errorThrown) {
-                        if (XMLHttpRequest.responseJSON.code == 333) {
-                            alert("三秒防刷");
-//                            location.reload(true);
-                        } else
-                            alert("Connection error");
-                    },
-                    success: function (result) {
-                        if (result.code == 200) {
-                            //1、解析并显示书籍
-                            build_book_table(result);
-
-                            //2、显示分页条信息
-                            build_page_nav(result);
-                        } else if (result.code == 333) {
-                            alert("三秒防刷");
-                        }
-                        else {
-                            alert(result.message);
-                        }
-                    }
-                }
-            );
-        }
-
-        function build_book_table(result) {
-            $("#bookList").empty();
-            var books = result.data.page.list;
-            $.each(books, function (index, item) {
-                var bookName = $("<h3></h3>").append(item.name);
-                var bookDesc = $("<p></p>").append(item.description);
-                var bookAuthor = $("<p></p>").append($("<span></span>").append(item.author));
-                var detail = $("<a></a>").attr("href", "/book/detail?bookid=" + item.uid).append("查看详情");
-                var bookPrice = $("<span></span>").addClass("pull-right").css({
-                    "margin-right": "10px",
-                    "color": "darkred"
-                }).append("￥" + item.price);
-
-                var rootDiv = $("<div></div>").addClass("col-md-4");
-                var captionDiv = $("<div></div>").addClass("caption");
-                var thumbnailDiv = $("<div></div>").addClass("thumbnail").append();
-                thumbnailDiv.append(bookName)
-                    .append(bookName)
-                    .append(bookDesc)
-                    .append(bookAuthor)
-                    .append($("<p></p>").append(detail).append(bookPrice));
-                captionDiv.append(thumbnailDiv);
-                rootDiv.append(captionDiv).appendTo("#bookList");
-            })
-        }
-
-        function build_page_nav(result) {
-            $("#page_nav_area").empty();
-            var ul = $("<ul></ul>").addClass("pagination");
-            var firstPageLi = $("<li></li>").append($("<a></a>").append("首页").attr("href", "#"));
-            var prePageLi = $("<li></li>").append($("<a></a>").append("&laquo;"));
-            if (result.data.page.hasPreviousPage == false) {
-                firstPageLi.addClass("disabled");
-                prePageLi.addClass("disabled");
-            } else {
-                firstPageLi.click(function () {
-                    to_page(1);
-                });
-                prePageLi.click(function () {
-                    to_page(result.data.page.pageNum - 1);
-                });
-            }
-
-            var nextPageLi = $("<li></li>").append($("<a></a>").append("&raquo;"));
-            var lastPageLi = $("<li></li>").append($("<a></a>").append("末页").attr("href", "#"));
-            if (result.data.page.hasNextPage == false) {
-                nextPageLi.addClass("disabled");
-                lastPageLi.addClass("disabled");
-            } else {
-                nextPageLi.click(function () {
-                    to_page(result.data.page.pageNum + 1);
-                });
-                lastPageLi.click(function () {
-                    to_page(result.data.page.pages);
-                });
-            }
-
-            ul.append(firstPageLi).append(prePageLi);
-            $.each(result.data.page.navigatepageNums, function (index, item) {
-                var numLi = $("<li></li>").append($("<a></a>").append(item));
-                if (result.data.page.pageNum == item) {
-                    currentPage = item;
-                    numLi.addClass("active");
-                }
-                numLi.click(function () {
-                    to_page(item);
-                });
-                ul.append(numLi);
-            });
-            ul.append(nextPageLi).append(lastPageLi).appendTo($("#page_nav_area"));
-        }
-
-        function getPanicList() {
-            $.ajax({
-
-                    type: "POST",
-                    url: "/book/v1/panic/list",
-                    data: null,
-                    error: function (XMLHttpRequest, textStatus, errorThrown) {
-                        if (XMLHttpRequest.responseJSON.code == 333) {
-                            alert("三秒防刷");
-//                            location.reload(true);
-                        } else
-                            alert("Connection error");
-                    },
-                    success: function (result) {
-                        if (result.code == 200) {
-//                            alert(result.data.page.list.length);
-                            build_panic_list(result);
-                        }
-                        else {
-                            alert(result.message);
-                        }
-                    }
-                }
-            );
-        }
-
-//        <div class="list-group-item">
-//            <h3><a href="/book/panic?bookid=04303d63f90344609977f92844ebdd09">Java编程思想</a></h3>
-//            <p>14:30准时开始</p>
-//        </div>
-        function build_panic_list(result) {
-            var page = result.data.page.list;
-            $.each(page, function (index, item) {
-                var aDiv = $("<div></div>").addClass("list-group-item");
-
-                var h3Div = $("<h3></h3>").append($("<a>" + "" + "</a>").attr("id", "panic_" + index).attr("href", "/book/panic?bookid=" + item.uid));
-                var pDiv = $("<p></p>").text(new Date(item.startTime).toLocaleString() + " 准时开始");
-
-                aDiv.append(h3Div).append(pDiv);
-                $("#panic_list").append(aDiv);
-
-                $.ajax({
-                    type: "GET",
-                    url: "/book/v1/detail/" + item.uid,
-                    data: null,
-                    error: function (request) {
-                        alert("Connection error");
-                    },
-                    success: function (result) {
-                        var book = result.data.book;
-                        $("#" + "panic_" + index).text(book.name);
-                    }
-                });
-            });
-        }
-
-        function getBookName(bookuid) {
-
-        }
-    })
-    ;
-</script>
+<script src="/static/min/user.js"></script>
+<script src="/static/min/book.js"></script>
+<script src="/static/min/index.js"></script>
 
 </body>
 </html>

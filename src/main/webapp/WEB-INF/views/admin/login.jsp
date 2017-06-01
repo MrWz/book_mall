@@ -75,9 +75,6 @@
 
 <script src="https://cdn.bootcss.com/jquery/1.12.4/jquery.min.js"></script>
 <script src="https://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-<div id="responseText"></div>
-</body>
-
 <script>
     $(function () {
         $("#loginBtn").click(function () {
@@ -99,6 +96,8 @@
                 }
             });
         })
-    })
+    });
 </script>
+
+</body>
 </html>
