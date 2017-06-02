@@ -20,11 +20,11 @@ public class RedisLockUtil {
         /**
          * 锁等待时间，防止线程饥饿
          */
-        int timeoutMsecs=10;
+        long timeoutMsecs=System.currentTimeMillis()+3*1000;
 
         Jedis jedis=jedisPool.getResource();
 
-        while(timeoutMsecs > 0){
+        while(timeoutMsecs > System.currentTimeMillis()){
             expireMsecs = System.currentTimeMillis() + value + 1;
             String expiresStr = String.valueOf(expireMsecs);//锁的到期时间
             long result=jedis.setnx(key, expiresStr);
@@ -45,15 +45,7 @@ public class RedisLockUtil {
                 jedis.close();
                 return true;
             }
-            try {
-
-                Thread.sleep(100);
-                --timeoutMsecs;
-            } catch (Exception e) {
-
-            }
         }
-//jmeter
         /**
          * 如过执行到这里，说明此线程在规定等待的时间内并未获得锁
          */

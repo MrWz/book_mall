@@ -18,14 +18,11 @@ public class ClearTopTenInRedis {
     @Autowired
     private JedisPool jedisPool;
 
-    @Scheduled(cron = "0 41 16 ? * WED ")   //每周清空缓存
+    @Scheduled(cron = "0 59 23 ? * WED ")   //每周清空缓存
     public void count() {
         Jedis jedis = jedisPool.getResource();
         jedis.del(Constants.TOP_TEN_KEY);
 
-        /**
-         * 居然不释放连接。。。已修改
-         */
         jedis.close();
     }
 }

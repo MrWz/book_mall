@@ -205,7 +205,6 @@ public class UserServiceImpl implements UserService {
 
     /**
      * 购买图书(订单处理)
-     *
      * @param userUid
      * @param bookUid
      * @param nums
@@ -218,18 +217,13 @@ public class UserServiceImpl implements UserService {
             throw new ParameterException(EX_10001.getMessage());
         }
         Date date=new Date();
-        Book book=(Book) redisCountHotBookUtil.getInRedis(bookUid, Book.class);//在Redis中查询，未查询到，在去Mysql中查找。
-        if (book == null) {
-            Book bk=bookDao.selectByBookUid(bookUid);
-            redisCountHotBookUtil.putRedis(bk, Book.class);
-            book=bk;
-        }
-        boolean lockStatus=redisLockUtil.getLock("redisKey-" + book.getUid(), 3 * 1000);
+        Book book=null;
+        boolean lockStatus=redisLockUtil.getLock("redisKey-" + bookUid, 3 * 1000);
         if (lockStatus) {
-            book=(Book) redisCountHotBookUtil.getInRedis(bookUid, Book.class);
+            book=bookDao.selectByBookUid(bookUid);
             int newStock=book.getStock() - nums;
             if (newStock < 0) {
-                redisLockUtil.unLock("redisKey-" + book.getUid());
+                redisLockUtil.unLock("redisKey-" + bookUid);
                 return false;
             }
             book.setStock(newStock);
@@ -238,8 +232,8 @@ public class UserServiceImpl implements UserService {
             /**
              *更新表之后，必须得更新缓存
              */
-            redisCountHotBookUtil.putRedis(book, Book.class);
-            redisLockUtil.unLock("redisKey-" + book.getUid());
+            redisCountHotBookUtil.clearRedis(book, Book.class);
+            redisLockUtil.unLock("redisKey-" + bookUid);
         } else {
             throw new BusinessException(ExceptionCode.EX_20002.getCode(), ExceptionCode.EX_20002.getMessage());
         }
@@ -319,12 +313,8 @@ public class UserServiceImpl implements UserService {
 
         Role role;
         UserRole userRole;
-        User userInfo=(User) redisCountHotBookUtil.getInRedis(username, User.class);//在Redis中查询
-        if (userInfo == null) {
-            User us=selectByName(username);
-            redisCountHotBookUtil.putRedis(us, User.class);
-            userInfo=us;
-        }
+        User userInfo=selectByName(username);
+
         if (userInfo == null) {//用户不存在
             String uid=UIDUtil.getRandomUID();
             String mdPassword=Md5SaltUtil.getMD5(password, uid);

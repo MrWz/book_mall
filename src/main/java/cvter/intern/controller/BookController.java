@@ -147,7 +147,6 @@ public class BookController extends BaseController {
     @RequestMapping(value="/buy", method=RequestMethod.POST)
     public Msg buy(@CurrentUser User user, @RequestParam String bookuid, @RequestParam int nums) {
         boolean flag=userService.buy(user.getUid(), bookuid, nums);
-
         if (flag) {
             return Msg.success().setMessage("购买成功");
         }

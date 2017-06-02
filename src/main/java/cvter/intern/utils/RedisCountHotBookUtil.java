@@ -13,7 +13,20 @@ public class RedisCountHotBookUtil<T extends GetRedisKey> {
     @Autowired
     private JedisPool jedisPool;
 
-    public String putRedis(T obj, Class<T> clazz) {
+    public void clearRedis(T obj, Class<T> clazz) {
+        Jedis jedis=jedisPool.getResource();
+
+        try{
+            String  key="bookUid:" + obj.getUid();
+            jedis.del(key);
+        }catch (Exception e){
+        }
+        finally {
+            jedis.close();
+        }
+    }
+
+        public String putRedis(T obj, Class<T> clazz) {
         try {
             T instance=clazz.newInstance();
             String type=instance.getClass().toString();
